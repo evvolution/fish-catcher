@@ -1,0 +1,144 @@
+// Prisma is intentionally initialized without models for now.
+// Add your first model here when the domain becomes clear.
+
+generator client {
+  provider   = "prisma-client"
+  output     = "../src/generated/prisma"
+  engineType = "client"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum UserKind {
+  MEMBER
+  GUEST
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+enum AuthProvider {
+  WECHAT
+  GOOGLE
+  PHONE
+  GUEST
+}
+
+enum AuthIdentityStatus {
+  ACTIVE
+  REVOKED
+}
+
+enum SessionStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+enum VerificationScene {
+  SIGN_IN
+  BIND_PHONE
+  RESET_PASSWORD
+}
+
+model User {
+  id           String         @id @default(cuid()) @db.VarChar(191)
+  kind         UserKind       @default(MEMBER)
+  role         UserRole       @default(USER)
+  status       UserStatus     @default(ACTIVE)
+  displayName  String         @default("摸鱼用户") @map("display_name") @db.VarChar(50)
+  avatarUrl    String?        @map("avatar_url") @db.VarChar(255)
+  lastLoginAt  DateTime?      @map("last_login_at")
+  registeredAt DateTime       @default(now()) @map("registered_at")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  profile      UserProfile?
+  identities   AuthIdentity[]
+  sessions     UserSession[]
+
+  @@index([kind, status], map: "idx_users_kind_status")
+  @@index([createdAt], map: "idx_users_created_at")
+  @@map("users")
+}
+
+model UserProfile {
+  id                  String   @id @default(cuid()) @db.VarChar(191)
+  userId              String   @unique @map("user_id") @db.VarChar(191)
+  nickname            String?  @db.VarChar(50)
+  bio                 String?  @db.VarChar(255)
+  city                String?  @db.VarChar(64)
+  onboardingCompleted Boolean  @default(false) @map("onboarding_completed")
+  preferences         Json?
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_profiles")
+}
+
+model AuthIdentity {
+  id              String             @id @default(cuid()) @db.VarChar(191)
+  userId          String             @map("user_id") @db.VarChar(191)
+  provider        AuthProvider
+  providerUserId  String             @map("provider_user_id") @db.VarChar(191)
+  providerUnionId String?            @map("provider_union_id") @db.VarChar(191)
+  email           String?            @db.VarChar(191)
+  phone           String?            @db.VarChar(32)
+  status          AuthIdentityStatus @default(ACTIVE)
+  isPrimary       Boolean            @default(false) @map("is_primary")
+  metadata        Json?
+  lastUsedAt      DateTime?          @map("last_used_at")
+  createdAt       DateTime           @default(now()) @map("created_at")
+  updatedAt       DateTime           @updatedAt @map("updated_at")
+  user            User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerUserId], map: "uniq_auth_provider_user")
+  @@index([userId, status], map: "idx_auth_identities_user_status")
+  @@index([provider, lastUsedAt], map: "idx_auth_identities_provider_last_used")
+  @@map("auth_identities")
+}
+
+model UserSession {
+  id           String        @id @default(cuid()) @db.VarChar(191)
+  userId       String        @map("user_id") @db.VarChar(191)
+  sessionToken String        @unique @map("session_token") @db.VarChar(191)
+  status       SessionStatus @default(ACTIVE)
+  platform     String        @default("h5") @db.VarChar(32)
+  ipAddress    String?       @map("ip_address") @db.VarChar(64)
+  userAgent    String?       @map("user_agent") @db.VarChar(255)
+  lastSeenAt   DateTime?     @map("last_seen_at")
+  expiresAt    DateTime      @map("expires_at")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status], map: "idx_user_sessions_user_status")
+  @@index([expiresAt], map: "idx_user_sessions_expires_at")
+  @@map("user_sessions")
+}
+
+model PhoneVerificationCode {
+  id         String            @id @default(cuid()) @db.VarChar(191)
+  scene      VerificationScene
+  target     String            @db.VarChar(32)
+  codeHash   String            @map("code_hash") @db.VarChar(191)
+  attempts   Int               @default(0)
+  sentAt     DateTime          @default(now()) @map("sent_at")
+  expiresAt  DateTime          @map("expires_at")
+  consumedAt DateTime?         @map("consumed_at")
+  metadata   Json?
+
+  @@index([target, scene], map: "idx_phone_codes_target_scene")
+  @@index([expiresAt], map: "idx_phone_codes_expires_at")
+  @@map("phone_verification_codes")
+}
