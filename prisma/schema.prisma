@@ -51,6 +51,25 @@ enum VerificationScene {
   RESET_PASSWORD
 }
 
+enum DimensionKind {
+  TIME_OF_DAY
+  INDUSTRY
+  MOOD
+  STYLE
+  SOLAR_TERM
+  HOLIDAY
+  WEATHER
+  CARD_RARITY
+  GREETING_PHASE
+}
+
+enum CopywritingKind {
+  RESULT
+  CARD
+  GREETING
+  GUIDE
+}
+
 model User {
   id           String         @id @default(cuid()) @db.VarChar(191)
   kind         UserKind       @default(MEMBER)
@@ -141,4 +160,163 @@ model PhoneVerificationCode {
   @@index([target, scene], map: "idx_phone_codes_target_scene")
   @@index([expiresAt], map: "idx_phone_codes_expires_at")
   @@map("phone_verification_codes")
+}
+
+model MomentActivity {
+  id          String             @id @default(cuid()) @db.VarChar(191)
+  slug        String             @unique @db.VarChar(64)
+  name        String             @db.VarChar(64)
+  iconKey     String             @map("icon_key") @db.VarChar(64)
+  description String?            @db.VarChar(255)
+  prompt      String?            @db.VarChar(255)
+  colorStart  String?            @map("color_start") @db.VarChar(16)
+  colorEnd    String?            @map("color_end") @db.VarChar(16)
+  sortOrder   Int                @default(0) @map("sort_order")
+  isActive    Boolean            @default(true) @map("is_active")
+  createdAt   DateTime           @default(now()) @map("created_at")
+  updatedAt   DateTime           @updatedAt @map("updated_at")
+  copyEntries CopywritingEntry[]
+  backgrounds BackgroundAsset[]
+
+  @@index([sortOrder, isActive], map: "idx_moment_activities_sort_active")
+  @@map("moment_activities")
+}
+
+model DimensionGroup {
+  id          String            @id @default(cuid()) @db.VarChar(191)
+  key         String            @unique @db.VarChar(64)
+  label       String            @db.VarChar(64)
+  description String?           @db.VarChar(255)
+  kind        DimensionKind
+  sortOrder   Int               @default(0) @map("sort_order")
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+  options     DimensionOption[]
+
+  @@index([kind, sortOrder], map: "idx_dimension_groups_kind_sort")
+  @@map("dimension_groups")
+}
+
+model DimensionOption {
+  id              String                     @id @default(cuid()) @db.VarChar(191)
+  groupId         String                     @map("group_id") @db.VarChar(191)
+  slug            String                     @db.VarChar(64)
+  label           String                     @db.VarChar(64)
+  description     String?                    @db.VarChar(255)
+  sortOrder       Int                        @default(0) @map("sort_order")
+  isActive        Boolean                    @default(true) @map("is_active")
+  metadata        Json?
+  createdAt       DateTime                   @default(now()) @map("created_at")
+  updatedAt       DateTime                   @updatedAt @map("updated_at")
+  group           DimensionGroup             @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  copyLinks       CopywritingEntryDimension[]
+  backgroundLinks BackgroundAssetDimension[]
+
+  @@unique([groupId, slug], map: "uniq_dimension_options_group_slug")
+  @@index([groupId, sortOrder, isActive], map: "idx_dimension_options_group_sort_active")
+  @@map("dimension_options")
+}
+
+model CopywritingEntry {
+  id             String                       @id @default(cuid()) @db.VarChar(191)
+  slug           String                       @unique @db.VarChar(80)
+  kind           CopywritingKind
+  activityId     String?                      @map("activity_id") @db.VarChar(191)
+  title          String                       @db.VarChar(120)
+  content        String                       @db.Text
+  notes          String?                      @db.VarChar(255)
+  minDurationSec Int?                         @map("min_duration_sec")
+  maxDurationSec Int?                         @map("max_duration_sec")
+  weight         Int                          @default(100)
+  dropRate       Int                          @default(0) @map("drop_rate")
+  isActive       Boolean                      @default(true) @map("is_active")
+  createdAt      DateTime                     @default(now()) @map("created_at")
+  updatedAt      DateTime                     @updatedAt @map("updated_at")
+  activity       MomentActivity?              @relation(fields: [activityId], references: [id], onDelete: SetNull)
+  dimensions     CopywritingEntryDimension[]
+
+  @@index([kind, isActive], map: "idx_copywriting_entries_kind_active")
+  @@index([activityId, kind], map: "idx_copywriting_entries_activity_kind")
+  @@map("copywriting_entries")
+}
+
+model CopywritingEntryDimension {
+  copywritingEntryId String           @map("copywriting_entry_id") @db.VarChar(191)
+  optionId           String           @map("option_id") @db.VarChar(191)
+  createdAt          DateTime         @default(now()) @map("created_at")
+  copywritingEntry   CopywritingEntry @relation(fields: [copywritingEntryId], references: [id], onDelete: Cascade)
+  option             DimensionOption  @relation(fields: [optionId], references: [id], onDelete: Cascade)
+
+  @@id([copywritingEntryId, optionId])
+  @@index([optionId], map: "idx_copywriting_entry_dimensions_option")
+  @@map("copywriting_entry_dimensions")
+}
+
+model BackgroundAsset {
+  id               String                     @id @default(cuid()) @db.VarChar(191)
+  slug             String                     @unique @db.VarChar(80)
+  title            String                     @db.VarChar(120)
+  imagePath        String                     @map("image_path") @db.VarChar(255)
+  sourceName       String                     @map("source_name") @db.VarChar(64)
+  sourcePageUrl    String                     @map("source_page_url") @db.VarChar(255)
+  photographerName String?                    @map("photographer_name") @db.VarChar(120)
+  licenseLabel     String?                    @map("license_label") @db.VarChar(120)
+  blurColor        String?                    @map("blur_color") @db.VarChar(16)
+  description      String?                    @db.VarChar(255)
+  activityId       String?                    @map("activity_id") @db.VarChar(191)
+  sortOrder        Int                        @default(0) @map("sort_order")
+  isActive         Boolean                    @default(true) @map("is_active")
+  createdAt        DateTime                   @default(now()) @map("created_at")
+  updatedAt        DateTime                   @updatedAt @map("updated_at")
+  activity         MomentActivity?            @relation(fields: [activityId], references: [id], onDelete: SetNull)
+  dimensions       BackgroundAssetDimension[]
+
+  @@index([activityId, sortOrder, isActive], map: "idx_background_assets_activity_sort_active")
+  @@map("background_assets")
+}
+
+model BackgroundAssetDimension {
+  backgroundAssetId String          @map("background_asset_id") @db.VarChar(191)
+  optionId          String          @map("option_id") @db.VarChar(191)
+  createdAt         DateTime        @default(now()) @map("created_at")
+  backgroundAsset   BackgroundAsset @relation(fields: [backgroundAssetId], references: [id], onDelete: Cascade)
+  option            DimensionOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+
+  @@id([backgroundAssetId, optionId])
+  @@index([optionId], map: "idx_background_asset_dimensions_option")
+  @@map("background_asset_dimensions")
+}
+
+model CityGuide {
+  id          String      @id @default(cuid()) @db.VarChar(191)
+  slug        String      @unique @db.VarChar(64)
+  name        String      @db.VarChar(64)
+  description String?     @db.VarChar(255)
+  sortOrder   Int         @default(0) @map("sort_order")
+  isActive    Boolean     @default(true) @map("is_active")
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+  snacks      CitySnack[]
+
+  @@index([sortOrder, isActive], map: "idx_city_guides_sort_active")
+  @@map("city_guides")
+}
+
+model CitySnack {
+  id          String    @id @default(cuid()) @db.VarChar(191)
+  cityId      String    @map("city_id") @db.VarChar(191)
+  slug        String    @db.VarChar(64)
+  name        String    @db.VarChar(64)
+  unitLabel   String    @default("份") @map("unit_label") @db.VarChar(16)
+  priceCents  Int       @map("price_cents")
+  description String?   @db.VarChar(255)
+  sortOrder   Int       @default(0) @map("sort_order")
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  city        CityGuide @relation(fields: [cityId], references: [id], onDelete: Cascade)
+
+  @@unique([cityId, slug], map: "uniq_city_snacks_city_slug")
+  @@index([cityId, sortOrder, isActive], map: "idx_city_snacks_city_sort_active")
+  @@map("city_snacks")
 }

@@ -1,19 +1,20 @@
 import type { Metadata, Viewport } from "next";
+
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "摸鱼",
-    template: "%s | 摸鱼",
+    default: "间隙时光 | Gap Moment",
+    template: "%s | 间隙时光",
   },
-  description: "摸鱼项目的移动端首页与欢迎页。",
+  description: "一款将碎片时间意义化、仪式化的游客优先本地体验产品原型。",
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#f3efe8",
+  themeColor: "#edf0e8",
 };
 
 export default function RootLayout({
