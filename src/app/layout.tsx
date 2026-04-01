@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     default: "间隙时光 | Gap Moment",
     template: "%s | 间隙时光",
   },
-  description: "一款将碎片时间意义化、仪式化的游客优先本地体验产品原型。",
+  description: "把碎片时间轻轻收好。",
 };
 
 export const viewport: Viewport = {

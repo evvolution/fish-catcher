@@ -37,9 +37,7 @@ export default function WelcomeClient() {
         <div className={styles.copyBlock}>
           <p className={styles.eyebrow}>间隙时光</p>
           <h1 className={styles.title}>先摸一下小鱼，再进森林。</h1>
-          <p className={styles.description}>
-            游客直接进入，记录默认只留在当前设备里。这里不打卡，也不催你变更好，只把碎片时间郑重接住。
-          </p>
+          <p className={styles.description}>把这一小段空白，轻轻还给自己。</p>
         </div>
 
         <motion.button
@@ -98,13 +96,9 @@ export default function WelcomeClient() {
         </motion.button>
 
         <div className={styles.footer}>
-          <p className={styles.hint}>当前版本先走游客闭环，后续再接选择性同步。</p>
           <div className={styles.links}>
             <Link href="/forest" className={styles.secondaryLink}>
               直接进入森林
-            </Link>
-            <Link href="/operator" className={styles.secondaryLink}>
-              运营内容台
             </Link>
           </div>
         </div>

@@ -3,7 +3,6 @@
 import type { MutableRefObject, ReactNode } from "react";
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 
 import {
@@ -164,6 +163,9 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
     null;
   const currentBackgroundRecord = currentBackground ? backgroundMap.get(currentBackground) ?? null : null;
   const activeCity = store.profile.citySlug ? cities.find((city) => city.slug === store.profile.citySlug) ?? null : null;
+  const activeIndustryLabel = store.profile.industrySlug
+    ? industryOptions.find((option) => option.value === store.profile.industrySlug)?.label ?? null
+    : null;
 
   function handleStartActivity(activity: ActivityRecord) {
     const background = pickBackground(catalog, activity.slug, store.profile, new Date());
@@ -317,19 +319,23 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
 
   return (
     <main className={styles.page}>
-      {currentBackgroundRecord ? (
-        <Image
-          src={currentBackgroundRecord.imagePath}
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className={styles.backgroundImage}
-        />
-      ) : null}
-      <div className={styles.backgroundScrim} aria-hidden="true" />
+      <div className={styles.backgroundViewport} aria-hidden="true">
+        {currentBackgroundRecord ? (
+          <Image
+            src={currentBackgroundRecord.imagePath}
+            alt=""
+            fill
+            priority
+            sizes="(min-width: 768px) 430px, 100vw"
+            className={styles.backgroundImage}
+          />
+        ) : null}
+        <div className={styles.backgroundBloom} />
+        <div className={styles.backgroundScrim} />
+      </div>
 
-      <AnimatePresence mode="wait">
+      <div className={styles.contentShell}>
+        <AnimatePresence mode="wait">
         {view === "forest" ? (
           <motion.section
             key="forest"
@@ -344,24 +350,19 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
                 <p className={styles.eyebrow}>Gap Moment</p>
                 <h1 className={styles.brand}>间隙时光</h1>
               </div>
-              <span className={styles.guestBadge}>游客森林</span>
             </header>
 
             <section className={styles.heroCard}>
               <p className={styles.heroLead}>林间漫步</p>
               <h2 className={styles.heroTitle}>{greeting?.content ?? "先停一下，不急着把自己交回给待办。"} </h2>
               <p className={styles.heroMeta}>
-                {activeCity ? `${activeCity.name} · ` : ""}
-                {store.profile.industrySlug
-                  ? industryOptions.find((option) => option.value === store.profile.industrySlug)?.label ?? "游客"
-                  : "未限定行业"}
+                {[activeCity?.name, activeIndustryLabel].filter(Boolean).join(" · ") || "给自己留一点空白"}
               </p>
             </section>
 
             <section className={styles.actionSection}>
               <div className={styles.sectionHeading}>
                 <p className={styles.sectionEyebrow}>驻足时刻</p>
-                <p className={styles.sectionHint}>点一个图标就开始，不需要确认。</p>
               </div>
 
               <div className={styles.activityGrid}>
@@ -384,16 +385,11 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
                   </button>
                 ))}
               </div>
-
-              <p className={styles.promptText}>
-                {activities[0]?.prompt ?? "今天不必强撑，先给自己一个小空白。"}
-              </p>
             </section>
 
             <section className={styles.recordSection}>
               <div className={styles.sectionHeading}>
                 <p className={styles.sectionEyebrow}>回音</p>
-                <p className={styles.sectionHint}>最近留下来的几段间隙时光。</p>
               </div>
 
               <div className={styles.recordList}>
@@ -408,9 +404,7 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
                     </article>
                   ))
                 ) : (
-                  <article className={styles.emptyCard}>
-                    第一次驻足还没发生。等你点亮一个图标，这片森林就会开始记住你。
-                  </article>
+                  <article className={styles.emptyCard}>还没有回音。</article>
                 )}
               </div>
             </section>
@@ -424,9 +418,6 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
                 <GearIcon />
                 <span>设置</span>
               </button>
-              <Link href="/operator" className={styles.operatorLink}>
-                运营内容台
-              </Link>
             </footer>
           </motion.section>
         ) : null}
@@ -505,7 +496,7 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
         ) : null}
       </AnimatePresence>
 
-      <AnimatePresence>
+        <AnimatePresence>
         {sheet === "album" && view === "forest" ? (
           <OverlaySheet title="卡册" onClose={() => setSheet(null)}>
             <div className={styles.cardGrid}>
@@ -522,9 +513,7 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
                   </article>
                 ))
               ) : (
-                <article className={styles.emptyCard}>
-                  还没有掉落卡片。等某个时刻刚好被你认真对待，森林会把一句话交给你。
-                </article>
+                <article className={styles.emptyCard}>还没有卡片掉落。</article>
               )}
             </div>
           </OverlaySheet>
@@ -575,17 +564,10 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
                 </div>
               </div>
 
-              <p className={styles.settingsHint}>
-                游客模式下，记录和卡片默认只保存在当前浏览器。运营内容管理页暂时不加权限，方便你先做内容迭代。
-              </p>
-
               <div className={styles.sheetActions}>
                 <button type="button" className={styles.primaryButton} onClick={handleSaveProfile}>
                   保存设置
                 </button>
-                <Link href="/operator" className={styles.inlineLink}>
-                  打开运营内容台
-                </Link>
               </div>
             </div>
           </OverlaySheet>
@@ -606,7 +588,7 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             >
               <p className={styles.onboardingLead}>第一次进森林</p>
-              <h2 className={styles.onboardingTitle}>先帮你把趣味换算和文案语气调顺一点。</h2>
+              <h2 className={styles.onboardingTitle}>先留一个城市。</h2>
 
               <label className={styles.field}>
                 <span className={styles.fieldLabel}>你所在的城市</span>
@@ -652,7 +634,8 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
             </motion.section>
           </motion.div>
         ) : null}
-      </AnimatePresence>
+        </AnimatePresence>
+      </div>
     </main>
   );
 }
