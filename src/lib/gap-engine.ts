@@ -21,6 +21,7 @@ export function createEmptyGuestStore(): GuestForestStore {
       industrySlug: null,
       hasSeenOnboarding: false,
     },
+    quickActivitySlugs: [],
     recentCopyIds: [],
     records: [],
     cards: [],
@@ -43,6 +44,9 @@ export function sanitizeGuestStore(value: unknown): GuestForestStore {
       industrySlug: typeof profile.industrySlug === "string" ? profile.industrySlug : null,
       hasSeenOnboarding: Boolean(profile.hasSeenOnboarding),
     },
+    quickActivitySlugs: Array.isArray(candidate.quickActivitySlugs)
+      ? candidate.quickActivitySlugs.filter((item): item is string => typeof item === "string").slice(0, 4)
+      : [],
     recentCopyIds: Array.isArray(candidate.recentCopyIds)
       ? candidate.recentCopyIds.filter((item): item is string => typeof item === "string").slice(0, RECENT_COPY_LIMIT)
       : [],

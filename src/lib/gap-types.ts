@@ -130,6 +130,7 @@ export type MomentRecord = {
 
 export type GuestForestStore = {
   profile: GuestProfile;
+  quickActivitySlugs: string[];
   recentCopyIds: string[];
   records: MomentRecord[];
   cards: CollectedCard[];
