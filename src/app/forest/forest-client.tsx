@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties, MutableRefObject, ReactNode } from "react";
+import type { MutableRefObject, ReactNode } from "react";
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
@@ -27,8 +27,15 @@ import styles from "./forest.module.css";
 
 const STORAGE_KEY = "gap-moment.guest-store.v1";
 
+const activityIconPaths: Record<string, string> = {
+  cloud: "/assets/icons/cloud.svg",
+  cup: "/assets/icons/coffee.svg",
+  leaf: "/assets/icons/wind.svg",
+  trail: "/assets/icons/walk.svg",
+};
+
 type ViewState = "forest" | "timer" | "result";
-type SheetState = null | "settings";
+type SheetState = null | "album" | "settings";
 
 type TimerState = {
   activitySlug: string;
@@ -56,9 +63,18 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
   const [result, setResult] = useState<ForestResult | null>(null);
   const [homeGreetingId, setHomeGreetingId] = useState<string | null>(null);
   const [homeBackgroundSlug, setHomeBackgroundSlug] = useState<string | null>(null);
+  const [cityDraft, setCityDraft] = useState<string>("");
+  const [industryDraft, setIndustryDraft] = useState<string>("");
   const ambientAudioRef = useRef<AmbientAudioHandle | null>(null);
 
   const activities = catalog.activities;
+  const cities = catalog.cities;
+  const cityOptions = cities.map((city) => ({ value: city.slug, label: city.name }));
+  const industryOptions =
+    catalog.dimensionGroups.find((group) => group.key === "industry")?.options.map((option) => ({
+      value: option.slug,
+      label: option.label,
+    })) ?? [];
 
   const backgroundMap = useMemo(
     () => new Map(catalog.backgrounds.map((background) => [background.slug, background])),
@@ -69,35 +85,23 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
     [catalog.activities],
   );
   const copyMap = useMemo(() => new Map(catalog.copyEntries.map((entry) => [entry.id, entry])), [catalog.copyEntries]);
-  const quickActivities = useMemo(() => {
-    const preferredSlugs = store.quickActivitySlugs.length ? store.quickActivitySlugs : activities.slice(0, 4).map((item) => item.slug);
-
-    return preferredSlugs
-      .map((slug) => activityMap.get(slug))
-      .filter((activity): activity is ActivityRecord => Boolean(activity))
-      .slice(0, 4);
-  }, [activityMap, activities, store.quickActivitySlugs]);
 
   useEffect(() => {
     try {
       const saved = window.localStorage.getItem(STORAGE_KEY);
       const nextStore = saved ? sanitizeGuestStore(JSON.parse(saved)) : createEmptyGuestStore();
-      setStore({
-        ...nextStore,
-        quickActivitySlugs: nextStore.quickActivitySlugs.length
-          ? nextStore.quickActivitySlugs
-          : activities.slice(0, 4).map((activity) => activity.slug),
-      });
+      setStore(nextStore);
+      setCityDraft(nextStore.profile.citySlug ?? cities[0]?.slug ?? "");
+      setIndustryDraft(nextStore.profile.industrySlug ?? "");
     } catch {
       const empty = createEmptyGuestStore();
-      setStore({
-        ...empty,
-        quickActivitySlugs: activities.slice(0, 4).map((activity) => activity.slug),
-      });
+      setStore(empty);
+      setCityDraft(cities[0]?.slug ?? "");
+      setIndustryDraft("");
     } finally {
       setHasHydrated(true);
     }
-  }, [activities]);
+  }, [cities]);
 
   useEffect(() => {
     if (!hasHydrated) {
@@ -153,6 +157,7 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
     };
   }, []);
 
+  const onboardingOpen = hasHydrated && (!store.profile.hasSeenOnboarding || !store.profile.citySlug);
   const greeting =
     homeGreetingId && copyMap.has(homeGreetingId)
       ? (copyMap.get(homeGreetingId) as CopywritingRecord)
@@ -164,6 +169,10 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
     catalog.backgrounds[0]?.slug ??
     null;
   const currentBackgroundRecord = currentBackground ? backgroundMap.get(currentBackground) ?? null : null;
+  const activeCity = store.profile.citySlug ? cities.find((city) => city.slug === store.profile.citySlug) ?? null : null;
+  const activeIndustryLabel = store.profile.industrySlug
+    ? industryOptions.find((option) => option.value === store.profile.industrySlug)?.label ?? null
+    : null;
 
   function handleStartActivity(activity: ActivityRecord) {
     const background = pickBackground(catalog, activity.slug, store.profile, new Date());
@@ -292,26 +301,31 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
     setHomeBackgroundSlug(nextAtmosphere.backgroundSlug);
   }
 
-  function handleToggleQuickActivity(activitySlug: string) {
-    setStore((current) => {
-      const exists = current.quickActivitySlugs.includes(activitySlug);
+  function handleDeleteCard(cardId: string) {
+    if (!window.confirm("删除这张卡片？")) {
+      return;
+    }
 
-      if (exists) {
-        if (current.quickActivitySlugs.length <= 1) {
-          return current;
-        }
+    setStore((current) => ({
+      ...current,
+      cards: current.cards.filter((card) => card.id !== cardId),
+    }));
+  }
 
-        return {
-          ...current,
-          quickActivitySlugs: current.quickActivitySlugs.filter((slug) => slug !== activitySlug),
-        };
-      }
+  function handleSaveProfile() {
+    if (!cityDraft) {
+      return;
+    }
 
-      return {
-        ...current,
-        quickActivitySlugs: [...current.quickActivitySlugs, activitySlug].slice(0, 4),
-      };
-    });
+    setStore((current) => ({
+      ...current,
+      profile: {
+        citySlug: cityDraft,
+        industrySlug: industryDraft || null,
+        hasSeenOnboarding: true,
+      },
+    }));
+    setSheet(null);
   }
 
   return (
@@ -333,55 +347,76 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
 
       <div className={styles.contentShell}>
         <AnimatePresence mode="wait">
-          {view === "forest" ? (
-            <motion.section
-              key="forest"
-              className={styles.stage}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <header className={styles.topGlassCard}>
-                <span className={styles.topGlassIndicator} aria-hidden="true" />
-                <h1 className={styles.topGlassTitle}>{greeting?.content ?? "先停一下，把自己还给自己。"}</h1>
-              </header>
+        {view === "forest" ? (
+          <motion.section
+            key="forest"
+            className={styles.stage}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <header className={styles.header}>
+              <p className={styles.brand}>间隙时光</p>
+            </header>
 
-              <div className={styles.stageContent}>
-                <section className={styles.nativeSection}>
-                  <div className={styles.sectionHeader}>
-                    <p className={styles.sectionLabel}>常用入口</p>
-                    <button type="button" className={styles.sectionAction} onClick={() => setSheet("settings")}>
-                      编辑
-                    </button>
-                  </div>
+            <section className={styles.heroCard}>
+              <h1 className={styles.heroTitle}>{greeting?.content ?? "先停一下，不急着把自己交回给待办。"}</h1>
+              <p className={styles.heroMeta}>
+                {[greeting?.title, activeCity?.name, activeIndustryLabel].filter(Boolean).join(" · ")}
+              </p>
+            </section>
 
-                  <div className={styles.shortcutField}>
-                    {quickActivities.map((activity) => (
-                      <button
-                        key={activity.slug}
-                        type="button"
-                        className={styles.shortcutCard}
-                        aria-label={activity.name}
-                        onClick={() => handleStartActivity(activity)}
-                        style={
-                          {
-                            "--card-start": activity.colorStart ?? "#dfe6e0",
-                            "--card-end": activity.colorEnd ?? "#a6bbae",
-                          } as CSSProperties
-                        }
-                      >
-                        <span className={styles.shortcutIconWrap}>
-                          <ActivityIcon iconKey={activity.iconKey} />
-                        </span>
-                        <span className={styles.shortcutTitle}>{activity.name}</span>
-                      </button>
-                    ))}
-                  </div>
-                </section>
+            <section className={styles.actionSection}>
+              <div className={styles.activityGrid}>
+                {activities.map((activity) => (
+                  <button
+                    key={activity.slug}
+                    type="button"
+                    className={styles.activityButton}
+                    aria-label={activity.name}
+                    onClick={() => handleStartActivity(activity)}
+                  >
+                    <span
+                      className={styles.activityOrb}
+                      style={{
+                        background: `linear-gradient(135deg, ${activity.colorStart ?? "#dfe6e0"} 0%, ${activity.colorEnd ?? "#a6bbae"} 100%)`,
+                      }}
+                    >
+                      <AssetIcon src={activityIconPaths[activity.iconKey] ?? activityIconPaths.cloud} />
+                    </span>
+                    <span className={styles.activityName}>{activity.name}</span>
+                  </button>
+                ))}
               </div>
-            </motion.section>
-          ) : null}
+            </section>
+
+            {store.records.length ? <section className={styles.recordSection}>
+              <div className={styles.recordList}>
+                {store.records.slice(0, 2).map((record) => (
+                  <article key={record.id} className={styles.recordCard}>
+                    <div>
+                      <p className={styles.recordActivity}>{record.activityName}</p>
+                      <p className={styles.recordCopy}>{record.copyContent}</p>
+                    </div>
+                    <span className={styles.recordDuration}>{formatDuration(record.durationSec)}</span>
+                  </article>
+                ))}
+              </div>
+            </section> : null}
+
+            <nav className={styles.bottomDock} aria-label="森林工具">
+              <button type="button" className={styles.dockButton} onClick={() => setSheet("album")}>
+                <AssetIcon src="/assets/icons/book.svg" />
+                <span>卡册{store.cards.length ? ` ${store.cards.length}` : ""}</span>
+              </button>
+              <button type="button" className={styles.dockButton} onClick={() => setSheet("settings")}>
+                <AssetIcon src="/assets/icons/settings.svg" />
+                <span>设置</span>
+              </button>
+            </nav>
+          </motion.section>
+        ) : null}
 
         {view === "timer" && timer ? (
           <motion.section
@@ -394,22 +429,28 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
           >
             <div className={styles.timerTopBar}>
               <p className={styles.timerActivity}>{activityMap.get(timer.activitySlug)?.name ?? "驻足"}</p>
-              <button type="button" className={styles.noiseButton} onClick={() => void handleToggleAmbient()}>
-                <NoiseIcon />
-                <span>{timer.ambientOn ? "静噪已开" : "静噪"}</span>
+              <button
+                type="button"
+                className={timer.ambientOn ? `${styles.noiseButton} ${styles.noiseButtonActive}` : styles.noiseButton}
+                aria-label={timer.ambientOn ? "关闭静噪" : "打开静噪"}
+                aria-pressed={timer.ambientOn}
+                onClick={() => void handleToggleAmbient()}
+              >
+                <AssetIcon src="/assets/icons/volume.svg" />
               </button>
             </div>
 
             <div className={styles.timerCenter}>
-              <p className={styles.timerLabel}>这段时间正在慢慢属于你</p>
               <p className={styles.timerValue}>{formatDuration(Math.floor(elapsedMs / 1000))}</p>
             </div>
 
             <div className={styles.timerControls}>
               <button type="button" className={styles.endButton} onClick={handleFinishTimer}>
+                <AssetIcon src="/assets/icons/stop.svg" />
                 结束
               </button>
               <button type="button" className={styles.pauseButton} onClick={handlePauseOrResume}>
+                <AssetIcon src={timer.segmentStartedAt ? "/assets/icons/pause.svg" : "/assets/icons/play.svg"} />
                 {timer.segmentStartedAt ? "暂停" : "继续"}
               </button>
             </div>
@@ -425,14 +466,16 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
           >
-            <p className={styles.resultLead}>你刚刚完成了 {result.activity.name}</p>
+            <p className={styles.resultLead}>{result.activity.name}</p>
             <h2 className={styles.resultDuration}>{formatDuration(result.durationSec)}</h2>
-            <p className={styles.resultCopy}>{result.copy.content}</p>
+            <p className={`${styles.resultCopy} ${result.copy.content.length > 72 ? styles.resultCopyLong : ""}`}>
+              {result.copy.content}
+            </p>
+            <p className={styles.resultSource}>{result.copy.title}</p>
             {result.snackSummary ? <p className={styles.resultSnack}>{result.snackSummary}</p> : null}
 
             {result.droppedCard ? (
               <article className={styles.cardDrop}>
-                <p className={styles.cardDropLead}>掉落句子卡片</p>
                 <h3 className={styles.cardDropTitle}>{result.droppedCard.title}</h3>
                 <p className={styles.cardDropContent}>{result.droppedCard.content}</p>
               </article>
@@ -440,14 +483,17 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
 
             <div className={styles.resultActions}>
               <button type="button" className={styles.primaryButton} onClick={handleBackToForest}>
-                回到森林
+                森林
               </button>
               <button
                 type="button"
                 className={styles.secondaryButton}
-                onClick={handleBackToForest}
+                onClick={() => {
+                  setSheet("album");
+                  handleBackToForest();
+                }}
               >
-                再停一下
+                卡册
               </button>
             </div>
           </motion.section>
@@ -455,37 +501,147 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
       </AnimatePresence>
 
         <AnimatePresence>
-          {sheet === "settings" && view === "forest" ? (
-            <OverlaySheet title="常用入口" onClose={() => setSheet(null)}>
-              <div className={styles.settingsPanel}>
-                <section className={styles.sheetSection}>
-                  <p className={styles.sheetSectionLabel}>选择显示在首页的入口</p>
-                  <p className={styles.sheetNote}>最多四个，至少保留一个。</p>
-                  <div className={styles.sheetGroup}>
-                    <div className={styles.shortcutPicker}>
-                      {activities.map((activity) => {
-                        const active = store.quickActivitySlugs.includes(activity.slug);
-
-                        return (
-                          <button
-                            key={activity.slug}
-                            type="button"
-                            className={active ? `${styles.shortcutPickerItem} ${styles.shortcutPickerItemActive}` : styles.shortcutPickerItem}
-                            onClick={() => handleToggleQuickActivity(activity.slug)}
-                          >
-                            <span className={styles.shortcutPickerIcon}>
-                              <ActivityIcon iconKey={activity.iconKey} />
-                            </span>
-                            <span>{activity.name}</span>
-                          </button>
-                        );
-                      })}
+        {sheet === "album" && view === "forest" ? (
+          <OverlaySheet title="卡册" onClose={() => setSheet(null)}>
+            <div className={styles.cardGrid}>
+              {store.cards.length ? (
+                store.cards.map((card) => (
+                  <article key={card.id} className={styles.cardItem}>
+                    <div>
+                      <p className={styles.cardItemTitle}>{card.title}</p>
+                      <p className={styles.cardItemContent}>{card.content}</p>
                     </div>
-                  </div>
-                </section>
+                    <button
+                      type="button"
+                      className={styles.deleteButton}
+                      aria-label={`删除 ${card.title}`}
+                      onClick={() => handleDeleteCard(card.id)}
+                    >
+                      <AssetIcon src="/assets/icons/trash.svg" />
+                    </button>
+                  </article>
+                ))
+              ) : (
+                <article className={styles.emptyCard}>还没有卡片掉落。</article>
+              )}
+            </div>
+          </OverlaySheet>
+        ) : null}
+
+        {sheet === "settings" && view === "forest" ? (
+          <OverlaySheet title="设置" onClose={() => setSheet(null)}>
+            <div className={styles.settingsPanel}>
+              <label className={styles.field}>
+                <span className={styles.fieldLabel}>城市</span>
+                <select
+                  className={styles.select}
+                  value={cityDraft}
+                  onChange={(event) => setCityDraft(event.target.value)}
+                >
+                  {cityOptions.map((city) => (
+                    <option key={city.value} value={city.value}>
+                      {city.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <div className={styles.field}>
+                <span className={styles.fieldLabel}>行业</span>
+                <div className={styles.choiceWrap}>
+                  <button
+                    type="button"
+                    className={industryDraft ? styles.choiceChip : `${styles.choiceChip} ${styles.choiceChipActive}`}
+                    onClick={() => setIndustryDraft("")}
+                  >
+                    不选
+                  </button>
+                  {industryOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      className={
+                        industryDraft === option.value
+                          ? `${styles.choiceChip} ${styles.choiceChipActive}`
+                          : styles.choiceChip
+                      }
+                      onClick={() => setIndustryDraft(option.value)}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </OverlaySheet>
-          ) : null}
+
+              <div className={styles.sheetActions}>
+                <button type="button" className={styles.primaryButton} onClick={handleSaveProfile}>
+                  保存
+                </button>
+              </div>
+            </div>
+          </OverlaySheet>
+        ) : null}
+
+        {onboardingOpen ? (
+          <motion.div
+            className={styles.onboardingBackdrop}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.section
+              className={styles.onboardingCard}
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 18 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <h2 className={styles.onboardingTitle}>你在哪里？</h2>
+
+              <label className={styles.field}>
+                <span className={styles.fieldLabel}>城市</span>
+                <select className={styles.select} value={cityDraft} onChange={(event) => setCityDraft(event.target.value)}>
+                  {cityOptions.map((city) => (
+                    <option key={city.value} value={city.value}>
+                      {city.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <div className={styles.field}>
+                <span className={styles.fieldLabel}>行业</span>
+                <div className={styles.choiceWrap}>
+                  <button
+                    type="button"
+                    className={industryDraft ? styles.choiceChip : `${styles.choiceChip} ${styles.choiceChipActive}`}
+                    onClick={() => setIndustryDraft("")}
+                  >
+                    不选
+                  </button>
+                  {industryOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      className={
+                        industryDraft === option.value
+                          ? `${styles.choiceChip} ${styles.choiceChipActive}`
+                          : styles.choiceChip
+                      }
+                      onClick={() => setIndustryDraft(option.value)}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <button type="button" className={styles.primaryButton} onClick={handleSaveProfile} disabled={!cityDraft}>
+                进入森林
+              </button>
+            </motion.section>
+          </motion.div>
+        ) : null}
         </AnimatePresence>
       </div>
     </main>
@@ -514,6 +670,9 @@ function OverlaySheet({
       />
       <motion.section
         className={styles.sheet}
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
         initial={{ y: "100%", opacity: 0.9 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: "100%", opacity: 0.9 }}
@@ -522,8 +681,8 @@ function OverlaySheet({
         <div className={styles.sheetHandle} />
         <header className={styles.sheetHeader}>
           <h2 className={styles.sheetTitle}>{title}</h2>
-          <button type="button" className={styles.closeButton} onClick={onClose}>
-            ×
+          <button type="button" className={styles.closeButton} aria-label="关闭" onClick={onClose}>
+            <AssetIcon src="/assets/icons/close.svg" />
           </button>
         </header>
         {children}
@@ -532,58 +691,9 @@ function OverlaySheet({
   );
 }
 
-function ActivityIcon({ iconKey }: { iconKey: string }) {
-  if (iconKey === "cup") {
-    return (
-      <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.icon}>
-        <path
-          fill="currentColor"
-          d="M2 21h18v-2H2v2zm18-13h-2V6H4v8c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm-2 5h-2V8h2v5z"
-        />
-      </svg>
-    );
-  }
-
-  if (iconKey === "leaf") {
-    return (
-      <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.icon}>
-        <path
-          fill="currentColor"
-          d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66l6.66-5.81c.88-.2 1.74-.53 2.54-1.02.7-.44 1.34-.96 1.9-1.57.81-.88 1.45-1.92 1.83-3.05.35-1.06.54-2.19.54-3.34V4L17 8z"
-        />
-      </svg>
-    );
-  }
-
-  if (iconKey === "trail") {
-    return (
-      <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.icon}>
-        <path
-          fill="currentColor"
-          d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3c1.3 1.5 3.3 2.5 5.5 2.5v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1l-5.2 2.2v4.7h2v-3.4l1.8-.7z"
-        />
-      </svg>
-    );
-  }
-
+function AssetIcon({ src }: { src: string }) {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.icon}>
-      <path
-        fill="currentColor"
-        d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-      />
-    </svg>
-  );
-}
-
-function NoiseIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.icon}>
-      <path
-        fill="currentColor"
-        d="M5 14.5h2.2l2.1-6 3.2 10 2.1-7H19a1 1 0 1 1 0 2h-3.6l-2.1 7-3.2-10-1.9 5.5H5a1 1 0 1 1 0-2Z"
-      />
-    </svg>
+    <Image src={src} alt="" width={24} height={24} className={styles.icon} aria-hidden="true" />
   );
 }
 

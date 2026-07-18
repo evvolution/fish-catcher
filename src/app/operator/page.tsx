@@ -42,10 +42,6 @@ export default async function OperatorPage() {
         <div>
           <p className={styles.eyebrow}>Operator Console</p>
           <h1 className={styles.title}>间隙时光内容台</h1>
-          <p className={styles.description}>
-            这里先作为内建运营页使用，不设权限门槛，方便你快速看维度、改文案、换背景。游客端流程默认走本地存储，
-            内容资产则由数据库承接。
-          </p>
         </div>
         <div className={styles.heroLinks}>
           <Link href="/forest" className={styles.linkButton}>
@@ -70,7 +66,6 @@ export default async function OperatorPage() {
             <p className={styles.sectionEyebrow}>Dimension Map</p>
             <h2 className={styles.sectionTitle}>当前维度总览</h2>
           </div>
-          <p className={styles.sectionHint}>先把“内容宇宙的坐标系”看清，再去扩文案。</p>
         </div>
 
         <div className={styles.dimensionGrid}>
@@ -97,7 +92,6 @@ export default async function OperatorPage() {
             <p className={styles.sectionEyebrow}>Copywriting</p>
             <h2 className={styles.sectionTitle}>新增文案</h2>
           </div>
-          <p className={styles.sectionHint}>支持结果文案、卡片、问候语和运营说明。</p>
         </div>
 
         <form action={createCopyEntryAction} className={styles.formCard}>
@@ -115,7 +109,6 @@ export default async function OperatorPage() {
             <p className={styles.sectionEyebrow}>Copywriting</p>
             <h2 className={styles.sectionTitle}>文案库</h2>
           </div>
-          <p className={styles.sectionHint}>点击展开即可编辑。维度会直接影响游客侧的文案匹配。</p>
         </div>
 
         <div className={styles.stack}>
@@ -177,7 +170,6 @@ export default async function OperatorPage() {
             <p className={styles.sectionEyebrow}>Backgrounds</p>
             <h2 className={styles.sectionTitle}>新增背景图记录</h2>
           </div>
-          <p className={styles.sectionHint}>先管理元数据和路径，后续如需上传能力可以再补。</p>
         </div>
 
         <form action={createBackgroundAction} className={styles.formCard}>
@@ -195,7 +187,6 @@ export default async function OperatorPage() {
             <p className={styles.sectionEyebrow}>Backgrounds</p>
             <h2 className={styles.sectionTitle}>背景图库</h2>
           </div>
-          <p className={styles.sectionHint}>当前示例素材已下载进 `public/assets/backgrounds`。</p>
         </div>
 
         <div className={styles.backgroundGrid}>
@@ -261,7 +252,6 @@ export default async function OperatorPage() {
             <p className={styles.sectionEyebrow}>Supporting Data</p>
             <h2 className={styles.sectionTitle}>行为与城市换算样例</h2>
           </div>
-          <p className={styles.sectionHint}>这一块先只展示，等你确认需求再决定是否也做成后台 CRUD。</p>
         </div>
 
         <div className={styles.supportGrid}>

@@ -1,13 +1,19 @@
-# fish-catcher
+# 间隙时光 / Gap Moment
 
-A minimal full-stack starter built with Next.js, TypeScript, and Prisma.
+一个把碎片时间还给用户的移动端森林。它不做提醒、打卡、排名或效率评价，只提供一次进入、四种驻足方式、计时、名句结果与私人卡册。
 
-## Included
+## 当前能力
 
 - Next.js 16 with the App Router
-- TypeScript and the default Next.js ESLint setup
-- Prisma 7 initialized for MySQL with a ready-to-use auth schema
-- A mobile-first welcome page and home page with real auth entry flows
+- Prisma 7 / MySQL 内容与账号模型
+- 游客本地优先的森林、计时、结果、卡册和设置闭环
+- 4 条时段问候、880 条行为结果、320 条掉落卡片（共 1,204 条内容资产）
+- 1,200 条结果/卡片均具备场景、情感内核、心理需要、文字动作和能量标签
+- 120 条论坛议题原创微评论：V2EX、Hacker News、Reddit 各 40 条，轻松与深度各 60 条，并带观察/过期日期
+- 微信、Google、手机验证码和游客身份的服务端接口骨架
+- 隐藏的内容运营页 `/operator`
+
+设计原则与素材逻辑见 [`docs/design-system-2026.md`](docs/design-system-2026.md)，内容语义见 [`docs/content-semantics.md`](docs/content-semantics.md)，图片、图标与古典文案来源见 [`docs/gap-moment-asset-sources.md`](docs/gap-moment-asset-sources.md)。
 
 ## Start
 
@@ -18,6 +24,14 @@ npm run dev
 ```
 
 Then open `http://localhost:3000`.
+
+没有数据库、只需做本地视觉验收时，可在开发环境设置：
+
+```bash
+FOREST_STATIC_PREVIEW="1"
+```
+
+该开关不会在生产环境生效。
 
 ## Database configuration
 
@@ -127,9 +141,14 @@ Useful commands:
 ```bash
 npm run lint
 npm run typecheck
+npm run check:quotes
+npm run build:quotes
+npm run build:forums
 npm run prisma:generate
 npm run prisma:studio
 ```
+
+`check:quotes` 离线验证全部 1,200 条语料的数量、去重、地区/时代/语言平衡、论坛语气、来源、时效、低俗词与政治敏感过滤；`build:quotes` 会联网从公版来源重建冻结语料，`build:forums` 会从已核验的热点清单重建 120 条原创评论，通常只在内容版本升级或热点到期时运行。
 
 ## Suggested places to extend
 

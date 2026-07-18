@@ -1,0 +1,19 @@
+ALTER TABLE `dimension_groups`
+MODIFY `kind` ENUM(
+    'TIME_OF_DAY',
+    'INDUSTRY',
+    'MOOD',
+    'STYLE',
+    'SOLAR_TERM',
+    'HOLIDAY',
+    'WEATHER',
+    'CARD_RARITY',
+    'GREETING_PHASE',
+    'SCENE',
+    'EMOTIONAL_CORE',
+    'PSYCHOLOGICAL_NEED',
+    'LITERARY_GESTURE',
+    'ENERGY',
+    'CONTENT_TONE',
+    'HOT_TOPIC'
+) NOT NULL;

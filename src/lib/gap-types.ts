@@ -7,7 +7,14 @@ export type DimensionKind =
   | "HOLIDAY"
   | "WEATHER"
   | "CARD_RARITY"
-  | "GREETING_PHASE";
+  | "GREETING_PHASE"
+  | "SCENE"
+  | "EMOTIONAL_CORE"
+  | "PSYCHOLOGICAL_NEED"
+  | "LITERARY_GESTURE"
+  | "ENERGY"
+  | "CONTENT_TONE"
+  | "HOT_TOPIC";
 
 export type CopywritingKind = "RESULT" | "CARD" | "GREETING" | "GUIDE";
 
@@ -130,7 +137,6 @@ export type MomentRecord = {
 
 export type GuestForestStore = {
   profile: GuestProfile;
-  quickActivitySlugs: string[];
   recentCopyIds: string[];
   records: MomentRecord[];
   cards: CollectedCard[];

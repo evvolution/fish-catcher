@@ -1,27 +1,7 @@
-@font-face {
-  font-family: "Source Han Serif SC Medium";
-  src: url("/fonts/SourceHanSerifSC-Medium.otf") format("opentype");
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Alibaba PuHuiTi Medium";
-  src: url("/fonts/Alibaba-PuHuiTi-Medium.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-}
-
 :root {
   color-scheme: light;
-  --page-background: #edf0e8;
-  --page-foreground: #243536;
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-right: env(safe-area-inset-right, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-left: env(safe-area-inset-left, 0px);
+  --page-background: #e9eeeb;
+  --page-foreground: #1d2d2d;
 }
 
 * {
@@ -31,6 +11,7 @@
 html {
   -webkit-text-size-adjust: 100%;
   background: var(--page-background);
+  scroll-behavior: smooth;
 }
 
 body {
@@ -38,15 +19,16 @@ body {
   min-height: 100vh;
   background: var(--page-background);
   color: var(--page-foreground);
-  overflow-x: hidden;
-  font-weight: 500;
   font-family:
-    "Source Han Serif SC Medium",
-    "Alibaba PuHuiTi Medium",
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Text",
     "PingFang SC",
     "Hiragino Sans GB",
     "Microsoft YaHei",
-    serif;
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 a {
@@ -61,6 +43,23 @@ select {
   font: inherit;
 }
 
+button,
+a,
+select,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:not(:disabled),
+summary,
+select {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: default;
+}
+
 img {
   display: block;
   max-width: 100%;
@@ -68,4 +67,19 @@ img {
 
 summary {
   list-style: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

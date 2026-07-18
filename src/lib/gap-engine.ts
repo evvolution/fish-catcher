@@ -8,6 +8,7 @@ import type {
   GuestProfile,
   MomentRecord,
 } from "@/lib/gap-types";
+import { gapSemanticPreferencesByActivity } from "@/lib/gap-semantics";
 
 const MOMENT_VALUE_CENTS_PER_SECOND = 6;
 const RECENT_COPY_LIMIT = 8;
@@ -21,7 +22,6 @@ export function createEmptyGuestStore(): GuestForestStore {
       industrySlug: null,
       hasSeenOnboarding: false,
     },
-    quickActivitySlugs: [],
     recentCopyIds: [],
     records: [],
     cards: [],
@@ -44,9 +44,6 @@ export function sanitizeGuestStore(value: unknown): GuestForestStore {
       industrySlug: typeof profile.industrySlug === "string" ? profile.industrySlug : null,
       hasSeenOnboarding: Boolean(profile.hasSeenOnboarding),
     },
-    quickActivitySlugs: Array.isArray(candidate.quickActivitySlugs)
-      ? candidate.quickActivitySlugs.filter((item): item is string => typeof item === "string").slice(0, 4)
-      : [],
     recentCopyIds: Array.isArray(candidate.recentCopyIds)
       ? candidate.recentCopyIds.filter((item): item is string => typeof item === "string").slice(0, RECENT_COPY_LIMIT)
       : [],
@@ -296,12 +293,72 @@ function scoreCopyEntry(entry: CopywritingRecord, context: CopyMatchContext) {
 
   score += scoreDimension(entry.dimensionKeys.time_of_day, context.timeOfDaySlug, 60);
   score += scoreDimension(entry.dimensionKeys.industry, context.industrySlug, 45);
+  score += scoreSemanticContext(entry, context);
 
   if (context.recentCopyIds.includes(entry.id)) {
     score = Math.floor(score * 0.2);
   }
 
   return score;
+}
+
+const semanticPreferencesByTime: Record<string, { scene: string[]; emotional_core: string[]; energy: string[] }> = {
+  dawn: {
+    scene: ["threshold", "nature"],
+    emotional_core: ["joy", "wonder", "relief"],
+    energy: ["bright", "open"],
+  },
+  day: {
+    scene: ["human_world", "companionship"],
+    emotional_core: ["resilience", "joy", "relief"],
+    energy: ["grounded", "bright"],
+  },
+  dusk: {
+    scene: ["memory", "threshold", "companionship"],
+    emotional_core: ["longing", "belonging", "tenderness"],
+    energy: ["soft", "flowing"],
+  },
+  night: {
+    scene: ["solitude", "inner_world", "spiritual"],
+    emotional_core: ["serenity", "melancholy", "wonder", "mortality"],
+    energy: ["still", "soft"],
+  },
+};
+
+function scoreSemanticContext(entry: CopywritingRecord, context: CopyMatchContext) {
+  let score = 0;
+  const activity = context.activitySlug
+    ? gapSemanticPreferencesByActivity[context.activitySlug as keyof typeof gapSemanticPreferencesByActivity]
+    : null;
+  if (activity) {
+    score += scoreTagOverlap(entry.dimensionKeys.scene, activity.scene, 8);
+    score += scoreTagOverlap(entry.dimensionKeys.emotional_core, activity.emotional_core, 10);
+    score += scoreTagOverlap(entry.dimensionKeys.psychological_need, activity.psychological_need, 9);
+    score += scoreTagOverlap(entry.dimensionKeys.literary_gesture, activity.literary_gesture, 6);
+    score += scoreTagOverlap(entry.dimensionKeys.energy, activity.energy, 7);
+  }
+
+  const time = semanticPreferencesByTime[context.timeOfDaySlug];
+  if (time) {
+    score += scoreTagOverlap(entry.dimensionKeys.scene, time.scene, 5);
+    score += scoreTagOverlap(entry.dimensionKeys.emotional_core, time.emotional_core, 7);
+    score += scoreTagOverlap(entry.dimensionKeys.energy, time.energy, 5);
+  }
+
+  if (context.durationSec != null && context.durationSec <= 60) {
+    score += scoreTagOverlap(entry.dimensionKeys.psychological_need, ["permission", "rest", "release"], 5);
+    score += scoreTagOverlap(entry.dimensionKeys.energy, ["still", "soft", "open"], 4);
+  } else if (context.durationSec != null && context.durationSec >= 180) {
+    score += scoreTagOverlap(entry.dimensionKeys.psychological_need, ["perspective", "meaning", "renewal", "courage"], 5);
+    score += scoreTagOverlap(entry.dimensionKeys.energy, ["flowing", "bright", "grounded", "open"], 4);
+  }
+
+  return score;
+}
+
+function scoreTagOverlap(actual: string[] | undefined, desired: readonly string[], pointsPerMatch: number) {
+  if (!actual?.length) return 0;
+  return actual.filter((value) => desired.includes(value)).length * pointsPerMatch;
 }
 
 function scoreBackground(

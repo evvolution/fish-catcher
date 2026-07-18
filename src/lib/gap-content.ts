@@ -9,11 +9,29 @@ import type {
 } from "@/lib/gap-types";
 import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
+import gapCopyCorpusData from "@/lib/gap-copy-corpus.json";
+import gapForumCopyData from "@/lib/gap-forum-copy.json";
+import { gapQuoteSeeds } from "@/lib/gap-quotes";
+import { semanticDimensionRefs, type GapSemanticAnalysis } from "@/lib/gap-semantics";
 
 type DimensionGroupSeed = {
   key: string;
   label: string;
-  kind: "TIME_OF_DAY" | "INDUSTRY" | "MOOD" | "STYLE" | "WEATHER" | "CARD_RARITY" | "GREETING_PHASE";
+  kind:
+    | "TIME_OF_DAY"
+    | "INDUSTRY"
+    | "MOOD"
+    | "STYLE"
+    | "WEATHER"
+    | "CARD_RARITY"
+    | "GREETING_PHASE"
+    | "SCENE"
+    | "EMOTIONAL_CORE"
+    | "PSYCHOLOGICAL_NEED"
+    | "LITERARY_GESTURE"
+    | "ENERGY"
+    | "CONTENT_TONE"
+    | "HOT_TOPIC";
   description: string;
   options: Array<{
     slug: string;
@@ -45,6 +63,36 @@ type CopySeed = {
   weight?: number;
   dropRate?: number;
   dimensions?: string[];
+};
+
+type CorpusEntry = {
+  slug: string;
+  kind: "RESULT" | "CARD";
+  title: string;
+  content: string;
+  activitySlug: "drift" | "tea" | "breathe" | "stroll";
+  dropRate: number;
+  region: "east_asia" | "west" | "south_asia_middle_east" | "latin_america";
+  era: "ancient" | "classical" | "modern";
+  language: string;
+  sourceUrl: string;
+  semantics: GapSemanticAnalysis;
+};
+
+type ForumEntry = {
+  slug: string;
+  kind: "RESULT" | "CARD";
+  title: string;
+  content: string;
+  activitySlug: "drift" | "tea" | "breathe" | "stroll";
+  dropRate: number;
+  forum: "V2EX" | "Hacker News" | "Reddit";
+  topic: string;
+  tone: "light" | "deep";
+  sourceUrl: string;
+  observedAt: string;
+  expiresAt: string;
+  semantics: GapSemanticAnalysis;
 };
 
 type BackgroundSeed = {
@@ -112,6 +160,123 @@ const dimensionGroupSeeds: DimensionGroupSeed[] = [
       { slug: "breathe", label: "喘口气", description: "比快乐更基础，是先缓下来。" },
       { slug: "wander", label: "游离", description: "允许意识短暂偏航。" },
       { slug: "gather", label: "归拢", description: "把散掉的自己慢慢收回来。" },
+    ],
+  },
+  {
+    key: "scene",
+    label: "场景内核",
+    kind: "SCENE",
+    description: "不是地点分类，而是读到这句话时，意识被带入的生活与心理场域。",
+    options: [
+      { slug: "nature", label: "山水天地", description: "风、月、山海、草木构成的开放自然场域。" },
+      { slug: "solitude", label: "独处静室", description: "无人打扰、安静向内的独处空间。" },
+      { slug: "journey", label: "行路迁徙", description: "道路、舟船、脚步、离开与归返。" },
+      { slug: "home", label: "炉火日常", description: "窗、灯、茶、酒与可安放身体的日常。" },
+      { slug: "companionship", label: "相逢共坐", description: "朋友、爱人、亲人或陌生人的彼此在场。" },
+      { slug: "memory", label: "故园回望", description: "记忆、旧日、故乡和无法复现的时间。" },
+      { slug: "threshold", label: "晨昏风雨", description: "黎明、黄昏、季节和天气形成的过渡时刻。" },
+      { slug: "spiritual", label: "宇宙玄思", description: "灵魂、真理、天地与超越个体的尺度。" },
+      { slug: "human_world", label: "人间行役", description: "城市、劳作、战争、秩序与尘世往来。" },
+      { slug: "inner_world", label: "梦与内景", description: "心、梦、念头和无法被外界直接看见的活动。" },
+    ],
+  },
+  {
+    key: "emotional_core",
+    label: "情感内核",
+    kind: "EMOTIONAL_CORE",
+    description: "识别诗句真正承载的情绪张力，避免把有风景的句子一概归为治愈。",
+    options: [
+      { slug: "serenity", label: "澄静", description: "情绪已沉淀，世界暂时不需要被推动。" },
+      { slug: "tenderness", label: "温情", description: "柔软地关心一个人、一件事或此刻的自己。" },
+      { slug: "longing", label: "思念", description: "指向远方、故人、故乡或尚未抵达之物。" },
+      { slug: "melancholy", label: "怅惘", description: "允许失落存在，不急着把它修复成积极。" },
+      { slug: "wonder", label: "惊奇敬畏", description: "面对天地、美与未知时，被更大尺度打开。" },
+      { slug: "joy", label: "欣悦", description: "轻盈、明亮、有生命力，但不喧闹亢奋。" },
+      { slug: "resilience", label: "坚韧", description: "承认阻力，同时仍有继续站立和前行的力量。" },
+      { slug: "freedom", label: "旷达", description: "松开控制，允许心和身体拥有更大边界。" },
+      { slug: "belonging", label: "归属", description: "与家、友人、世界或自身重新建立联系。" },
+      { slug: "mortality", label: "无常", description: "直面时间、衰老、离别和生命有限。" },
+      { slug: "relief", label: "释然", description: "压力松动，终于可以呼出一直憋住的气。" },
+    ],
+  },
+  {
+    key: "psychological_need",
+    label: "心理需要",
+    kind: "PSYCHOLOGICAL_NEED",
+    description: "这句话在当下承担什么功能：不是情绪是什么，而是此刻需要得到什么。",
+    options: [
+      { slug: "rest", label: "歇息", description: "暂时停止消耗，让注意力落地。" },
+      { slug: "comfort", label: "被接住", description: "悲伤和疲惫不必独自承担。" },
+      { slug: "release", label: "松绑", description: "从紧绷、控制和反复思考中松开一点。" },
+      { slug: "connection", label: "重新相连", description: "确认自己仍与人、地方或世界存在关系。" },
+      { slug: "perspective", label: "拉远视角", description: "把眼前难题放回更大的时间和空间。" },
+      { slug: "renewal", label: "重新开始", description: "恢复新鲜感与再次行动的可能。" },
+      { slug: "meaning", label: "找回意义", description: "在无常和失序中寻找可以承受的解释。" },
+      { slug: "courage", label: "继续向前", description: "不否认困难，但为下一步提供支撑。" },
+      { slug: "permission", label: "允许无用", description: "允许自己停顿、游离，不必立刻产出。" },
+    ],
+  },
+  {
+    key: "literary_gesture",
+    label: "文字动作",
+    kind: "LITERARY_GESTURE",
+    description: "一句话如何靠近用户：看见、陪伴、邀请或改变观看角度。",
+    options: [
+      { slug: "witness", label: "静静看见", description: "不判断、不劝解，只确认此刻真实存在。" },
+      { slug: "soothe", label: "轻声安抚", description: "降低刺激，让情绪先安全下来。" },
+      { slug: "accompany", label: "并肩陪伴", description: "不替用户解决，但不让他独自停留。" },
+      { slug: "invite", label: "向外邀请", description: "邀请身体或注意力迈出很小的一步。" },
+      { slug: "reframe", label: "换个角度", description: "不否认现实，只重新安排它的尺度。" },
+      { slug: "awaken", label: "唤醒感官", description: "用光、声音、风景让感受重新上线。" },
+      { slug: "affirm", label: "确认力量", description: "指出用户已经拥有的韧性与行动能力。" },
+      { slug: "open", label: "打开空间", description: "让胸口、视线和思绪获得更多余地。" },
+    ],
+  },
+  {
+    key: "energy",
+    label: "能量强度",
+    kind: "ENERGY",
+    description: "控制一句话抵达用户时的力度，避免疲惫时收到过度昂扬的表达。",
+    options: [
+      { slug: "still", label: "静止", description: "几乎不推动，只陪意识停下。" },
+      { slug: "soft", label: "低柔", description: "轻微安抚，不要求立刻改变。" },
+      { slug: "flowing", label: "流动", description: "带一点前行感，但没有催促。" },
+      { slug: "bright", label: "明亮", description: "唤醒感官和希望，保持克制。" },
+      { slug: "grounded", label: "稳定", description: "提供可以依靠的力量与确定感。" },
+      { slug: "open", label: "舒展", description: "从封闭状态向外展开呼吸和视野。" },
+    ],
+  },
+  {
+    key: "content_tone",
+    label: "表达深浅",
+    kind: "CONTENT_TONE",
+    description: "区分当代议题的轻松入口与深度观察；两者都避免说教和低俗表达。",
+    options: [
+      { slug: "light", label: "轻松", description: "带一点日常幽默，让热点不制造新的压力。" },
+      { slug: "deep", label: "深度", description: "追问议题背后的关系、边界、代价与心理需要。" },
+    ],
+  },
+  {
+    key: "hot_topic",
+    label: "当代议题",
+    kind: "HOT_TOPIC",
+    description: "来自热门论坛公开线程的议题观察；正文为原创评论，并设置时效边界。",
+    options: [
+      { slug: "ai_attention", label: "AI 与注意力" },
+      { slug: "privacy_trust", label: "隐私与信任" },
+      { slug: "work_rest", label: "工作与休息" },
+      { slug: "mindful_consumption", label: "日常消费" },
+      { slug: "science_wonder", label: "科学与惊奇" },
+      { slug: "family_connection", label: "关系与陪伴" },
+      { slug: "everyday_ritual", label: "日常仪式" },
+      { slug: "digital_memory", label: "数字记忆" },
+      { slug: "creative_life", label: "创作生活" },
+      { slug: "repair_longevity", label: "修复与长寿" },
+      { slug: "analog_focus", label: "专注与留白" },
+      { slug: "open_technology", label: "开放技术" },
+      { slug: "problem_solving", label: "问题与行动" },
+      { slug: "simple_living", label: "简单生活" },
+      { slug: "aging_acceptance", label: "自然老去" },
     ],
   },
   {
@@ -204,173 +369,102 @@ const copySeeds: CopySeed[] = [
   {
     slug: "greeting-dawn-01",
     kind: "GREETING",
-    title: "清晨问候",
-    content: "森林今天醒得比消息列表早一点，你也可以。",
+    title: "常建《题破山寺后禅院》",
+    content: "清晨入古寺，初日照高林。",
+    notes: "原文核对：维基文库 https://zh.wikisource.org/",
     dimensions: ["time_of_day:dawn", "greeting_phase:opening", "style:tender"],
   },
   {
     slug: "greeting-day-01",
     kind: "GREETING",
-    title: "午后问候",
-    content: "白天有很多任务，这里先只接住你这个人。",
+    title: "苏轼《浣溪沙》",
+    content: "人间有味是清欢。",
+    notes: "原文核对：维基文库 https://zh.wikisource.org/",
     dimensions: ["time_of_day:day", "greeting_phase:opening", "style:lucid"],
   },
   {
     slug: "greeting-dusk-01",
     kind: "GREETING",
-    title: "傍晚问候",
-    content: "傍晚是一天里最适合把自己捡回来的时段。",
+    title: "陶渊明《饮酒·其五》",
+    content: "山气日夕佳，飞鸟相与还。",
+    notes: "原文核对：维基文库 https://zh.wikisource.org/",
     dimensions: ["time_of_day:dusk", "greeting_phase:settling", "style:tender"],
   },
   {
     slug: "greeting-night-01",
     kind: "GREETING",
-    title: "深夜问候",
-    content: "今天没讲完的话，先在这里放轻一点。",
+    title: "王维《鸟鸣涧》",
+    content: "月出惊山鸟，时鸣春涧中。",
+    notes: "原文核对：维基文库 https://zh.wikisource.org/",
     dimensions: ["time_of_day:night", "greeting_phase:settling", "style:lucid"],
   },
-  {
-    slug: "drift-result-01",
-    kind: "RESULT",
-    activitySlug: "drift",
-    title: "无条件基本收入",
-    content: "你刚刚为大脑申请了一笔无条件的安静补贴。",
-    minDurationSec: 45,
-    dimensions: ["style:witty", "mood:reset"],
-  },
-  {
-    slug: "drift-result-02",
-    kind: "RESULT",
-    activitySlug: "drift",
-    title: "主权区域",
-    content: "这是你今天为自己争取到的一小块主权区域。",
-    minDurationSec: 90,
-    dimensions: ["style:lucid", "mood:gather"],
-  },
-  {
-    slug: "drift-result-programmer",
-    kind: "RESULT",
-    activitySlug: "drift",
-    title: "缓存清理",
-    content: "你的大脑刚刚完成了一次温柔的缓存清理，不必立刻回到主线程。",
-    dimensions: ["industry:programmer", "style:witty", "mood:reset"],
-  },
-  {
-    slug: "tea-result-01",
-    kind: "RESULT",
-    activitySlug: "tea",
-    title: "水文循环",
-    content: "你用一杯热气，给自己补了一小段可见的生活。",
-    dimensions: ["style:tender", "mood:gather"],
-  },
-  {
-    slug: "tea-result-02",
-    kind: "RESULT",
-    activitySlug: "tea",
-    title: "复活叶片",
-    content: "你刚刚用热水复活了一片叶子，也顺手把自己泡松了一点。",
-    dimensions: ["style:witty", "mood:breathe"],
-  },
-  {
-    slug: "breathe-result-01",
-    kind: "RESULT",
-    activitySlug: "breathe",
-    title: "空气缓存",
-    content: "你刚刚刷新了所在坐标的空气缓存。",
-    dimensions: ["style:witty", "mood:breathe"],
-  },
-  {
-    slug: "breathe-result-02",
-    kind: "RESULT",
-    activitySlug: "breathe",
-    title: "情绪交换",
-    content: "你和大气完成了一次完整的情绪交换。",
-    dimensions: ["style:tender", "mood:reset"],
-  },
-  {
-    slug: "breathe-result-medical",
-    kind: "RESULT",
-    activitySlug: "breathe",
-    title: "值班间隙",
-    content: "这几分钟不属于病历、不属于铃声，先完整归还给你。",
-    dimensions: ["industry:medical", "style:lucid", "mood:gather"],
-  },
-  {
-    slug: "stroll-result-01",
-    kind: "RESULT",
-    activitySlug: "stroll",
-    title: "脚步接管",
-    content: "你把一部分重量交给脚步了，这是很高级的分担。",
-    dimensions: ["style:lucid", "mood:gather"],
-  },
-  {
-    slug: "stroll-result-02",
-    kind: "RESULT",
-    activitySlug: "stroll",
-    title: "缓冲路段",
-    content: "刚才那段路，没有在赶你，它只是陪你缓冲了一会儿。",
-    dimensions: ["style:tender", "mood:wander"],
-  },
-  {
-    slug: "office-result-01",
-    kind: "RESULT",
-    title: "免打扰权限",
-    content: "你刚刚给自己开了一小段免打扰权限，这比秒回更重要。",
-    dimensions: ["industry:office", "style:lucid", "mood:reset"],
-  },
-  {
-    slug: "teacher-result-01",
-    kind: "RESULT",
-    title: "收声时刻",
-    content: "在很多声音之后，你终于给自己留出了一点收声的空间。",
-    dimensions: ["industry:teacher", "style:tender", "mood:gather"],
-  },
-  {
-    slug: "delivery-result-01",
-    kind: "RESULT",
-    title: "风停一会",
-    content: "你不必一直跟时间赛跑，这一会儿风先替你赶路。",
-    dimensions: ["industry:delivery", "style:tender", "mood:breathe"],
-  },
-  {
-    slug: "card-ordinary-01",
-    kind: "CARD",
-    title: "普通卡 | 缝隙",
-    content: "不是每一分钟都要拿去证明自己。",
-    dropRate: 20,
-    dimensions: ["card_rarity:ordinary", "style:lucid"],
-  },
-  {
-    slug: "card-ordinary-02",
-    kind: "CARD",
-    title: "普通卡 | 伸个懒腰",
-    content: "你在日程的夹缝里，替自己伸了一次懒腰。",
-    dropRate: 20,
-    dimensions: ["card_rarity:ordinary", "style:tender"],
-  },
-  {
-    slug: "card-glow-01",
-    kind: "CARD",
-    title: "微光卡 | 主权",
-    content: "真正属于你的时刻，哪怕很小，也不是零头。",
-    dropRate: 18,
-    dimensions: ["card_rarity:glow", "style:lucid"],
-  },
-  {
-    slug: "card-glow-02",
-    kind: "CARD",
-    title: "微光卡 | 回来",
-    content: "如果世界太吵，回来坐一会儿也算一种胜利。",
-    dropRate: 18,
-    dimensions: ["card_rarity:glow", "style:tender", "time_of_day:night"],
-  },
-  {
-    slug: "guide-onboarding-01",
-    kind: "GUIDE",
-    title: "森林导语",
-    content: "这里不考核你是否高效，只认真对待你有没有在场。",
-    dimensions: ["style:lucid"],
-  },
+  ...gapQuoteSeeds,
+];
+
+const gapCopyCorpus = gapCopyCorpusData as { version: string; entries: CorpusEntry[] };
+const corpusCopyPrefix = `corpus-${gapCopyCorpus.version}-`;
+const corpusRegionLabels: Record<CorpusEntry["region"], string> = {
+  east_asia: "东亚",
+  west: "西方",
+  south_asia_middle_east: "南亚/中东",
+  latin_america: "拉美",
+};
+const corpusEraLabels: Record<CorpusEntry["era"], string> = {
+  ancient: "古代",
+  classical: "古典",
+  modern: "近现代",
+};
+const corpusCopySeeds: CopySeed[] = gapCopyCorpus.entries.map((entry) => ({
+  slug: entry.slug,
+  kind: entry.kind,
+  title: entry.title,
+  content: entry.content,
+  activitySlug: entry.activitySlug,
+  dropRate: entry.dropRate,
+  notes: `区域=${corpusRegionLabels[entry.region]};时代=${corpusEraLabels[entry.era]};语言=${entry.language};权利=公版;来源=${entry.sourceUrl}`,
+  dimensions: semanticDimensionRefs(entry.semantics),
+}));
+const gapForumCopy = gapForumCopyData as { version: string; entries: ForumEntry[] };
+const forumCopyPrefix = `forum-${gapForumCopy.version}-`;
+const forumCopySeeds: CopySeed[] = gapForumCopy.entries.map((entry) => ({
+  slug: entry.slug,
+  kind: entry.kind,
+  title: entry.title,
+  content: entry.content,
+  activitySlug: entry.activitySlug,
+  dropRate: entry.dropRate,
+  notes: `区域=现代论坛;时代=当代;语言=zh-Hans;权利=原创;论坛=${entry.forum};语气=${entry.tone};话题=${entry.topic};观察=${entry.observedAt};有效至=${entry.expiresAt};来源=${entry.sourceUrl}`,
+  dimensions: [
+    ...semanticDimensionRefs(entry.semantics),
+    `content_tone:${entry.tone}`,
+    `hot_topic:${entry.topic}`,
+  ],
+}));
+const generatedCopySeeds = [...corpusCopySeeds, ...forumCopySeeds];
+const expectedGeneratedDimensionLinkCount = generatedCopySeeds.reduce(
+  (total, entry) => total + (entry.dimensions?.length ?? 0),
+  0,
+);
+
+const legacyGeneratedCopySlugs = [
+  "drift-result-01",
+  "drift-result-02",
+  "drift-result-programmer",
+  "tea-result-01",
+  "tea-result-02",
+  "breathe-result-01",
+  "breathe-result-02",
+  "breathe-result-medical",
+  "stroll-result-01",
+  "stroll-result-02",
+  "office-result-01",
+  "teacher-result-01",
+  "delivery-result-01",
+  "card-ordinary-01",
+  "card-ordinary-02",
+  "card-glow-01",
+  "card-glow-02",
+  "guide-onboarding-01",
 ];
 
 const backgroundSeeds: BackgroundSeed[] = [
@@ -530,20 +624,70 @@ const citySeeds: CitySeed[] = [
 export async function ensureGapMomentSeedData() {
   assertGapMomentDelegates();
 
-  const [activityCount, copyCount, backgroundCount, cityCount, groupCount] = await Promise.all([
+  const [
+    activityCount,
+    copyCount,
+    backgroundCount,
+    cityCount,
+    groupCount,
+    managedCopyCount,
+    generatedCopyCount,
+    generatedDimensionLinkCount,
+    staleGeneratedCopyCount,
+    legacyActiveCount,
+  ] = await Promise.all([
     prisma.momentActivity.count(),
     prisma.copywritingEntry.count(),
     prisma.backgroundAsset.count(),
     prisma.cityGuide.count(),
     prisma.dimensionGroup.count(),
+    prisma.copywritingEntry.count({ where: { slug: { in: copySeeds.map((entry) => entry.slug) } } }),
+    prisma.copywritingEntry.count({
+      where: {
+        OR: [{ slug: { startsWith: corpusCopyPrefix } }, { slug: { startsWith: forumCopyPrefix } }],
+        isActive: true,
+      },
+    }),
+    prisma.copywritingEntryDimension.count({
+      where: {
+        copywritingEntry: {
+          OR: [{ slug: { startsWith: corpusCopyPrefix } }, { slug: { startsWith: forumCopyPrefix } }],
+        },
+      },
+    }),
+    prisma.copywritingEntry.count({
+      where: {
+        OR: [{ slug: { startsWith: "corpus-" } }, { slug: { startsWith: "forum-" } }],
+        NOT: {
+          OR: [{ slug: { startsWith: corpusCopyPrefix } }, { slug: { startsWith: forumCopyPrefix } }],
+        },
+      },
+    }),
+    prisma.copywritingEntry.count({ where: { slug: { in: legacyGeneratedCopySlugs }, isActive: true } }),
   ]);
 
-  if (activityCount > 0 && copyCount > 0 && backgroundCount > 0 && cityCount > 0 && groupCount > 0) {
+  if (
+    activityCount > 0 &&
+    copyCount > 0 &&
+    backgroundCount > 0 &&
+    cityCount > 0 &&
+    groupCount >= dimensionGroupSeeds.length &&
+    managedCopyCount === copySeeds.length &&
+    generatedCopyCount === generatedCopySeeds.length &&
+    generatedDimensionLinkCount === expectedGeneratedDimensionLinkCount &&
+    staleGeneratedCopyCount === 0 &&
+    legacyActiveCount === 0
+  ) {
     return;
   }
 
   await prisma.$transaction(
     async (tx) => {
+      await tx.copywritingEntry.updateMany({
+        where: { slug: { in: legacyGeneratedCopySlugs } },
+        data: { isActive: false },
+      });
+
       for (const activity of activitySeeds) {
       await tx.momentActivity.upsert({
         where: {
@@ -673,6 +817,45 @@ export async function ensureGapMomentSeedData() {
       const activityMap = await buildActivityIdMap(tx);
       const optionMap = await buildDimensionOptionIdMap(tx);
 
+      if (
+        generatedCopyCount !== generatedCopySeeds.length ||
+        generatedDimensionLinkCount !== expectedGeneratedDimensionLinkCount ||
+        staleGeneratedCopyCount > 0
+      ) {
+        await tx.copywritingEntry.deleteMany({
+          where: { OR: [{ slug: { startsWith: "corpus-" } }, { slug: { startsWith: "forum-" } }] },
+        });
+        await tx.copywritingEntry.createMany({
+          data: generatedCopySeeds.map((copy) => ({
+            slug: copy.slug,
+            kind: copy.kind,
+            title: copy.title,
+            content: copy.content,
+            notes: copy.notes ?? null,
+            activityId: copy.activitySlug ? (activityMap.get(copy.activitySlug) ?? null) : null,
+            weight: copy.weight ?? 100,
+            dropRate: copy.dropRate ?? 0,
+            isActive: true,
+          })),
+        });
+        const savedGeneratedEntries = await tx.copywritingEntry.findMany({
+          where: {
+            OR: [{ slug: { startsWith: corpusCopyPrefix } }, { slug: { startsWith: forumCopyPrefix } }],
+          },
+          select: { id: true, slug: true },
+        });
+        const copySeedBySlug = new Map(generatedCopySeeds.map((entry) => [entry.slug, entry]));
+        const dimensionLinks = savedGeneratedEntries.flatMap((entry) => {
+          const refs = copySeedBySlug.get(entry.slug)?.dimensions ?? [];
+          return refs.map((ref) => {
+            const optionId = optionMap.get(ref);
+            if (!optionId) throw new Error(`Unknown generated copy dimension: ${ref}`);
+            return { copywritingEntryId: entry.id, optionId };
+          });
+        });
+        await tx.copywritingEntryDimension.createMany({ data: dimensionLinks });
+      }
+
       for (const background of backgroundSeeds) {
       const savedBackground = await tx.backgroundAsset.upsert({
         where: {
@@ -753,6 +936,10 @@ export async function ensureGapMomentSeedData() {
 }
 
 export async function getForestCatalog(): Promise<ForestCatalog> {
+  if (process.env.FOREST_STATIC_PREVIEW === "1" && process.env.NODE_ENV !== "production") {
+    return buildStaticForestCatalog();
+  }
+
   await ensureGapMomentSeedData();
 
   const [activities, dimensionGroups, backgrounds, copyEntries, cities] = await Promise.all([
@@ -835,6 +1022,24 @@ export async function getForestCatalog(): Promise<ForestCatalog> {
     }),
   ]);
 
+  const runtimeCopyEntries = selectRuntimeCopyEntries(
+    copyEntries.map((entry): CopywritingRecord => ({
+      id: entry.id,
+      slug: entry.slug,
+      kind: entry.kind,
+      title: entry.title,
+      content: entry.content,
+      notes: entry.notes,
+      activitySlug: entry.activity?.slug ?? null,
+      minDurationSec: entry.minDurationSec,
+      maxDurationSec: entry.maxDurationSec,
+      weight: entry.weight,
+      dropRate: entry.dropRate,
+      dimensionOptionIds: entry.dimensions.map((item) => item.optionId),
+      dimensionKeys: groupDimensionKeys(entry.dimensions),
+    })),
+  );
+
   return {
     activities: activities.map((activity): ActivityRecord => ({
       id: activity.id,
@@ -877,21 +1082,7 @@ export async function getForestCatalog(): Promise<ForestCatalog> {
       dimensionOptionIds: background.dimensions.map((entry) => entry.optionId),
       dimensionKeys: groupDimensionKeys(background.dimensions),
     })),
-    copyEntries: copyEntries.map((entry): CopywritingRecord => ({
-      id: entry.id,
-      slug: entry.slug,
-      kind: entry.kind,
-      title: entry.title,
-      content: entry.content,
-      notes: entry.notes,
-      activitySlug: entry.activity?.slug ?? null,
-      minDurationSec: entry.minDurationSec,
-      maxDurationSec: entry.maxDurationSec,
-      weight: entry.weight,
-      dropRate: entry.dropRate,
-      dimensionOptionIds: entry.dimensions.map((item) => item.optionId),
-      dimensionKeys: groupDimensionKeys(entry.dimensions),
-    })),
+    copyEntries: runtimeCopyEntries,
     cities: cities.map((city): CityRecord => ({
       id: city.id,
       slug: city.slug,
@@ -1037,6 +1228,181 @@ function groupDimensionKeys(
     accumulator[groupKey].push(entry.option.slug);
     return accumulator;
   }, {});
+}
+
+function selectRuntimeCopyEntries(entries: CopywritingRecord[]) {
+  const freshEntries = entries.filter(isRuntimeCopyFresh);
+  const dayNumber = Math.floor(Date.now() / 86_400_000);
+  const selected = freshEntries.filter(
+    (entry) => (entry.kind !== "RESULT" && entry.kind !== "CARD") || !entry.activitySlug,
+  );
+  const cultureLimits = {
+    RESULT: [
+      ["curated", 3],
+      ["东亚", 6],
+      ["西方", 4],
+      ["南亚/中东", 3],
+      ["拉美", 3],
+      ["现代论坛", 5],
+    ],
+    CARD: [
+      ["curated", 2],
+      ["东亚", 3],
+      ["西方", 2],
+      ["南亚/中东", 1],
+      ["拉美", 1],
+      ["现代论坛", 3],
+    ],
+  } as const;
+
+  for (const activitySlug of activitySeeds.map((activity) => activity.slug)) {
+    for (const [kind, limit] of [
+      ["RESULT", 24],
+      ["CARD", 12],
+    ] as const) {
+      const pool = freshEntries.filter((entry) => entry.kind === kind && entry.activitySlug === activitySlug);
+      if (pool.length <= limit) {
+        selected.push(...pool);
+        continue;
+      }
+
+      const dailyEntries = cultureLimits[kind].flatMap(([culture, cultureLimit]) =>
+        takeRotatingEntries(
+          pool.filter((entry) => runtimeCulture(entry) === culture),
+          cultureLimit,
+          `${dayNumber}:${activitySlug}:${kind}:${culture}`,
+        ),
+      );
+      if (dailyEntries.length < limit) {
+        const selectedSlugs = new Set(dailyEntries.map((entry) => entry.slug));
+        dailyEntries.push(
+          ...takeRotatingEntries(
+            pool.filter((entry) => !selectedSlugs.has(entry.slug)),
+            limit - dailyEntries.length,
+            `${dayNumber}:${activitySlug}:${kind}:remainder`,
+          ),
+        );
+      }
+      selected.push(...dailyEntries);
+    }
+  }
+
+  return selected;
+}
+
+function runtimeCulture(entry: CopywritingRecord) {
+  return entry.notes?.match(/(?:^|;)区域=([^;]+)/)?.[1] ?? "curated";
+}
+
+function isRuntimeCopyFresh(entry: CopywritingRecord) {
+  const expiresAt = entry.notes?.match(/(?:^|;)有效至=(\d{4}-\d{2}-\d{2})(?:;|$)/)?.[1];
+  return !expiresAt || expiresAt >= new Date().toISOString().slice(0, 10);
+}
+
+function takeRotatingEntries(entries: CopywritingRecord[], limit: number, seed: string) {
+  const pool = entries.toSorted((left, right) => left.slug.localeCompare(right.slug));
+  if (pool.length <= limit) return pool;
+
+  const start = stableStringHash(seed) % pool.length;
+  return Array.from({ length: limit }, (_, index) => pool[(start + index) % pool.length]);
+}
+
+function stableStringHash(value: string) {
+  let hash = 0;
+  for (const character of value) hash = (hash * 31 + character.codePointAt(0)!) >>> 0;
+  return hash;
+}
+
+function buildStaticForestCatalog(): ForestCatalog {
+  // ponytail: 仅供无数据库的本地视觉验收；生产环境始终走 Prisma 内容库。
+  const dimensionGroups: DimensionGroupRecord[] = dimensionGroupSeeds.map((group) => ({
+    id: `preview_dimension_group_${group.key}`,
+    key: group.key,
+    label: group.label,
+    kind: group.kind,
+    description: group.description,
+    options: group.options.map((option) => ({
+      id: `preview_dimension_${group.key}_${option.slug}`,
+      groupKey: group.key,
+      groupLabel: group.label,
+      kind: group.kind,
+      slug: option.slug,
+      label: option.label,
+      description: option.description ?? null,
+    })),
+  }));
+  const dimensionIdByRef = new Map<string, string>(
+    dimensionGroups.flatMap((group) => group.options.map((option) => [`${group.key}:${option.slug}`, option.id] as const)),
+  );
+  const dimensionKeysFromRefs = (refs: string[] = []) =>
+    refs.reduce<Record<string, string[]>>((keys, ref) => {
+      const [groupKey, optionSlug] = ref.split(":");
+      if (groupKey && optionSlug) {
+        keys[groupKey] ??= [];
+        keys[groupKey].push(optionSlug);
+      }
+      return keys;
+    }, {});
+
+  return {
+    activities: activitySeeds.map((activity) => ({
+      id: `preview_activity_${activity.slug}`,
+      slug: activity.slug,
+      name: activity.name,
+      iconKey: activity.iconKey,
+      description: activity.description,
+      prompt: activity.prompt,
+      colorStart: activity.colorStart,
+      colorEnd: activity.colorEnd,
+    })),
+    dimensionGroups,
+    backgrounds: backgroundSeeds.map((background) => ({
+      id: `preview_background_${background.slug}`,
+      slug: background.slug,
+      title: background.title,
+      imagePath: background.imagePath,
+      sourceName: background.sourceName,
+      sourcePageUrl: background.sourcePageUrl,
+      photographerName: background.photographerName ?? null,
+      licenseLabel: background.licenseLabel ?? null,
+      blurColor: background.blurColor ?? null,
+      description: background.description ?? null,
+      activitySlug: background.activitySlug ?? null,
+      dimensionOptionIds: (background.dimensions ?? []).flatMap((ref) => dimensionIdByRef.get(ref) ?? []),
+      dimensionKeys: dimensionKeysFromRefs(background.dimensions),
+    })),
+    copyEntries: selectRuntimeCopyEntries(
+      [...copySeeds, ...generatedCopySeeds].map((entry) => ({
+        id: `preview_copy_${entry.slug}`,
+        slug: entry.slug,
+        kind: entry.kind,
+        title: entry.title,
+        content: entry.content,
+        notes: entry.notes ?? null,
+        activitySlug: entry.activitySlug ?? null,
+        minDurationSec: entry.minDurationSec ?? null,
+        maxDurationSec: entry.maxDurationSec ?? null,
+        weight: entry.weight ?? 100,
+        dropRate: entry.dropRate ?? 0,
+        dimensionOptionIds: (entry.dimensions ?? []).flatMap((ref) => dimensionIdByRef.get(ref) ?? []),
+        dimensionKeys: dimensionKeysFromRefs(entry.dimensions),
+      })),
+    ),
+    cities: citySeeds.map((city) => ({
+      id: `preview_city_${city.slug}`,
+      slug: city.slug,
+      name: city.name,
+      description: city.description,
+      snacks: city.snacks.map((snack) => ({
+        id: `preview_snack_${city.slug}_${snack.slug}`,
+        slug: snack.slug,
+        name: snack.name,
+        unitLabel: snack.unitLabel,
+        priceCents: snack.priceCents,
+        description: snack.description ?? null,
+      })),
+    })),
+  };
 }
 
 function assertGapMomentDelegates() {

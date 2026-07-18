@@ -11,6 +11,9 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "build:quotes": "node scripts/build-gap-copy-corpus.mjs",
+    "build:forums": "node scripts/build-forum-copy.mjs",
+    "check:quotes": "node scripts/check-gap-quotes.mjs",
     "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:migrate:dev": "prisma migrate dev",
@@ -33,7 +36,6 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.1",
     "postcss": "^8.5.8",
-    "postcss-px-to-viewport-8-plugin": "^1.2.5",
     "prisma": "^7.6.0",
     "typescript": "^5"
   }
