@@ -52,7 +52,7 @@ readonly revision="$(git rev-parse HEAD)"
 readonly short_revision="$(git rev-parse --short HEAD)"
 
 printf '安装锁定依赖并构建 %s…\n' "$short_revision"
-npm ci --include=dev
+npm ci --include=dev --no-audit --no-fund
 npm run typecheck
 npm run build
 npm run prisma:migrate:deploy
