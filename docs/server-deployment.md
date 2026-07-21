@@ -18,15 +18,25 @@ fish/
 
 ## 一次性准备
 
-服务器需要 Git、Node.js 22 LTS、npm、PM2 和 Linux `flock`。部署与 PM2 始终使用同一个 Linux 用户，不要混用 `root` 和 `www`。
+服务器需要 Git、Node.js 22 LTS、npm、PM2 和 Linux `flock`。部署与 PM2 始终使用同一个 Linux 用户，不要混用 `root` 和 `www`。为避免与同机其他 GitHub 项目的密钥冲突，摸鱼使用独立密钥和 SSH Host 别名。
 
 ```bash
 npm install --global pm2@latest
-ssh-keygen -t ed25519 -C "fish-catcher-deploy"
-cat ~/.ssh/id_ed25519.pub
+ssh-keygen -t ed25519 -f ~/.ssh/fish_catcher_deploy_ed25519 -C "fish-catcher-deploy" -N ""
+cat ~/.ssh/fish_catcher_deploy_ed25519.pub
 ```
 
-把公钥添加到 GitHub 仓库 `Settings → Deploy keys`，保持只读，然后运行 `ssh -T git@github.com` 验证。
+把公钥添加到 GitHub 仓库 `Settings → Deploy keys`，保持只读。在 `~/.ssh/config` 中加入：
+
+```sshconfig
+Host github-fish-catcher
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/fish_catcher_deploy_ed25519
+  IdentitiesOnly yes
+```
+
+执行 `chmod 600 ~/.ssh/config`，然后运行 `ssh -T git@github-fish-catcher` 验证。
 
 截图里的宝塔占位目录先备份，再用一次性浅克隆取得部署脚本和环境模板：
 
@@ -34,7 +44,7 @@ cat ~/.ssh/id_ed25519.pub
 mv /www/wwwroot/nefelibata/fish /www/wwwroot/nefelibata/fish-static-backup
 mkdir -p /www/wwwroot/nefelibata/fish/deploy
 git clone --depth 1 --branch main --single-branch \
-  git@github.com:evvolution/fish-catcher.git /tmp/moyu-bootstrap
+  git@github-fish-catcher:evvolution/fish-catcher.git /tmp/moyu-bootstrap
 install -m 755 /tmp/moyu-bootstrap/deploy/deploy.sh \
   /www/wwwroot/nefelibata/fish/deploy/deploy.sh
 install -m 600 /tmp/moyu-bootstrap/.env.example \

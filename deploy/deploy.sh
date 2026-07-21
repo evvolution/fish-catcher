@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 umask 027
 
-readonly repo_url="git@github.com:evvolution/fish-catcher.git"
+readonly repo_url="git@github-fish-catcher:evvolution/fish-catcher.git"
 readonly deploy_branch="${MOYU_DEPLOY_BRANCH:-main}"
 readonly runtime_dir="${MOYU_RUNTIME_DIR:-/www/wwwroot/nefelibata/fish}"
 readonly runtime_parent="$(dirname -- "$runtime_dir")"
