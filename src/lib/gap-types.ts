@@ -97,6 +97,29 @@ export type CityRecord = {
   snacks: SnackRecord[];
 };
 
+export type ChinaProtectionStatus =
+  | "NONE"
+  | "NATIONAL_II"
+  | "WILD_ONLY_NATIONAL_II"
+  | "CITES_APPROVED_I"
+  | "CITES_APPROVED_II"
+  | "WILD_ONLY_CITES_APPROVED_II";
+
+export type FishToxicityStatus =
+  | "NONE_KNOWN"
+  | "VENOMOUS"
+  | "TOXIC_TISSUE"
+  | "TOXIC_PART"
+  | "ELECTRIC"
+  | "CIGUATERA_RISK";
+
+export type FishEdibilityStatus =
+  | "EDIBLE"
+  | "CONDITIONAL"
+  | "NOT_RECOMMENDED"
+  | "LEGAL_PROHIBITED"
+  | "WILD_ONLY_PROHIBITED";
+
 export type FishSpeciesRecord = {
   id: string;
   slug: string;
@@ -108,6 +131,12 @@ export type FishSpeciesRecord = {
   habits: string;
   distribution: string;
   imagePath: string;
+  chinaProtectionStatus: ChinaProtectionStatus;
+  citesAppendix: "I" | "II" | "NONE";
+  threeHaveStatus: "NOT_APPLICABLE";
+  toxicityStatus: FishToxicityStatus;
+  edibilityStatus: FishEdibilityStatus;
+  legalReviewedAt: string;
 };
 
 export type ForestCatalog = {

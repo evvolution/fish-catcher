@@ -46,8 +46,8 @@
     },
     {
       "path": "fishes/alligator-gar.webp",
-      "bytes": 18062,
-      "sha256": "c146c18ebf6ab80ec4efca7e1ef3508aa229fa85a5c692395232ad0c7952eab0",
+      "bytes": 22078,
+      "sha256": "4e02f2e33c4226ea060dc68683e322b03507a193ca152f9be9c63df47710b8a8",
       "contentType": "image/webp"
     },
     {
@@ -58,44 +58,44 @@
     },
     {
       "path": "fishes/american-paddlefish.webp",
-      "bytes": 27898,
-      "sha256": "b7afc1f2cfbefa6af9ba47de2a9740bbf1b903ffcbbdd068fea1db48163167fb",
+      "bytes": 20268,
+      "sha256": "80383964b7757856350c1b7d602a0ffde0879fa459b97bc682f69a15c44b41b6",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/angler.webp",
-      "bytes": 35398,
-      "sha256": "547a00677528f607a77f5024f34c1948d2d29afafb48559c3bb912ec49c46e65",
+      "bytes": 66216,
+      "sha256": "f97a76f1114a57f0bc75630e78ba8dd41d880735fdbf0304fe9bfbcec0bdcc5c",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/antarctic-toothfish.webp",
-      "bytes": 58292,
-      "sha256": "32f65c5926968fc1d9fb93744ffc9d46348671a2fc17342c60322b0f137dd5ce",
+      "bytes": 32202,
+      "sha256": "5cc8e206bbb447f4b720a51c494082c338393b81262b8247ecb99eca40b329ff",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/arapaima.webp",
-      "bytes": 37374,
-      "sha256": "4478ac0c635b5db16224e6d8eb15a1bea2aedb65a5aaa41fe74742479ca42317",
+      "bytes": 27032,
+      "sha256": "d1a5eebf033d0342c18f0cf713ba0153ec84c57e838e87854ff2ed9fe259d65a",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/arctic-char.webp",
-      "bytes": 31248,
-      "sha256": "32f2e2cbd95a310019648141bc12d1a22ab636af640358978c047865daae992b",
+      "bytes": 25336,
+      "sha256": "25a2ec7bf3c607cff40b819ea68133d679df93437ee6fa752016ef08739108a4",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/asian-swamp-eel.webp",
-      "bytes": 28070,
-      "sha256": "bb9fb22d51a6638da0de3ee6ef8a6de01c20dfeeeff2b8db197045b335e49cc4",
+      "bytes": 38262,
+      "sha256": "4af80f91befc13b34acf13377e1b8a9cf79abb56044cffaaebe622ae6dad61b5",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/atlantic-bluefin-tuna.webp",
-      "bytes": 31010,
-      "sha256": "bf6d0bdd0a5a090a03aee099ad4f689a950e6aaa8603e68e46c10e8d513358fb",
+      "bytes": 27884,
+      "sha256": "533921d0008da44ca70b9ec31d1cc797b90a4c75e6e6ce73ed5597cf86939d8d",
       "contentType": "image/webp"
     },
     {
@@ -106,26 +106,26 @@
     },
     {
       "path": "fishes/atlantic-cod.webp",
-      "bytes": 34654,
-      "sha256": "4dc30734b4f59d2894ba46004b6ad01e6f2bdd292220f02524adbee51d6867aa",
+      "bytes": 43676,
+      "sha256": "d9b2897476b06b9159db905ccf8b11b5e317ee435367984d500140dd5c31f466",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/atlantic-flyingfish.webp",
-      "bytes": 27114,
-      "sha256": "b2058ab8cd2b6aad7bdb0db2db5a41f731060a67928a2b4666c165b97481269f",
+      "bytes": 34926,
+      "sha256": "53c1d3cfe053438f987069e853e9a73e726c89c4a8b85406e539d757a6d3cf30",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/atlantic-herring.webp",
-      "bytes": 24326,
-      "sha256": "f27f12f050107450c446f8b67f94f9cbed60ed0d798175d52f4c5703ffcb2433",
+      "bytes": 20014,
+      "sha256": "6ecae3d5a874efcddaee2fc4d23d639f2b9e52f158e543e13d870e7a627739f6",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/atlantic-mackerel.webp",
-      "bytes": 31114,
-      "sha256": "853fd7ae2af2d2fd97c8bf975dfcccd23b23b6e728817cd8153a3cfbc7448880",
+      "bytes": 36290,
+      "sha256": "3ef3a6efb84e6ad579a19d25179e6a2443e268d67a5896218873d02c8d668900",
       "contentType": "image/webp"
     },
     {
@@ -136,44 +136,44 @@
     },
     {
       "path": "fishes/atlantic-salmon.webp",
-      "bytes": 31622,
-      "sha256": "625df97591122af1077fcacc264b5544e9ef08d34ca8680ccca3d58dce7a7188",
+      "bytes": 33180,
+      "sha256": "a4f19fb4b94ba4ce29de97866cad593b7e3fb056e23e91dffbc1e83755a47db0",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/atlantic-tarpon.webp",
-      "bytes": 38168,
-      "sha256": "ec28296c6ac8a0108e0b0e6545240cafd52049e47139c4d8da3e2e412a10ac5f",
+      "bytes": 29606,
+      "sha256": "1a730f4085fe9387eae415e5f2eec5b27894320755b54429b2ab85aa1d9d7635",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/atlantic-wolffish.webp",
-      "bytes": 41478,
-      "sha256": "a44e03f7304b9146c584a9126cf65e3b3902f19fff27ea6438a17903534fadf5",
+      "bytes": 35620,
+      "sha256": "d7f573fc119fe7096ad79a43224af5c9eaa0e6d75246ca4fc213c78ed365f7b1",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/banggai-cardinalfish.webp",
-      "bytes": 52478,
-      "sha256": "5cff91456e528d2ac7b9741a777770064f61f93bf7483ffb45b0f6125ec197e0",
+      "bytes": 44410,
+      "sha256": "7325e502bf11a71f408b179c1898b65cb59ad856d52a8df505ba641e3332a994",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/barreleye.webp",
-      "bytes": 29218,
-      "sha256": "2267bcec0857cb74642c046e53ecd7665e1d5ea17ad91a4dfd5697406ead1e51",
+      "bytes": 32282,
+      "sha256": "e3fa4823a62b456850e3d943b274018fa05c9089d8aa30d56c09d63f19c0fe7c",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/bighead-carp.webp",
-      "bytes": 53766,
-      "sha256": "4c310318fcd3b7de311384ea21fe1bcda9e898a22d61cfa226895a1f4144dc3a",
+      "bytes": 37776,
+      "sha256": "65fb432de7e5faba480f42a1fe1e393e563b80caaf5e82de6b86da5b53f66073",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/black-carp.webp",
-      "bytes": 42814,
-      "sha256": "7943a5e6d0144224692b6e1db3f2c1658d2f0750d78855691db47c3022ab7510",
+      "bytes": 24396,
+      "sha256": "a164f65f91f872dd7dc51cc2cec3550345489661023499f347cb6e6ca0ee6acc",
       "contentType": "image/webp"
     },
     {
@@ -196,8 +196,8 @@
     },
     {
       "path": "fishes/blue-barred-parrotfish.webp",
-      "bytes": 25832,
-      "sha256": "f92e21ad06f4fecdcbe669032d3120710633281cfd9c42212c47453d6dee6416",
+      "bytes": 31894,
+      "sha256": "762a49ecf565e89f88992f8f2c53f87e3162d66c3bc36243bcc57a83ea4aa1c6",
       "contentType": "image/webp"
     },
     {
@@ -220,26 +220,26 @@
     },
     {
       "path": "fishes/blue-tang.webp",
-      "bytes": 41124,
-      "sha256": "857d95d19f75d025bbcb6a7ad17666f7f4be899add4eb43f51e0ccf1eb617754",
+      "bytes": 37758,
+      "sha256": "23f6f7f983c4d925a921473f00990a6a557dbc98e415e739736b16f1817979cb",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/bluespotted-ribbontail-ray.webp",
-      "bytes": 29368,
-      "sha256": "5a9331a50934796d971e9614ed626a8429ee62c424caaf8ddf037d74c614dfc4",
+      "bytes": 26790,
+      "sha256": "d937b45a0203c84ed7c51f8f81197fbfa963e643344b50cdf3974b3c821718aa",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/bluestreak-cleaner-wrasse.webp",
-      "bytes": 19502,
-      "sha256": "ad25e66173ba6132cc5de5d4b0f5e1960f857e9cdcba1f3ac6285919ff095234",
+      "bytes": 19144,
+      "sha256": "ffc749368e26e7fcd58c6a55c02c1ab6fe9b560c910f35766e340f4d3ef2b243",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/bowfin.webp",
-      "bytes": 32800,
-      "sha256": "53eb23e2d5169cd3b91e76070b47907ea2a510bc4dce2f68034e9d7fd7c741e8",
+      "bytes": 36398,
+      "sha256": "2d75633c4f831a3dcd97f2cb4359e6c37dfe52062c10b15e0b00861559c206ae",
       "contentType": "image/webp"
     },
     {
@@ -250,8 +250,8 @@
     },
     {
       "path": "fishes/brown-trout.webp",
-      "bytes": 41406,
-      "sha256": "33146c09acfb95fdc222273f0201ae0dffab65ca4721e4c6d9bf714cd1c580c1",
+      "bytes": 31556,
+      "sha256": "81dc45540fd6a807d35a975beb243791c474e01a57441da5c6d526a3646f689a",
       "contentType": "image/webp"
     },
     {
@@ -274,8 +274,8 @@
     },
     {
       "path": "fishes/cardinal-tetra.webp",
-      "bytes": 36416,
-      "sha256": "b43822cc52588731dd87ce309b57ab23f48c448b8938fe0d902a6039f83a3289",
+      "bytes": 31570,
+      "sha256": "2cbe78cac988f72c10de4af9f3339969790c6e377f21d1439023b605f00042c0",
       "contentType": "image/webp"
     },
     {
@@ -292,8 +292,8 @@
     },
     {
       "path": "fishes/chinook-salmon.webp",
-      "bytes": 45876,
-      "sha256": "d51e924e7b0630f0ca64adf1a0fdbfe58952fe9f1b6d1ca1ffa7d024a061a028",
+      "bytes": 47360,
+      "sha256": "059c079b692cddc41b1781f5981ccab6ef3baa3bc4c0ffdaeb5ee40a0e3cae47",
       "contentType": "image/webp"
     },
     {
@@ -304,8 +304,8 @@
     },
     {
       "path": "fishes/clown-triggerfish.webp",
-      "bytes": 57318,
-      "sha256": "13748c6e2c95dd3633851438c0342e1bf40c173360715acefdaabb2d1a4bf974",
+      "bytes": 47446,
+      "sha256": "dacb49b4c0ea8e0f1e6cf53d1adddba50e70fefb53bfa0a0ecfb344768b08596",
       "contentType": "image/webp"
     },
     {
@@ -322,14 +322,14 @@
     },
     {
       "path": "fishes/common-carp.webp",
-      "bytes": 44426,
-      "sha256": "906ed6ed436242aa75ca2f7ae67bfe82729e7eb182c0176a51b34016e9445f87",
+      "bytes": 41586,
+      "sha256": "d86cb6af3c14682777fcb2437d3d9051cc352035c2ed57add658db53f9cc1ce8",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/common-fangtooth.webp",
-      "bytes": 64378,
-      "sha256": "2acd5575ce43febc82b74ff43d00abb346ad2a75b72937bf0c63543551576647",
+      "bytes": 56274,
+      "sha256": "fddde6b30a5f333495831c36790680dd5f51cd39bc69755e17bd1b8632e8e7e6",
       "contentType": "image/webp"
     },
     {
@@ -346,8 +346,8 @@
     },
     {
       "path": "fishes/common-seadragon.webp",
-      "bytes": 39720,
-      "sha256": "8852794bbf96361272430361683193112f93ab30e25803e13f0eab21588f6142",
+      "bytes": 39834,
+      "sha256": "05cd7efdbf03ed61ac8d878335e778eb081eb212bf7639734c426129cee81d38",
       "contentType": "image/webp"
     },
     {
@@ -382,8 +382,8 @@
     },
     {
       "path": "fishes/electric-eel.webp",
-      "bytes": 26682,
-      "sha256": "f3b3480133a9261ce3eaaf30072f97cf055f7f6f0f5bbb4a332b6524fb51ac01",
+      "bytes": 28306,
+      "sha256": "3e60ec0c757409a69368d6fd848f4782e936fd4472ec0ebef7830238d27934b7",
       "contentType": "image/webp"
     },
     {
@@ -394,14 +394,14 @@
     },
     {
       "path": "fishes/emperor-angelfish.webp",
-      "bytes": 58902,
-      "sha256": "45f2fe5cd8ff4551ca89e8feca9437fcaf9fd2f197fafe10f9028484ac3b17be",
+      "bytes": 65178,
+      "sha256": "274ffce5d121a0f6295bf066c6b9a54b81b618ce9f807ac948b1aacbc4ca1a88",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/european-anchovy.webp",
-      "bytes": 19778,
-      "sha256": "29f6cbb03138b184701f5aedd07dd525658208b3db577c2798d7507b5fcf7144",
+      "bytes": 19988,
+      "sha256": "2f8543bcfdf0a7671694aaca56455c68ed905c309711e2fa9d8fa17dff0631c9",
       "contentType": "image/webp"
     },
     {
@@ -412,8 +412,8 @@
     },
     {
       "path": "fishes/european-flounder.webp",
-      "bytes": 63886,
-      "sha256": "2167b40872f8e8a43c890d09bbe64e96be7f47ba9a90a0b3f2ebd4bc3dcc0b66",
+      "bytes": 47010,
+      "sha256": "4fc3f6e1edaef7591fed6051647433e480325c2be0438f9c963574d6eeb23050",
       "contentType": "image/webp"
     },
     {
@@ -424,14 +424,14 @@
     },
     {
       "path": "fishes/european-perch.webp",
-      "bytes": 45306,
-      "sha256": "673c629913b466d2c2dff474d3289d6c51f8930558a6edb1d558c28a2dc0630a",
+      "bytes": 35184,
+      "sha256": "91e14edc9e27982793e1ec9c036401be2a3bb320356de716a9fb4e207d434ddb",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/european-plaice.webp",
-      "bytes": 45350,
-      "sha256": "bcf7d0974057e2db008f5548847f558189357e4a45108ba94e1479e19d48bdb8",
+      "bytes": 62420,
+      "sha256": "7a3a5af632bbe6c5804941a108dfce6b03feec0291b63be77ded90050db88d23",
       "contentType": "image/webp"
     },
     {
@@ -442,8 +442,8 @@
     },
     {
       "path": "fishes/european-sturgeon.webp",
-      "bytes": 21636,
-      "sha256": "6124f2e72e788360a6e48ebde92e4a9ede59bf5768ea0ecde8d9e0c4ebd577e2",
+      "bytes": 17300,
+      "sha256": "c5bf0beaff0c3223bae3381a6ff9cc202c27bf721a1407bfa8ef3a3c5e0a6137",
       "contentType": "image/webp"
     },
     {
@@ -472,8 +472,8 @@
     },
     {
       "path": "fishes/freshwater-angelfish.webp",
-      "bytes": 30704,
-      "sha256": "d52b5c5e8a1b6b3978eb37cadc658317f907944c4a8d10a5596e7f9850f47e1b",
+      "bytes": 21726,
+      "sha256": "c2f602c465bcd234e9d9739b08de168b8c14e873984df2c74cfa5b9ee7ead22d",
       "contentType": "image/webp"
     },
     {
@@ -502,8 +502,8 @@
     },
     {
       "path": "fishes/giant-manta-ray.webp",
-      "bytes": 26768,
-      "sha256": "6644039cf937179529a5b0f73d3b3454522106664b24e1934ed0a541e163aa00",
+      "bytes": 26500,
+      "sha256": "61bb3fb1d52dae66da4f5a3364d5e4cbed51b3cd58dc91686bf559ca35eacb79",
       "contentType": "image/webp"
     },
     {
@@ -526,8 +526,8 @@
     },
     {
       "path": "fishes/giant-trevally.webp",
-      "bytes": 60674,
-      "sha256": "70ef2efc0025ed9111d97c6b6ce76185088473ec29b9820dbb8e2b0e30df1d16",
+      "bytes": 36288,
+      "sha256": "a0c1cce856bf19a3c0847164038de9744fe373a866220667f56a977d40f5ff2d",
       "contentType": "image/webp"
     },
     {
@@ -550,26 +550,26 @@
     },
     {
       "path": "fishes/goldfish.webp",
-      "bytes": 32424,
-      "sha256": "5bd391e6a955b6ec3aa8819eed7a34b10451b25e605845b0a3ca43cceec897ac",
+      "bytes": 68208,
+      "sha256": "18dacd5db38d1088af3332edb4465df0dbfe4f61f9562ae868857fe531864d93",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/grass-carp.webp",
-      "bytes": 33044,
-      "sha256": "7093be644457dee54683de7ec4aca1cbd0244f9167fe6ed015212dcaee829b00",
+      "bytes": 34516,
+      "sha256": "db4e39aafd6a49cb36f0ed3fe1f9ac1acc0467827190204753ba4c52fc4ca7c3",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/great-barracuda.webp",
-      "bytes": 35144,
-      "sha256": "2c3d81371f5f75302750849aa2f686142547c709c93cc50d51aa1b0425283e61",
+      "bytes": 27004,
+      "sha256": "4f5a3e3a680e8acfbfd4dc03e176392be43e64c948277ccf90c43a6d416148fc",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/great-white-shark.webp",
-      "bytes": 40018,
-      "sha256": "0c3b391ddfbb446f5f52350714dba03274c78a4168f595e4f46c5f65829941f7",
+      "bytes": 29748,
+      "sha256": "3697a5ed4a47b2066feb787047bd8207c0f37c6f1d3cade5f55ea631b7456c93",
       "contentType": "image/webp"
     },
     {
@@ -586,14 +586,14 @@
     },
     {
       "path": "fishes/guppy.webp",
-      "bytes": 44914,
-      "sha256": "567c377e900675eaddf2960cc5d2eef66041953f530ad3e8a057539e4bdfb7a0",
+      "bytes": 26780,
+      "sha256": "6856e5dbed3dedabedf2b3ebd08a090ed0db84ff934e539d3982f1a4c4e4227d",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/haddock.webp",
-      "bytes": 27122,
-      "sha256": "43a8fa88d6746deacdcf6a8bb39154836d6d34862374f51ac9ae751c28dfa064",
+      "bytes": 29790,
+      "sha256": "263056de5bd8d94a36a6a406f82cf8a84bae25681ab9136dddf51d53d0150025",
       "contentType": "image/webp"
     },
     {
@@ -676,8 +676,8 @@
     },
     {
       "path": "fishes/largemouth-bass.webp",
-      "bytes": 39532,
-      "sha256": "33cb11e6c9797dcf8a9f8ed2a5483e4e595a781e8ce6dacb37c398f9265678c8",
+      "bytes": 40042,
+      "sha256": "ac05c23da1330f60f249f604821ecbd1a8b61106fce2762fa7f421a927dcd498",
       "contentType": "image/webp"
     },
     {
@@ -688,8 +688,8 @@
     },
     {
       "path": "fishes/leafy-seadragon.webp",
-      "bytes": 80262,
-      "sha256": "592a24bb212c8fc654639c210460fb78372a8f3e31ca719df4cb352af167232c",
+      "bytes": 64732,
+      "sha256": "93876a44bb8070be82ea77228ff0c6a51901ebb0733e6bd9609e09c7f73cfe25",
       "contentType": "image/webp"
     },
     {
@@ -700,14 +700,14 @@
     },
     {
       "path": "fishes/long-spine-porcupinefish.webp",
-      "bytes": 37920,
-      "sha256": "0519bfcaa226911c89c0bf196e60909bfcf27150b2e500beb34af4ca87a57b7a",
+      "bytes": 39072,
+      "sha256": "9fb52efc676a78b2e81136b24bdc7612d4324345b570f9ff7663855867f9870d",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/longfin-bannerfish.webp",
-      "bytes": 39630,
-      "sha256": "06a87046e4d2b1a664b18b71907107d5ee38e9af8869719edfafffcadbe878ae",
+      "bytes": 45228,
+      "sha256": "e5edb1f4b58811b582323d9d6db1ee1f4193a2c69d39cf753514d7b25a9b5be8",
       "contentType": "image/webp"
     },
     {
@@ -718,20 +718,20 @@
     },
     {
       "path": "fishes/mahi-mahi.webp",
-      "bytes": 28182,
-      "sha256": "b6c249ba08b09600cd37109af958b78e887607ca3945cb6f6e35590b494d1904",
+      "bytes": 36142,
+      "sha256": "93e88ae6bd3e48e651ced69e09302207a9d368cb76279e57a49954263abba214",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/mandarin-fish.webp",
-      "bytes": 32762,
-      "sha256": "38727fe145708b0bba8cf6bf39e2e58b1ff6a529d55cfcfda7cc21819e024fa8",
+      "bytes": 31548,
+      "sha256": "34d798d60761fe2aee1e95e9f3020a4ad38617d6cec437fac8f9f9ced122470b",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/mandarinfish.webp",
-      "bytes": 40114,
-      "sha256": "820c914ffb889f3bd42d3914ed2f4361c91a9e0373c3823d8e0da2a0df0d1471",
+      "bytes": 36006,
+      "sha256": "508ebca3460cd7f515b9eeb6e0f053d1e99fc31f9800cb25f07af9d8ff1d2186",
       "contentType": "image/webp"
     },
     {
@@ -742,8 +742,8 @@
     },
     {
       "path": "fishes/mekong-giant-catfish.webp",
-      "bytes": 34964,
-      "sha256": "918a062c2bde85ff236de3e4b7af812ecdf51a91048605d097a14e0292ccef22",
+      "bytes": 25400,
+      "sha256": "9ff9f8a21d3f53084279a9359766835e0320e83c8db10594eb151e00e6e8b05a",
       "contentType": "image/webp"
     },
     {
@@ -754,32 +754,32 @@
     },
     {
       "path": "fishes/moorish-idol.webp",
-      "bytes": 28114,
-      "sha256": "b2874d99506d22253dc0dc9fc103b834a8c4a09809692e1ec83cbb2f882a7a8e",
+      "bytes": 32306,
+      "sha256": "152243d769952d824d645f29fcfd7b8a8731e07307a95a5bb11814477a2fd46b",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/muskellunge.webp",
-      "bytes": 30144,
-      "sha256": "6cdd9419e4a8cd7877fc6575fb208b4ade35468f205ddf07cda05add77e387c5",
+      "bytes": 20240,
+      "sha256": "0bf03cd3dab8bf56e6619624b28cb833a33a0e08a5eb96d8ff5acae44522a40a",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/neon-tetra.webp",
-      "bytes": 28378,
-      "sha256": "3c863150025579247bce40da7aa92c09ab89e8d62223a548b65f13d8d7e787d8",
+      "bytes": 32358,
+      "sha256": "e080329ab664f207a97f9f5fc6dcadf6fc47378cc36e298b40e53bd8660fcb42",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/nile-tilapia.webp",
-      "bytes": 36270,
-      "sha256": "4f144c359bebb8996c98fb5ce1ac59f04f429e1aa93f61829211639b8c0a1c35",
+      "bytes": 49936,
+      "sha256": "2c1babf1f2615e83c396e02b43da588f7f58cd74d786c04c933151d08cc28394",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/northern-pike.webp",
-      "bytes": 26990,
-      "sha256": "b6d56cae55b17622498ab3b059f50ca446953f294d04900117f09953714af0ce",
+      "bytes": 37208,
+      "sha256": "e66fac9ab859bf21f50f092443ad3665721df229639f6174b894db0d776ef531",
       "contentType": "image/webp"
     },
     {
@@ -802,8 +802,8 @@
     },
     {
       "path": "fishes/ocean-sunfish.webp",
-      "bytes": 24112,
-      "sha256": "2d8b3132ed331ab46235381141a66f9c98e9df9ef6488fd719dd36521db87186",
+      "bytes": 27578,
+      "sha256": "fc9c6afa5969e11e8f23e678e53b788990bb8c2ecafcb178c92bd84a76e5f20a",
       "contentType": "image/webp"
     },
     {
@@ -814,8 +814,8 @@
     },
     {
       "path": "fishes/ocellaris-clownfish.webp",
-      "bytes": 38992,
-      "sha256": "948c429588f2f1535e517a8660bfc20a33b45a2571b65b622c0597cf01431886",
+      "bytes": 37316,
+      "sha256": "023f69c32838fac4e137e17d4250485d4e5fb56602cd32eea917066e47aecae9",
       "contentType": "image/webp"
     },
     {
@@ -826,14 +826,14 @@
     },
     {
       "path": "fishes/orange-spotted-filefish.webp",
-      "bytes": 35722,
-      "sha256": "90464d07c4f9d70980c1e479867b3739c37d45e2711ae1ece2d1d849c90f5397",
+      "bytes": 29108,
+      "sha256": "cc03827aea79bb5a4a47f2f2150d31bc6733f9382afe9baf5feabd18c563a627",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/oscar.webp",
-      "bytes": 62564,
-      "sha256": "893558f8604a0b466d3af04d5ec1b8070c1952bf861d67e30e6535ca423e34a1",
+      "bytes": 36298,
+      "sha256": "a77dd5d90a3e3d65d48688cd75dceea8c130202ac72d03e3a366d0e18ab89de0",
       "contentType": "image/webp"
     },
     {
@@ -844,8 +844,8 @@
     },
     {
       "path": "fishes/pacific-halibut.webp",
-      "bytes": 45952,
-      "sha256": "ebf16df714c69c30f6dec9c5bc306b6ec409df781d1c36114d1d010cb556b920",
+      "bytes": 53106,
+      "sha256": "21133c2d118f9dd2087cd371ce24d99cb738f07cfe59996815d22d7014f89a92",
       "contentType": "image/webp"
     },
     {
@@ -886,8 +886,8 @@
     },
     {
       "path": "fishes/pond-loach.webp",
-      "bytes": 18136,
-      "sha256": "81b59af8841feed5cf793d989a741fd9922f86937172982a69db122e9f051daa",
+      "bytes": 22008,
+      "sha256": "76372eaace15176a1f8f1eda529dd8c6aae64f0cfbc7243930694bc91ca368a4",
       "contentType": "image/webp"
     },
     {
@@ -916,26 +916,26 @@
     },
     {
       "path": "fishes/rainbow-trout.webp",
-      "bytes": 62224,
-      "sha256": "9ded67f3ee65aa3dc6de28162bb5339c28b4aebb1e238ca07ae72520a748812f",
+      "bytes": 42714,
+      "sha256": "cad96d9f0a8783227315c2a2134b10fe87d3a127dfcab2bad4fcd0f7582db774",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/red-bellied-piranha.webp",
-      "bytes": 74106,
-      "sha256": "7dc50328086984f8f8e6c563d8c625a5fc853bc2cd9f0e5c7dd31afa0fb8c05f",
+      "bytes": 51254,
+      "sha256": "fc58a92416d964e157801375579cd99228e1e572a41c20f0b7f7f87ff9072f12",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/red-discus.webp",
-      "bytes": 53486,
-      "sha256": "efe3eabd7eb542416107ab3cc22d1eef16cf580ac7c7ea8915bee83cb7266919",
+      "bytes": 78394,
+      "sha256": "8a3e5e380824a7ba2efa2b05399e1b374693db040990bf67c2fe5069bcc1a4ec",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/red-lionfish.webp",
-      "bytes": 82928,
-      "sha256": "c18c1a7042c5688bef4a5b956122337a2b33197897edbb6547a2010902405f9d",
+      "bytes": 65654,
+      "sha256": "4b9b85ac9e06bcbcc1df3e5beb85bbeef00c6b2aff1f5a779271584eeda4a842",
       "contentType": "image/webp"
     },
     {
@@ -946,14 +946,14 @@
     },
     {
       "path": "fishes/redtail-catfish.webp",
-      "bytes": 37436,
-      "sha256": "cb85987dce3ae8ab779748d3f91162044e2549bba2f893ab0eac99310b46e620",
+      "bytes": 47560,
+      "sha256": "822ded803455f6772d10e703d303ab54b4e5b8c6814f04d670a492761af5d5db",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/royal-gramma.webp",
-      "bytes": 29072,
-      "sha256": "c6edab8afcfd4668448af41ab7cf4d74facd65e66a2f57e8c62ffd1f19450b66",
+      "bytes": 47170,
+      "sha256": "10c5a602e80a82ce64d92a7bc6fecd675698ac37bac6884f5f99be2427a81f91",
       "contentType": "image/webp"
     },
     {
@@ -964,14 +964,14 @@
     },
     {
       "path": "fishes/sailfish.webp",
-      "bytes": 38334,
-      "sha256": "60f4a909db45917a5c3824531f893443dbb727dfb553e1f6c37d1083941910f5",
+      "bytes": 26000,
+      "sha256": "b5ae17328cdebb5a9130cf5fb84a71eadd8cd6a2914b543658c2cdd13fbfda56",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/scalloped-hammerhead.webp",
-      "bytes": 32282,
-      "sha256": "ef2d95e1703bbf805907dd70e522d1ecabac62703da588ed581b394372003f9d",
+      "bytes": 25622,
+      "sha256": "d512056468c59e5bceed3297c08a7f0f1d155188079ef9a4c29ce7a2b7897184",
       "contentType": "image/webp"
     },
     {
@@ -988,20 +988,20 @@
     },
     {
       "path": "fishes/siamese-fighting-fish.webp",
-      "bytes": 88514,
-      "sha256": "0eb40e4f6413c357eaf1a41db751d27c10edf3ed0a90464a8e6cec84fef444cb",
+      "bytes": 54450,
+      "sha256": "bcbfb697745e0063e2fa6f5d774e16cd34b0082ddfbabb7d2a56ba06539d9d22",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/silver-arowana.webp",
-      "bytes": 37736,
-      "sha256": "e8f3c3c075f81ca6b7a14064053fd93e63a082a3f07816a23de82f4b31fe97bd",
+      "bytes": 25186,
+      "sha256": "4231b0ca9e795062605034180a6aad7231a16cd4f6b7d1403cc19609faf886c2",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/silver-carp.webp",
-      "bytes": 49168,
-      "sha256": "1fbd1438efab4f21ecdfcb48b4171ffa2da23b9c492f2c399e31a069b696e94d",
+      "bytes": 37998,
+      "sha256": "3a2e7bc332d1c285927d7b523467292820327576181ed8c67d49ecd244399a95",
       "contentType": "image/webp"
     },
     {
@@ -1012,14 +1012,14 @@
     },
     {
       "path": "fishes/sloanes-viperfish.webp",
-      "bytes": 43532,
-      "sha256": "c30b1fc20c12b1c294c9b529602c4587b731559d88613c732ea5c1d5f4c58f18",
+      "bytes": 45322,
+      "sha256": "ddaea233b62322a2621481587bb931fe71a147b938b3c81568e77aae41cc1f75",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/smallmouth-bass.webp",
-      "bytes": 59796,
-      "sha256": "4a7d8639ac13351ff4dc6ef83a09d62989c6d30ae0dd6eee2544aba923929b8a",
+      "bytes": 59000,
+      "sha256": "7103ccb3eea68708a7ab7ca5dffb6bb0d53e9d4c2e3957af9c47d6d45bfa66c9",
       "contentType": "image/webp"
     },
     {
@@ -1036,8 +1036,8 @@
     },
     {
       "path": "fishes/sockeye-salmon.webp",
-      "bytes": 31162,
-      "sha256": "a910aa48c33f94a3b7272711ac0ce74d6f701a383602f412796953732b654a5f",
+      "bytes": 31980,
+      "sha256": "12852a87e5c29bfefcd89e06bba86985f2f43d07f807aac48daa40f7d762295f",
       "contentType": "image/webp"
     },
     {
@@ -1048,8 +1048,8 @@
     },
     {
       "path": "fishes/spotted-boxfish.webp",
-      "bytes": 54222,
-      "sha256": "7ee7d3eadb902bb7f599b3670c2bced9484b4172e3e7dce6d196813c552a15be",
+      "bytes": 55992,
+      "sha256": "6da0230171d620d02f7be3df8c8749f8c4daa0c2da7b37691a7959df1336e432",
       "contentType": "image/webp"
     },
     {
@@ -1066,8 +1066,8 @@
     },
     {
       "path": "fishes/spotted-seahorse.webp",
-      "bytes": 74666,
-      "sha256": "fec05ed3cf4ae68693c82ddae7e18011870e1e52657152020c91a69bce4131f4",
+      "bytes": 44298,
+      "sha256": "387b86be67b3396e157c2fd619caf82d1a433a88f2859e16599c41efff753cfd",
       "contentType": "image/webp"
     },
     {
@@ -1084,14 +1084,14 @@
     },
     {
       "path": "fishes/swordfish.webp",
-      "bytes": 37498,
-      "sha256": "4bec0b9e5d6f7bc967ba015b94d6bbd45aac4acb865cff18d9be7755bf0cfbde",
+      "bytes": 24218,
+      "sha256": "c96cc45c7b3ea1575b178e59e2bccfa06662426b4dbe987467da2139a7540303",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/tambaqui.webp",
-      "bytes": 39820,
-      "sha256": "3aff994539d104b1cb88779a6ebc0f495294c5c1925c71955009265e0e73699f",
+      "bytes": 57778,
+      "sha256": "8f3516127e78278693d9602889f2edd9d5a50da8d75cbe7252550d3f23974d1c",
       "contentType": "image/webp"
     },
     {
@@ -1102,8 +1102,8 @@
     },
     {
       "path": "fishes/threadfin-butterflyfish.webp",
-      "bytes": 33840,
-      "sha256": "5c0870a12bd3c88fa199797eb62fe22aff4714dde525d17bfb88538079895aee",
+      "bytes": 40774,
+      "sha256": "3f67a769cd5a5e45f1066e58b436adbf0d3078c62d1a61033d12eede32cb26cc",
       "contentType": "image/webp"
     },
     {
@@ -1120,8 +1120,8 @@
     },
     {
       "path": "fishes/titan-triggerfish.webp",
-      "bytes": 52610,
-      "sha256": "b05e017145e4054f311a8441bc9ea95e25537ca2aa3a22ea1b19b1d7ed7d3889",
+      "bytes": 41144,
+      "sha256": "f80943a0f8867fc61522a894649bbe85c2579b46c375740f9fa1ec40b2e9d602",
       "contentType": "image/webp"
     },
     {
@@ -1132,32 +1132,32 @@
     },
     {
       "path": "fishes/wahoo.webp",
-      "bytes": 18666,
-      "sha256": "ad3e1706eb9583b63c62cea4904dafa41cc22ef1c665acc5bd5e9c528f75ef0d",
+      "bytes": 26276,
+      "sha256": "de2ebc434bc209ef91ad1c026fb22fafedf21d1b7346f15518b03a774d491259",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/wels-catfish.webp",
-      "bytes": 26998,
-      "sha256": "c08d4c0ebf4fe4627a22b5d79272e9233ba0c8bb1222babe4f2c2cc14ac9df0a",
+      "bytes": 23608,
+      "sha256": "9d75c11a717d0b3eb7e37d22776f60cdb267f81cec4ebe0539a676378b3bfcf0",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/west-african-lungfish.webp",
-      "bytes": 27520,
-      "sha256": "c020da45cda7f51345c650ff936df11f6afbb22d409f20b757da06952faeab85",
+      "bytes": 26582,
+      "sha256": "23ef306aecb51f40f74305dacd663979dd7f815d2bc1a661d246372f70d99e8d",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/west-indian-coelacanth.webp",
-      "bytes": 38850,
-      "sha256": "f92665d6f15baf66858d2bfcbc2ecab4fd099eedd6b8aa6378b6de2618242e3d",
+      "bytes": 49422,
+      "sha256": "86fda6c98f87881e29eefbae6f15317ef914ba7c48cd7fc725cbccf9cfb50289",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/whale-shark.webp",
-      "bytes": 26928,
-      "sha256": "060bc0ab52c3e5b50fd4939733b9ce524db235d52d5d8c81c378f44d63d314fe",
+      "bytes": 35328,
+      "sha256": "740980228040fdce48fb3d733900114e9ef69fed26d583ed5aee32ca38e0736a",
       "contentType": "image/webp"
     },
     {
@@ -1192,8 +1192,8 @@
     },
     {
       "path": "fishes/yellow-tang.webp",
-      "bytes": 28604,
-      "sha256": "8554424688f646612c8b4bbe6e3f7d7bc47e9d045d978154970b2402ff75455c",
+      "bytes": 31000,
+      "sha256": "2e90e3d74ff2aa7ae540df36763fa49d3ff56ed690dcfca520e245ebbfa087d4",
       "contentType": "image/webp"
     },
     {
@@ -1210,20 +1210,20 @@
     },
     {
       "path": "fishes/zander.webp",
-      "bytes": 33930,
-      "sha256": "cf8e19b3511b3516997eb12013594dff521eea9ccdfbb792bf1a62ac798268d7",
+      "bytes": 41648,
+      "sha256": "cd35e14b67f0bc2765d815f96cdae32aafad45283ac493bc02b55abfa2438f3a",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/zebra-shark.webp",
-      "bytes": 25102,
-      "sha256": "0cec47398f0a3a64e9ef91da0dce34457a3b9e1b20b3c831454ca003688b4445",
+      "bytes": 29116,
+      "sha256": "62d09bb8fbdaf7fc199a7b1a8e6931903dd8fac1ce6484acfebee11071487757",
       "contentType": "image/webp"
     },
     {
       "path": "fishes/zebrafish.webp",
-      "bytes": 30528,
-      "sha256": "833c3f2c36bcd09e086f5b0d3f0362eb41795e5c2724e99174f81b4ef279bfaa",
+      "bytes": 35152,
+      "sha256": "5095367cfba0dcb90dc9cfc6a54a78f651d0cf53e3e84af3c3a44a342ca2de5d",
       "contentType": "image/webp"
     },
     {

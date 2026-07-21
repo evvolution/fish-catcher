@@ -12,6 +12,7 @@ const projectRoot = process.cwd();
 const assetDirectory = path.join(projectRoot, "public/assets/fishes");
 const catalogPath = path.join(projectRoot, "src/lib/fish-species.json");
 const refresh = process.argv.includes("--refresh");
+const preferFishBase = process.argv.includes("--prefer-fishbase");
 const refreshSlugs = new Set(
   process.argv.find((argument) => argument.startsWith("--refresh="))?.slice("--refresh=".length).split(",") ?? [],
 );
@@ -46,6 +47,7 @@ const preferredImageTitles = new Map([
 ]);
 
 const preferredDirectImages = new Map([
+  ["Labroides dimidiatus", directFishBaseImage("Ladim_j0.jpg", "Labroides", "dimidiatus", "Field, R.")],
   ["Larimichthys polyactis", directFishBaseImage("Lapol_u7.jpg", "Larimichthys", "polyactis", "Yau, B.")],
   ["Larimichthys crocea", directFishBaseImage("Lacro_u1.jpg", "Larimichthys", "crocea", "Lai, N.-W.")],
   ["Mallotus villosus", directFishBaseImage("Mavil_f0.jpg", "Mallotus", "villosus", "Armesto, A.")],
@@ -278,7 +280,16 @@ for (let index = 0; index < speciesSeeds.length; index += 1) {
     continue;
   }
 
-  const image = imageFromFrozenSource(seed.scientificName, existing) ?? (await findCommonsImage(seed.scientificName));
+  const fishBaseImage = preferFishBase
+    ? preferredDirectImages.get(seed.scientificName) ?? (await findFishBaseImage(seed.scientificName))
+    : null;
+  if (preferFishBase && !fishBaseImage && existing) {
+    process.stdout.write(`${String(index + 1).padStart(3, "0")} ${seed.scientificName} (kept existing)\n`);
+    catalog.push({ ...seed, ...pickImageMetadata(existing), sortOrder: index + 1 });
+    continue;
+  }
+  const image =
+    fishBaseImage ?? imageFromFrozenSource(seed.scientificName, existing) ?? (await findCommonsImage(seed.scientificName));
   const response = await fetchImage(image);
   const bytes = Buffer.from(await response.arrayBuffer());
   const sourcePath = path.join(os.tmpdir(), `fish-catcher-source-${randomUUID()}`);
@@ -398,6 +409,29 @@ async function findCommonsImage(scientificName) {
   if (!candidates.length) candidates = await searchCommonsImages(scientificName, scientificName);
   if (!candidates[0]) throw new Error(`No Wikimedia Commons image found for ${scientificName}.`);
   return candidates[0];
+}
+
+async function findFishBaseImage(scientificName) {
+  const [genus, species] = scientificName.split(" ");
+  if (!genus || !species) return null;
+
+  const descriptionUrl =
+    `https://www.fishbase.se/FieldGuide/FieldGuideSummary.php?genusname=${encodeURIComponent(genus)}` +
+    `&speciesname=${encodeURIComponent(species)}`;
+  const response = await fetchWithRetry(descriptionUrl);
+  const html = await response.text();
+  const imagePath = html.match(/(?:\.\.\/)?images\/species\/[^"']+\.(?:jpg|jpeg|png)/i)?.[0];
+  if (!imagePath) return null;
+
+  const author = html.match(/photo by[\s\S]{0,180}?<font[^>]*>([^<]+)<\/font>/i)?.[1]?.trim() || null;
+  return {
+    url: new URL(imagePath.replace(/^\.\./, ""), "https://www.fishbase.se/").toString(),
+    descriptionUrl,
+    sourceName: "FishBase",
+    author,
+    licenseLabel: "FishBase photo terms",
+    metadata: {},
+  };
 }
 
 function imageFromFrozenSource(scientificName, existing) {

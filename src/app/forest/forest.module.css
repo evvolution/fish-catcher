@@ -191,6 +191,45 @@
   line-height: 1.55;
 }
 
+.welcomeFishStatusGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px;
+  margin-top: 9px;
+}
+
+.welcomeFishStatusGrid > span {
+  display: flex;
+  min-width: 0;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 5px 3px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 11px;
+  background: rgba(5, 21, 25, 0.24);
+  text-align: center;
+}
+
+.welcomeFishStatusGrid small {
+  color: rgba(247, 249, 244, 0.42);
+  font-size: 7px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+}
+
+.welcomeFishStatusGrid strong {
+  overflow: hidden;
+  max-width: 100%;
+  margin-top: 2px;
+  color: rgba(249, 250, 246, 0.82);
+  font-size: 9px;
+  font-weight: 680;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .welcomeFishFact {
   display: -webkit-box;
   overflow: hidden;
@@ -199,7 +238,7 @@
   font-size: 10px;
   line-height: 1.5;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1;
 }
 
 .welcomeFishFact span {

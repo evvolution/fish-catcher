@@ -47,6 +47,32 @@ const OCCUPATION_SHORT_LABELS: Record<string, string> = {
   accounting: "会计",
 };
 
+const PROTECTION_LABELS: Record<FishSpeciesRecord["chinaProtectionStatus"], string> = {
+  NONE: "未列入",
+  NATIONAL_II: "国家二级",
+  WILD_ONLY_NATIONAL_II: "野生二级",
+  CITES_APPROVED_I: "核准一级",
+  CITES_APPROVED_II: "核准二级",
+  WILD_ONLY_CITES_APPROVED_II: "野生二级",
+};
+
+const TOXICITY_LABELS: Record<FishSpeciesRecord["toxicityStatus"], string> = {
+  NONE_KNOWN: "无已知",
+  VENOMOUS: "有毒棘",
+  TOXIC_TISSUE: "组织有毒",
+  TOXIC_PART: "局部有毒",
+  ELECTRIC: "强电风险",
+  CIGUATERA_RISK: "雪卡风险",
+};
+
+const EDIBILITY_LABELS: Record<FishSpeciesRecord["edibilityStatus"], string> = {
+  EDIBLE: "可食用",
+  CONDITIONAL: "谨慎食用",
+  NOT_RECOMMENDED: "不建议",
+  LEGAL_PROHIBITED: "法律禁食",
+  WILD_ONLY_PROHIBITED: "野生禁食",
+};
+
 // 2025 full-year GDP order. The first four shortcuts intentionally follow 北上广深, not this ranking.
 const GDP_CITY_OPTIONS: CityOption[] = [
   { value: "shanghai", label: "上海" },
@@ -749,6 +775,12 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
 }
 
 function WelcomeOverlay({ fish, onDismiss }: { fish: FishSpeciesRecord | null; onDismiss: () => void }) {
+  const protectionLabel = fish
+    ? fish.chinaProtectionStatus === "NONE" && fish.citesAppendix !== "NONE"
+      ? `CITES ${fish.citesAppendix}`
+      : PROTECTION_LABELS[fish.chinaProtectionStatus]
+    : "";
+
   return (
     <motion.section
       className={styles.welcomeOverlay}
@@ -803,6 +835,27 @@ function WelcomeOverlay({ fish, onDismiss }: { fish: FishSpeciesRecord | null; o
                       <p className={styles.welcomeScientificName}>{fish.scientificName}</p>
                     </div>
                     <p className={styles.welcomeFishSummary}>{fish.summary}</p>
+                    <div
+                      className={styles.welcomeFishStatusGrid}
+                      aria-label={`截至${fish.legalReviewedAt}：保护状态${protectionLabel}，三有不适用，毒性${TOXICITY_LABELS[fish.toxicityStatus]}，食用建议${EDIBILITY_LABELS[fish.edibilityStatus]}`}
+                    >
+                      <span>
+                        <small>保护</small>
+                        <strong>{protectionLabel}</strong>
+                      </span>
+                      <span>
+                        <small>三有</small>
+                        <strong>不适用</strong>
+                      </span>
+                      <span>
+                        <small>毒性</small>
+                        <strong>{TOXICITY_LABELS[fish.toxicityStatus]}</strong>
+                      </span>
+                      <span>
+                        <small>食用</small>
+                        <strong>{EDIBILITY_LABELS[fish.edibilityStatus]}</strong>
+                      </span>
+                    </div>
                     <p className={styles.welcomeFishFact}><span>习性</span>{fish.habits}</p>
                     <p className={styles.welcomeFishFact}><span>分布</span>{fish.distribution}</p>
                   </figcaption>

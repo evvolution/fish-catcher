@@ -13,7 +13,7 @@
     "typecheck": "tsc --noEmit",
     "build:quotes": "node scripts/build-gap-copy-corpus.mjs",
     "build:forums": "node scripts/build-forum-copy.mjs",
-    "build:fishes": "node scripts/build-fish-catalog.mjs",
+    "build:fishes": "node scripts/build-fish-catalog.mjs && node scripts/apply-fish-safety-profiles.mjs",
     "build:assets": "node scripts/build-asset-manifest.mjs",
     "check:fishes": "node scripts/check-fish-catalog.mjs",
     "check:assets": "node scripts/build-asset-manifest.mjs --check",

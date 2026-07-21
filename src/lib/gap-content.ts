@@ -128,6 +128,14 @@ type CitySeed = {
 };
 
 type FishSpeciesSeed = Omit<FishSpeciesRecord, "id"> & {
+  chinaProtectionNote: string;
+  chinaProtectionBasis: string;
+  chinaProtectionSourceUrl: string;
+  citesNote: string;
+  citesSourceUrl: string;
+  threeHaveNote: string;
+  toxicityNote: string;
+  edibilityNote: string;
   sourceName: string;
   sourcePageUrl: string;
   imageSourceName: string;
@@ -137,7 +145,8 @@ type FishSpeciesSeed = Omit<FishSpeciesRecord, "id"> & {
   sortOrder: number;
 };
 
-const fishSpeciesSeeds = fishSpeciesData satisfies FishSpeciesSeed[];
+// ponytail: the catalog checker validates these generated status strings more usefully than widening every JSON literal.
+const fishSpeciesSeeds = fishSpeciesData as FishSpeciesSeed[];
 const dimensionGroupSeeds: DimensionGroupSeed[] = [
   {
     key: "time_of_day",
@@ -678,6 +687,7 @@ export async function ensureGapMomentSeedData() {
     staleGeneratedCopyCount,
     legacyActiveCount,
     fishSpeciesCount,
+    reviewedFishSpeciesCount,
   ] = await Promise.all([
     prisma.momentActivity.count(),
     prisma.copywritingEntry.count(),
@@ -714,6 +724,7 @@ export async function ensureGapMomentSeedData() {
     }),
     prisma.copywritingEntry.count({ where: { slug: { in: legacyGeneratedCopySlugs }, isActive: true } }),
     prisma.fishSpecies.count({ where: { isActive: true } }),
+    prisma.fishSpecies.count({ where: { isActive: true, legalReviewedAt: "2026-07-21" } }),
   ]);
 
   if (
@@ -728,7 +739,8 @@ export async function ensureGapMomentSeedData() {
     generatedDimensionLinkCount === expectedGeneratedDimensionLinkCount &&
     staleGeneratedCopyCount === 0 &&
     legacyActiveCount === 0 &&
-    fishSpeciesCount === fishSpeciesSeeds.length
+    fishSpeciesCount === fishSpeciesSeeds.length &&
+    reviewedFishSpeciesCount === fishSpeciesSeeds.length
   ) {
     return;
   }
@@ -878,6 +890,20 @@ export async function ensureGapMomentSeedData() {
             habits: fish.habits,
             distribution: fish.distribution,
             imagePath: fish.imagePath,
+            chinaProtectionStatus: fish.chinaProtectionStatus,
+            chinaProtectionNote: fish.chinaProtectionNote,
+            chinaProtectionBasis: fish.chinaProtectionBasis,
+            chinaProtectionSourceUrl: fish.chinaProtectionSourceUrl,
+            citesAppendix: fish.citesAppendix,
+            citesNote: fish.citesNote,
+            citesSourceUrl: fish.citesSourceUrl,
+            threeHaveStatus: fish.threeHaveStatus,
+            threeHaveNote: fish.threeHaveNote,
+            toxicityStatus: fish.toxicityStatus,
+            toxicityNote: fish.toxicityNote,
+            edibilityStatus: fish.edibilityStatus,
+            edibilityNote: fish.edibilityNote,
+            legalReviewedAt: fish.legalReviewedAt,
             sourceName: fish.sourceName,
             sourcePageUrl: fish.sourcePageUrl,
             imageSourceName: fish.imageSourceName,
@@ -899,6 +925,20 @@ export async function ensureGapMomentSeedData() {
             habits: fish.habits,
             distribution: fish.distribution,
             imagePath: fish.imagePath,
+            chinaProtectionStatus: fish.chinaProtectionStatus,
+            chinaProtectionNote: fish.chinaProtectionNote,
+            chinaProtectionBasis: fish.chinaProtectionBasis,
+            chinaProtectionSourceUrl: fish.chinaProtectionSourceUrl,
+            citesAppendix: fish.citesAppendix,
+            citesNote: fish.citesNote,
+            citesSourceUrl: fish.citesSourceUrl,
+            threeHaveStatus: fish.threeHaveStatus,
+            threeHaveNote: fish.threeHaveNote,
+            toxicityStatus: fish.toxicityStatus,
+            toxicityNote: fish.toxicityNote,
+            edibilityStatus: fish.edibilityStatus,
+            edibilityNote: fish.edibilityNote,
+            legalReviewedAt: fish.legalReviewedAt,
             sourceName: fish.sourceName,
             sourcePageUrl: fish.sourcePageUrl,
             imageSourceName: fish.imageSourceName,
@@ -1136,6 +1176,12 @@ async function loadForestCatalog(): Promise<ForestCatalog> {
         habits: true,
         distribution: true,
         imagePath: true,
+        chinaProtectionStatus: true,
+        citesAppendix: true,
+        threeHaveStatus: true,
+        toxicityStatus: true,
+        edibilityStatus: true,
+        legalReviewedAt: true,
       },
     }),
   ]);
@@ -1226,6 +1272,12 @@ async function loadForestCatalog(): Promise<ForestCatalog> {
       habits: fish.habits,
       distribution: fish.distribution,
       imagePath: fish.imagePath,
+      chinaProtectionStatus: fish.chinaProtectionStatus as FishSpeciesRecord["chinaProtectionStatus"],
+      citesAppendix: fish.citesAppendix as FishSpeciesRecord["citesAppendix"],
+      threeHaveStatus: fish.threeHaveStatus as FishSpeciesRecord["threeHaveStatus"],
+      toxicityStatus: fish.toxicityStatus as FishSpeciesRecord["toxicityStatus"],
+      edibilityStatus: fish.edibilityStatus as FishSpeciesRecord["edibilityStatus"],
+      legalReviewedAt: fish.legalReviewedAt,
     })),
   };
 }
@@ -1560,12 +1612,12 @@ function buildStaticForestCatalog(): ForestCatalog {
       habits: fish.habits,
       distribution: fish.distribution,
       imagePath: fish.imagePath,
-      sourceName: fish.sourceName,
-      sourcePageUrl: fish.sourcePageUrl,
-      imageSourceName: fish.imageSourceName,
-      imageSourcePageUrl: fish.imageSourcePageUrl,
-      imageAuthor: fish.imageAuthor,
-      licenseLabel: fish.licenseLabel,
+      chinaProtectionStatus: fish.chinaProtectionStatus,
+      citesAppendix: fish.citesAppendix,
+      threeHaveStatus: fish.threeHaveStatus,
+      toxicityStatus: fish.toxicityStatus,
+      edibilityStatus: fish.edibilityStatus,
+      legalReviewedAt: fish.legalReviewedAt,
     })),
   };
 }
