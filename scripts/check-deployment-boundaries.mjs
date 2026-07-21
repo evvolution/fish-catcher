@@ -7,6 +7,10 @@ import { DEFAULT_ASSET_BASE_URL, resolveAssetUrl } from "../src/lib/asset-url.ts
 const projectRoot = process.cwd();
 const uploadRoot = path.join(projectRoot, "oss-upload/fish/assets");
 const manifestPath = path.join(uploadRoot, "manifest.json");
+const backgroundMigrationPath = path.join(
+  projectRoot,
+  "prisma/migrations/20260721180000_update_background_paths_to_webp/migration.sql",
+);
 
 assert.equal(
   resolveAssetUrl(DEFAULT_ASSET_BASE_URL, "/assets/icons/fish.svg"),
@@ -41,6 +45,12 @@ assert.equal(
   0,
   "Raster images in the OSS upload directory must be WebP",
 );
+
+const backgroundMigration = await fs.readFile(backgroundMigrationPath, "utf8");
+for (const backgroundName of ["mist-lake-dawn", "forest-light-path", "mountain-dusk", "tea-window-night"]) {
+  assert(backgroundMigration.includes(`/assets/backgrounds/${backgroundName}.jpg`));
+  assert(backgroundMigration.includes(`/assets/backgrounds/${backgroundName}.webp`));
+}
 
 const vueFiles = (await walk(path.join(projectRoot, "app"))).filter((filePath) => filePath.endsWith(".vue"));
 for (const filePath of vueFiles) {
