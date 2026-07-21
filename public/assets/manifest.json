@@ -1233,16 +1233,16 @@
       "contentType": "image/webp"
     },
     {
-      "path": "fonts/Alibaba-PuHuiTi-Medium.ttf",
-      "bytes": 9560068,
-      "sha256": "09eea65b54cfdfb30e11cd00f51035438870da12a090aa997add87be3df3ea73",
-      "contentType": "font/ttf"
+      "path": "fonts/Alibaba-PuHuiTi-Medium.subset.woff2",
+      "bytes": 534280,
+      "sha256": "db3e9fd26d848005271a4e8ce458ac8d00c1b9edda115760c52b718761b2c460",
+      "contentType": "font/woff2"
     },
     {
-      "path": "fonts/SourceHanSerifSC-Medium.otf",
-      "bytes": 24805580,
-      "sha256": "1d4dc4b757c07034e2412d6edf48f54f94ec7172d4deb3b90a3e4fc9dcb94f5d",
-      "contentType": "font/otf"
+      "path": "fonts/SourceHanSerifSC-Medium.subset.woff2",
+      "bytes": 1854680,
+      "sha256": "beeccb30bdfe504fd659ac6cbd4a600df243cc046c81a01ed5486593befd453b",
+      "contentType": "font/woff2"
     },
     {
       "path": "icons/book.svg",

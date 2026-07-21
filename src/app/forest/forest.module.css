@@ -461,7 +461,7 @@
   max-width: calc(100% - 48px);
   margin: 0;
   color: rgba(246, 248, 242, 0.58);
-  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-family: var(--font-serif);
   font-size: 11px;
   font-style: italic;
   font-weight: 580;
@@ -732,7 +732,7 @@
 .resultCopy {
   max-width: 430px;
   margin: clamp(44px, 9vh, 82px) 0 0;
-  font-family: "Songti SC", "STSong", serif;
+  font-family: var(--font-serif);
   font-size: clamp(28px, 7.6vw, 40px);
   font-weight: 600;
   line-height: 1.47;
@@ -777,7 +777,7 @@
 
 .cardDropContent {
   margin: 12px 0 0;
-  font-family: "Songti SC", "STSong", serif;
+  font-family: var(--font-serif);
   font-size: 18px;
   line-height: 1.65;
   white-space: pre-line;
@@ -942,10 +942,13 @@
   position: absolute;
   top: 50%;
   right: 12px;
+  width: 6px;
+  height: 6px;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
   color: rgba(32, 54, 56, 0.48);
-  font-size: 14px;
-  line-height: 1;
-  transform: translateY(-50%);
+  font-size: 0;
+  transform: translateY(-85%) rotate(45deg);
 }
 
 .field {
@@ -1163,6 +1166,12 @@
   font-weight: 600;
 }
 
+.customOccupationChip {
+  border-color: rgba(105, 87, 55, 0.14);
+  background: rgba(226, 214, 183, 0.52);
+  color: rgba(80, 68, 48, 0.82);
+}
+
 .choiceChipActive {
   border-color: transparent;
   background: #264447;
@@ -1255,7 +1264,7 @@
 .logCopy {
   margin: 10px 0 0;
   color: #203638;
-  font-family: "Songti SC", "STSong", serif;
+  font-family: var(--font-serif);
   font-size: 14px;
   line-height: 1.6;
 }
@@ -1412,7 +1421,7 @@
   border-radius: 50%;
   background: linear-gradient(145deg, rgba(231, 239, 217, 0.86), rgba(188, 211, 198, 0.72));
   color: rgba(32, 54, 56, 0.72);
-  font-family: "Songti SC", "STSong", serif;
+  font-family: var(--font-serif);
   font-size: 15px;
   font-weight: 700;
 }
@@ -1474,7 +1483,7 @@
 
 .cardItemContent {
   margin: 10px 0 0;
-  font-family: "Songti SC", "STSong", serif;
+  font-family: var(--font-serif);
   font-size: 15px;
   line-height: 1.65;
 }

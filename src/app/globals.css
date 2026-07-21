@@ -1,7 +1,25 @@
+@font-face {
+  font-family: "Gap Sans";
+  src: url("/assets/fonts/Alibaba-PuHuiTi-Medium.subset.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gap Serif";
+  src: url("/assets/fonts/SourceHanSerifSC-Medium.subset.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
 :root {
   color-scheme: light;
   --page-background: #e9eeeb;
   --page-foreground: #1d2d2d;
+  --font-sans: "Gap Sans", -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-serif: "Gap Serif", "Songti SC", "STSong", Georgia, "Times New Roman", serif;
 }
 
 * {
@@ -19,14 +37,7 @@ body {
   min-height: 100vh;
   background: var(--page-background);
   color: var(--page-foreground);
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "SF Pro Text",
-    "PingFang SC",
-    "Hiragino Sans GB",
-    "Microsoft YaHei",
-    sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }

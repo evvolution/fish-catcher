@@ -1315,8 +1315,8 @@ function OccupationPicker({
           type="button"
           className={
             occupationDraft === CUSTOM_OCCUPATION_VALUE
-              ? `${styles.choiceChip} ${styles.choiceChipActive}`
-              : styles.choiceChip
+              ? `${styles.choiceChip} ${styles.customOccupationChip} ${styles.choiceChipActive}`
+              : `${styles.choiceChip} ${styles.customOccupationChip}`
           }
           aria-expanded={occupationDraft === CUSTOM_OCCUPATION_VALUE}
           onClick={() => onOccupationChange(CUSTOM_OCCUPATION_VALUE)}

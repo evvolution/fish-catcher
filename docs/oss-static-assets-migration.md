@@ -7,7 +7,7 @@
 - `backgrounds/`：首页与活动背景，WebP。
 - `data/`：全国省 / 市 / 区县三级区划、GDP 前 50 城市的 100 条地方食物估价，JSON。
 - `fishes/`：200 张 960×640 透明 WebP；文件名与鱼类 `slug` 一致。
-- `fonts/`：中文字体，TTF/OTF。
+- `fonts/`：按应用文案字集化的中文 WOFF2；原始 TTF/OTF 仅保留在 `assets/font-sources`，不上传 OSS。
 - `icons/`：界面 SVG 图标。
 - `manifest.json`：逐文件相对路径、字节数、MIME 与 SHA-256；它本身不参与哈希，避免递归变化。
 
@@ -31,7 +31,7 @@ https://<cdn-domain>/fish-catcher/assets/v1
 
 ## 上传前
 
-- 运行 `npm run check:fishes && npm run check:regions && npm run build:assets && npm run check:assets`。
+- 运行 `npm run check:fishes && npm run check:regions && npm run check:fonts && npm run build:assets && npm run check:assets`。
 - 保存 `public/assets/manifest.json`，确认文件数量、字节数与 SHA-256。
 - 确认 OSS Bucket 不允许目录列表和匿名写入；只开放静态文件读取。
 - 若使用自有 CDN 域名，将它加入 Next.js 图片远程来源配置后再切换。
@@ -44,7 +44,7 @@ https://<cdn-domain>/fish-catcher/assets/v1
 ossutil cp -r public/assets/ oss://<bucket>/fish-catcher/assets/v1/ --update
 ```
 
-按扩展名设置正确的 `Content-Type`：WebP 为 `image/webp`，SVG 为 `image/svg+xml`，JSON 为 `application/json`，TTF 为 `font/ttf`，OTF 为 `font/otf`。版本目录可统一设置：
+按扩展名设置正确的 `Content-Type`：WebP 为 `image/webp`，SVG 为 `image/svg+xml`，JSON 为 `application/json`，WOFF2 为 `font/woff2`。版本目录可统一设置：
 
 ```text
 Cache-Control: public, max-age=31536000, immutable
@@ -57,7 +57,7 @@ Cache-Control: public, max-age=31536000, immutable
 - 从 CDN 随机抽取背景、鱼图、字体、SVG 各 2 个，并核对 `data/regional-catalog.json`，与 `manifest.json` 的字节数和 SHA-256 对比。
 - 检查鱼图响应保留透明通道且 `Content-Type` 为 `image/webp`。
 - 检查首张鱼图与背景命中 CDN，后续只预取下一条鱼图，没有一次请求 200 张图片。
-- 检查 Brotli/Gzip 仅用于 SVG、JSON 等文本资源；不要重复压缩 WebP、TTF/OTF。
+- 检查 Brotli/Gzip 仅用于 SVG、JSON 等文本资源；不要重复压缩 WebP、WOFF2。
 - 验证 404 回源、跨域、HTTPS、移动网络下的超时与缓存命中率。
 - 切换 `ASSET_BASE_URL` 后保留上一版本至少一个发布周期，再清理旧目录。
 

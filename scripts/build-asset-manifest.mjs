@@ -15,6 +15,7 @@ const contentTypes = new Map([
   [".json", "application/json"],
   [".ttf", "font/ttf"],
   [".otf", "font/otf"],
+  [".woff2", "font/woff2"],
 ]);
 
 const files = (await walk(assetRoot))
