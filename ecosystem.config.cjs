@@ -24,7 +24,7 @@ module.exports = {
         ...fileEnv,
         NODE_ENV: "production",
         NITRO_HOST: fileEnv.NITRO_HOST || "127.0.0.1",
-        NITRO_PORT: fileEnv.NITRO_PORT || "3000",
+        NITRO_PORT: fileEnv.NITRO_PORT || "7667",
       },
     },
   ],

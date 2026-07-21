@@ -35,17 +35,19 @@ assert(deploySource.includes('rm -rf -- "$old_release"'));
 assert(deploySource.includes('PRISMA_ENGINES_MIRROR="${PRISMA_ENGINES_MIRROR:-https://cdn.npmmirror.com/binaries/prisma}"'));
 
 const require = createRequire(import.meta.url);
-const ecosystem = require(path.join(projectRoot, "ecosystem.config.cjs"));
+const ecosystemPath = path.join(projectRoot, "ecosystem.config.cjs");
+const ecosystemSource = fs.readFileSync(ecosystemPath, "utf8");
+const ecosystem = require(ecosystemPath);
 const app = ecosystem.apps?.[0];
 assert.equal(app?.name, "moyu");
 assert.equal(app?.script, "current/.output/server/index.mjs");
 assert.equal(app?.watch, false);
 assert.equal(app?.env_production?.NODE_ENV, "production");
 assert.equal(app?.env_production?.NITRO_HOST, "127.0.0.1");
-assert.equal(app?.env_production?.NITRO_PORT, "3000");
+assert(ecosystemSource.includes('NITRO_PORT: fileEnv.NITRO_PORT || "7667"'));
 
 const nginxSource = fs.readFileSync(path.join(projectRoot, "deploy/nginx-location.conf"), "utf8");
-assert(nginxSource.includes("proxy_pass http://127.0.0.1:3000;"));
+assert(nginxSource.includes("proxy_pass http://127.0.0.1:7667;"));
 assert(nginxSource.includes("proxy_set_header X-Forwarded-Proto $scheme;"));
 
 console.log("server deployment: temporary shallow build, artifact-only runtime and PM2 proxy are valid");

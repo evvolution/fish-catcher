@@ -52,7 +52,7 @@ install -m 600 /tmp/moyu-bootstrap/.env.example \
 rm -rf /tmp/moyu-bootstrap
 ```
 
-编辑 `/www/wwwroot/nefelibata/fish/.env`，确认数据库连接、最终域名、`NITRO_HOST=127.0.0.1` 与 `NITRO_PORT=3000`，然后首次发布：
+编辑 `/www/wwwroot/nefelibata/fish/.env`，确认数据库连接、最终域名、`NITRO_HOST=127.0.0.1` 与 `NITRO_PORT=7667`，然后首次发布：
 
 ```bash
 /www/wwwroot/nefelibata/fish/deploy/deploy.sh
@@ -87,11 +87,11 @@ ossutil cp -r oss-upload/fish/assets/ oss://apexres/fish/assets/ --update
 
 ## 宝塔反向代理
 
-`fish.nefelibata.ink` 反向代理目标设置为 `http://127.0.0.1:3000`，启用 HTTPS。不要向公网开放 3000 端口。等价配置见 `deploy/nginx-location.conf`。
+`fish.nefelibata.ink` 反向代理目标设置为 `http://127.0.0.1:7667`，启用 HTTPS。不要向公网开放 7667 端口。等价配置见 `deploy/nginx-location.conf`。
 
 ```bash
 pm2 status moyu
 pm2 logs moyu --lines 100
-curl -I http://127.0.0.1:3000
+curl -I http://127.0.0.1:7667
 curl -I https://fish.nefelibata.ink
 ```
