@@ -14,7 +14,7 @@ export default defineNuxtConfig({
       title: "摸鱼",
       meta: [
         { name: "description", content: "把碎片时间轻轻收好。" },
-        { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
+        { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" },
         { name: "theme-color", content: "#152b31" },
         { name: "referrer", content: "strict-origin-when-cross-origin" },
       ],
