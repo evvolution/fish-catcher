@@ -32,6 +32,7 @@ for (const forbiddenCommand of ["reset --hard", "checkout --", "clean -fd"]) {
 }
 assert(deploySource.includes('"$runtime_parent"/.moyu-build.*) rm -rf -- "$temporary_root"'));
 assert(deploySource.includes('rm -rf -- "$old_release"'));
+assert(deploySource.includes('PRISMA_ENGINES_MIRROR="${PRISMA_ENGINES_MIRROR:-https://cdn.npmmirror.com/binaries/prisma}"'));
 
 const require = createRequire(import.meta.url);
 const ecosystem = require(path.join(projectRoot, "ecosystem.config.cjs"));

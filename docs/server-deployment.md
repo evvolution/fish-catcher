@@ -77,7 +77,7 @@ git push origin main
 /www/wwwroot/nefelibata/fish/deploy/deploy.sh
 ```
 
-脚本会加部署锁、浅克隆最新 `main`、执行关闭审计与筹款请求的 `npm ci`、类型检查、Nuxt 构建与 Prisma 生产迁移，随后原子切换 `current` 链接并 reload PM2。关闭 npm 审计是因为部分镜像不实现安全审计 API，不影响锁文件安装；PM2 失败会尝试恢复旧链接，成功后仅保留当前 `.output`。
+脚本会加部署锁、浅克隆最新 `main`、执行关闭审计与筹款请求的 `npm ci`、类型检查、Nuxt 构建与 Prisma 生产迁移，随后原子切换 `current` 链接并 reload PM2。关闭 npm 审计是因为部分镜像不实现安全审计 API，不影响锁文件安装；Prisma 引擎默认从 `https://cdn.npmmirror.com/binaries/prisma` 下载并照常校验，可用 `PRISMA_ENGINES_MIRROR` 覆盖；PM2 失败会尝试恢复旧链接，成功后仅保留当前 `.output`。
 
 静态资源变化时仍需从配置好 ossutil 的机器同步 OSS，它们不会进入 Nuxt 运行产物：
 

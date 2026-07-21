@@ -11,6 +11,8 @@ readonly current_link="$runtime_dir/current"
 readonly lock_path="${XDG_RUNTIME_DIR:-/tmp}/moyu-deploy.lock"
 temporary_root=""
 
+export PRISMA_ENGINES_MIRROR="${PRISMA_ENGINES_MIRROR:-https://cdn.npmmirror.com/binaries/prisma}"
+
 fail() {
   printf '部署终止：%s\n' "$1" >&2
   exit 1
