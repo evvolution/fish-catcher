@@ -3,12 +3,15 @@ import type {
   BackgroundRecord,
   CollectedCard,
   CopywritingRecord,
+  FishSpeciesRecord,
   ForestCatalog,
   GuestForestStore,
   GuestProfile,
   MomentRecord,
 } from "@/lib/gap-types";
 import { gapSemanticPreferencesByActivity } from "@/lib/gap-semantics";
+import { packFoodBudget, type FoodBackpackItem } from "@/lib/food-backpack";
+import { regionalCatalog } from "@/lib/regional-catalog";
 
 const MOMENT_VALUE_CENTS_PER_SECOND = 6;
 const RECENT_COPY_LIMIT = 8;
@@ -18,12 +21,18 @@ const CARD_LIMIT = 40;
 export function createEmptyGuestStore(): GuestForestStore {
   return {
     profile: {
+      provinceCode: null,
+      provinceName: null,
+      cityCode: null,
       citySlug: null,
       cityName: null,
+      districtCode: null,
+      districtName: null,
       industrySlug: null,
       industryName: null,
       hasSeenOnboarding: false,
     },
+    totalAttentionCents: 0,
     recentCopyIds: [],
     records: [],
     cards: [],
@@ -39,21 +48,32 @@ export function sanitizeGuestStore(value: unknown): GuestForestStore {
 
   const candidate = value as Partial<GuestForestStore>;
   const profile = candidate.profile ?? empty.profile;
+  const records = Array.isArray(candidate.records)
+    ? candidate.records.filter(isMomentRecord).slice(0, RECORD_LIMIT)
+    : [];
+  const totalAttentionCents =
+    typeof candidate.totalAttentionCents === "number" && Number.isFinite(candidate.totalAttentionCents)
+      ? Math.max(0, Math.round(candidate.totalAttentionCents))
+      : records.reduce((total, record) => total + getMomentAttentionCents(record.durationSec), 0);
 
   return {
     profile: {
+      provinceCode: safeProfileString(profile.provinceCode, 12),
+      provinceName: safeProfileString(profile.provinceName, 32),
+      cityCode: safeProfileString(profile.cityCode, 12),
       citySlug: typeof profile.citySlug === "string" ? profile.citySlug : null,
       cityName: typeof profile.cityName === "string" ? profile.cityName.slice(0, 32) : null,
+      districtCode: safeProfileString(profile.districtCode, 12),
+      districtName: safeProfileString(profile.districtName, 32),
       industrySlug: typeof profile.industrySlug === "string" ? profile.industrySlug : null,
       industryName: typeof profile.industryName === "string" ? profile.industryName.slice(0, 32) : null,
       hasSeenOnboarding: Boolean(profile.hasSeenOnboarding),
     },
+    totalAttentionCents,
     recentCopyIds: Array.isArray(candidate.recentCopyIds)
       ? candidate.recentCopyIds.filter((item): item is string => typeof item === "string").slice(0, RECENT_COPY_LIMIT)
       : [],
-    records: Array.isArray(candidate.records)
-      ? candidate.records.filter(isMomentRecord).slice(0, RECORD_LIMIT)
-      : [],
+    records,
     cards: Array.isArray(candidate.cards)
       ? candidate.cards.filter(isCollectedCard).slice(0, CARD_LIMIT)
       : [],
@@ -185,22 +205,25 @@ export function maybeDropCard(
   } satisfies CollectedCard;
 }
 
-export function buildSnackSummary(catalog: ForestCatalog, citySlug: string | null, durationSec: number) {
-  if (!citySlug) {
-    return null;
-  }
+export function getMomentAttentionCents(durationSec: number) {
+  return Math.max(0, Math.round(Math.max(0, durationSec) * MOMENT_VALUE_CENTS_PER_SECOND));
+}
 
-  const city = catalog.cities.find((item) => item.slug === citySlug);
+export function buildSnackSummary(profile: GuestProfile, durationSec: number) {
+  const attentionCents = Math.max(200, getMomentAttentionCents(durationSec));
+  const localFoods = regionalCatalog.foods.find((entry) => entry.citySlug === profile.citySlug)?.items;
+  const foods = localFoods?.length ? localFoods : regionalCatalog.genericFoods;
+  const parts = buildFoodEquivalent(foods, attentionCents, Boolean(localFoods?.length));
+  const place = profile.cityName ? `${profile.cityName}这一带` : "通用城市";
 
-  if (!city || city.snacks.length === 0) {
-    return null;
-  }
+  return `${place}的这段摸鱼时光，约合 ${parts.join("、")}。`;
+}
 
-  const attentionCents = Math.max(200, Math.round(durationSec * MOMENT_VALUE_CENTS_PER_SECOND));
-  const snack = city.snacks[attentionCents % city.snacks.length];
-  const ratio = attentionCents / snack.priceCents;
-
-  return `大约相当于 ${formatSnackRatio(ratio)} ${snack.unitLabel}${city.name}的${snack.name}`;
+export function buildFoodBackpack(profile: GuestProfile, totalAttentionCents: number): FoodBackpackItem[] {
+  const localFoods = regionalCatalog.foods.find((entry) => entry.citySlug === profile.citySlug)?.items;
+  const cola = regionalCatalog.genericFoods.find((food) => food.name === "可乐");
+  const foods = localFoods?.length ? [...localFoods, ...(cola ? [cola] : [])] : regionalCatalog.genericFoods;
+  return packFoodBudget(foods, totalAttentionCents);
 }
 
 export function appendResultToStore(
@@ -235,12 +258,48 @@ export function appendResultToStore(
 
   return {
     ...store,
+    totalAttentionCents: store.totalAttentionCents + getMomentAttentionCents(result.durationSec),
     recentCopyIds: [result.copy.id, ...store.recentCopyIds.filter((item) => item !== result.copy.id)].slice(
       0,
       RECENT_COPY_LIMIT,
     ),
     records: [record, ...store.records].slice(0, RECORD_LIMIT),
     cards: result.droppedCard ? [result.droppedCard, ...store.cards].slice(0, CARD_LIMIT) : store.cards,
+  } satisfies GuestForestStore;
+}
+
+export function appendFishViewingToStore(
+  store: GuestForestStore,
+  result: {
+    fish: FishSpeciesRecord;
+    durationSec: number;
+    snackSummary: string;
+    endedAt: Date;
+    startedAt: Date;
+  },
+) {
+  const record: MomentRecord = {
+    id: `record_fish_${result.fish.slug}_${result.endedAt.getTime()}`,
+    activitySlug: "fish-viewing",
+    activityName: "看鱼",
+    startedAt: result.startedAt.toISOString(),
+    endedAt: result.endedAt.toISOString(),
+    durationSec: result.durationSec,
+    copyId: `fish:${result.fish.slug}`,
+    copyTitle: result.fish.scientificName,
+    copyContent: result.fish.summary,
+    backgroundSlug: null,
+    snackSummary: result.snackSummary,
+    droppedCardId: null,
+    fishSlug: result.fish.slug,
+    fishName: result.fish.commonNameZh,
+    fishImagePath: result.fish.imagePath,
+  };
+
+  return {
+    ...store,
+    totalAttentionCents: store.totalAttentionCents + getMomentAttentionCents(result.durationSec),
+    records: [record, ...store.records].slice(0, RECORD_LIMIT),
   } satisfies GuestForestStore;
 }
 
@@ -421,6 +480,10 @@ function pickWeighted<T>(items: Array<{ item: T; weight: number }>) {
 }
 
 function formatSnackRatio(value: number) {
+  if (Number.isInteger(value)) {
+    return `${value}`;
+  }
+
   if (value >= 10) {
     return `${Math.round(value)}`;
   }
@@ -430,6 +493,54 @@ function formatSnackRatio(value: number) {
   }
 
   return value.toFixed(2);
+}
+
+function buildFoodEquivalent(
+  foods: Array<{ name: string; unit: string; priceCents: number }>,
+  budgetCents: number,
+  hasLocalFoods: boolean,
+) {
+  const primary = foods[0];
+  const secondary = foods[1];
+
+  if (!primary) return ["一份短暂的喘息"];
+  if (budgetCents < primary.priceCents || !secondary) {
+    return [`${formatFoodAmount(budgetCents / primary.priceCents, primary.unit)}${primary.name}`];
+  }
+
+  const secondaryReserve = secondary.priceCents / 2;
+  const primaryCount = Math.max(1, Math.floor((budgetCents - secondaryReserve) / primary.priceCents));
+  let remainder = budgetCents - primaryCount * primary.priceCents;
+  const result = [`${formatFoodAmount(primaryCount, primary.unit)}${primary.name}`];
+  const cola = hasLocalFoods ? regionalCatalog.genericFoods.find((food) => food.name === "可乐") : null;
+  const colaReserve =
+    cola && secondary.unit !== "瓶" && remainder >= secondary.priceCents / 2 + cola.priceCents
+      ? cola.priceCents
+      : 0;
+  const secondaryCount = Math.floor(((remainder - colaReserve) / secondary.priceCents) * 2) / 2;
+
+  if (secondaryCount >= 0.5) {
+    result.push(`${formatFoodAmount(secondaryCount, secondary.unit)}${secondary.name}`);
+    remainder -= secondaryCount * secondary.priceCents;
+  }
+
+  if (cola && remainder >= cola.priceCents) {
+    result.push(`还能捎带${formatFoodAmount(1, cola.unit)}${cola.name}`);
+  }
+
+  return result;
+}
+
+function formatFoodAmount(value: number, unit: string) {
+  const rounded = Math.max(0.1, Math.round(value * 10) / 10);
+  if (rounded === 0.5) return `半${unit}`;
+  if (rounded === 1) return `一${unit}`;
+  if (rounded === 2) return `两${unit}`;
+  return `${formatSnackRatio(rounded)}${unit}`;
+}
+
+function safeProfileString(value: unknown, maxLength: number) {
+  return typeof value === "string" ? value.slice(0, maxLength) : null;
 }
 
 function isCollectedCard(value: unknown): value is CollectedCard {
@@ -464,6 +575,11 @@ function isMomentRecord(value: unknown): value is MomentRecord {
     typeof candidate.durationSec === "number" &&
     typeof candidate.copyId === "string" &&
     typeof candidate.copyTitle === "string" &&
-    typeof candidate.copyContent === "string"
+    typeof candidate.copyContent === "string" &&
+    (candidate.fishSlug == null || typeof candidate.fishSlug === "string") &&
+    (candidate.fishName == null || typeof candidate.fishName === "string") &&
+    (candidate.fishImagePath == null || (
+      typeof candidate.fishImagePath === "string" && candidate.fishImagePath.startsWith("/assets/fishes/")
+    ))
   );
 }

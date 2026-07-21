@@ -1,8 +1,9 @@
 .page {
   position: relative;
-  min-height: 100vh;
-  min-height: 100dvh;
-  overflow-x: hidden;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: none;
   color: #f7f8f3;
   background: #14282d;
   isolation: isolate;
@@ -13,6 +14,8 @@
   inset: 0;
   z-index: 100;
   overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
   color: #f8faf5;
   background: #14282d;
   isolation: isolate;
@@ -98,6 +101,16 @@
   -webkit-backdrop-filter: blur(24px) saturate(145%);
 }
 
+.welcomeFishCard::before {
+  position: absolute;
+  inset: 7px;
+  z-index: 3;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 27px;
+  content: "";
+  pointer-events: none;
+}
+
 .welcomeFishContent {
   position: absolute;
   inset: 0;
@@ -148,8 +161,11 @@
 }
 
 .welcomeFishCopy {
+  display: flex;
   min-height: 0;
   flex: 1 1 50%;
+  justify-content: flex-end;
+  flex-direction: column;
   padding: 18px 20px 20px;
 }
 
@@ -164,6 +180,7 @@
 .welcomeScientificName,
 .welcomeFishSummary,
 .welcomeFishFact,
+.welcomeProtectionNote,
 .welcomeHint {
   margin: 0;
 }
@@ -185,49 +202,14 @@
 }
 
 .welcomeFishSummary {
+  display: -webkit-box;
+  overflow: hidden;
   margin-top: 7px;
   color: rgba(249, 250, 246, 0.76);
   font-size: 11px;
   line-height: 1.55;
-}
-
-.welcomeFishStatusGrid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 5px;
-  margin-top: 9px;
-}
-
-.welcomeFishStatusGrid > span {
-  display: flex;
-  min-width: 0;
-  min-height: 38px;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  padding: 5px 3px;
-  border: 1px solid rgba(255, 255, 255, 0.11);
-  border-radius: 11px;
-  background: rgba(5, 21, 25, 0.24);
-  text-align: center;
-}
-
-.welcomeFishStatusGrid small {
-  color: rgba(247, 249, 244, 0.42);
-  font-size: 7px;
-  font-weight: 650;
-  letter-spacing: 0.08em;
-}
-
-.welcomeFishStatusGrid strong {
-  overflow: hidden;
-  max-width: 100%;
-  margin-top: 2px;
-  color: rgba(249, 250, 246, 0.82);
-  font-size: 9px;
-  font-weight: 680;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .welcomeFishFact {
@@ -245,6 +227,27 @@
   margin-right: 8px;
   color: rgba(247, 249, 244, 0.82);
   font-weight: 680;
+  letter-spacing: 0.08em;
+}
+
+.welcomeProtectionNote {
+  display: -webkit-box;
+  overflow: hidden;
+  margin-top: 9px;
+  padding: 8px 10px;
+  border-top: 1px solid rgba(218, 235, 224, 0.14);
+  border-bottom: 1px solid rgba(218, 235, 224, 0.08);
+  color: rgba(246, 248, 242, 0.62);
+  font-size: 9px;
+  line-height: 1.55;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.welcomeProtectionNote span {
+  margin-right: 7px;
+  color: rgba(231, 241, 223, 0.88);
+  font-weight: 700;
   letter-spacing: 0.08em;
 }
 
@@ -294,8 +297,8 @@
 .contentShell {
   position: relative;
   width: min(100%, 500px);
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100%;
+  min-height: 0;
   margin: 0 auto;
 }
 
@@ -304,13 +307,18 @@
 .resultStage {
   position: relative;
   display: flex;
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100%;
+  min-height: 0;
   flex-direction: column;
   padding:
     max(22px, env(safe-area-inset-top))
     20px
     max(28px, env(safe-area-inset-bottom));
+}
+
+.stage,
+.timerStage {
+  padding-bottom: max(116px, calc(env(safe-area-inset-bottom) + 102px));
 }
 
 .header {
@@ -332,14 +340,15 @@
 }
 
 .albumButton {
+  width: 42px;
+  height: 42px;
   flex: 0 0 auto;
-  min-height: 42px;
-  gap: 8px;
-  padding: 0 4px;
-  background: transparent;
-  font-size: 12px;
-  font-weight: 650;
-  letter-spacing: 0.06em;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 50%;
+  background: rgba(8, 25, 29, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(18px) saturate(145%);
+  -webkit-backdrop-filter: blur(18px) saturate(145%);
 }
 
 .profileTools {
@@ -351,13 +360,36 @@
 }
 
 .profileSummary {
+  display: flex;
   overflow: hidden;
-  color: rgba(247, 249, 244, 0.66);
-  font-size: 10px;
-  font-weight: 620;
-  letter-spacing: 0.08em;
+  min-width: 0;
+  max-width: min(52vw, 230px);
+  align-items: flex-end;
+  flex-direction: column;
+  gap: 3px;
+  text-align: right;
+}
+
+.profileIndustry,
+.profileRegion {
+  overflow: hidden;
+  max-width: 100%;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.profileIndustry {
+  color: rgba(249, 250, 246, 0.82);
+  font-size: 13px;
+  font-weight: 680;
+  letter-spacing: 0.055em;
+}
+
+.profileRegion {
+  color: rgba(247, 249, 244, 0.48);
+  font-size: 9px;
+  font-weight: 580;
+  letter-spacing: 0.06em;
 }
 
 .settingsButton {
@@ -373,93 +405,138 @@
 }
 
 .heroCard {
-  width: fit-content;
-  max-width: 420px;
-  margin-top: clamp(34px, 8vh, 72px);
+  position: relative;
+  display: grid;
+  width: 100%;
+  height: clamp(360px, 60dvh, 610px);
+  place-items: center;
+  margin-top: 16px;
+  overflow: hidden;
+  padding: 46px 30px 62px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 36px;
+  background:
+    linear-gradient(150deg, rgba(232, 244, 238, 0.13), rgba(7, 24, 28, 0.22)),
+    rgba(8, 25, 29, 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 24px 64px rgba(2, 12, 15, 0.26);
+  backdrop-filter: blur(24px) saturate(145%);
+  -webkit-backdrop-filter: blur(24px) saturate(145%);
+}
+
+.heroCard::before {
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 28px;
+  content: "";
+  pointer-events: none;
+}
+
+.heroQuote {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 46px 30px 62px;
 }
 
 .heroTitle {
+  max-width: 390px;
   margin: 0;
   font-size: clamp(30px, 8.3vw, 43px);
   font-weight: 720;
   line-height: 1.18;
   letter-spacing: -0.045em;
   text-shadow: 0 4px 24px rgba(2, 12, 15, 0.24);
+  text-align: center;
   text-wrap: balance;
 }
 
 .heroMeta {
-  margin: 14px 0 0;
+  position: absolute;
+  right: 24px;
+  bottom: 22px;
+  max-width: calc(100% - 48px);
+  margin: 0;
   color: rgba(246, 248, 242, 0.58);
+  font-family: Georgia, "Songti SC", "STSong", serif;
   font-size: 11px;
+  font-style: italic;
   font-weight: 580;
   letter-spacing: 0.1em;
   text-align: right;
 }
 
-.actionSection {
-  margin-top: 34px;
-}
-
-.activityGrid {
+.bottomTabBar {
+  position: fixed;
+  right: max(14px, calc((100vw - 500px) / 2 + 14px));
+  bottom: max(14px, env(safe-area-inset-bottom));
+  left: max(14px, calc((100vw - 500px) / 2 + 14px));
+  z-index: 6;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 4px;
-  padding: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 34px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 3px;
+  padding: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 30px;
   background:
-    linear-gradient(145deg, rgba(230, 244, 239, 0.12), rgba(15, 34, 38, 0.16)),
-    rgba(9, 26, 30, 0.14);
+    linear-gradient(145deg, rgba(232, 244, 239, 0.15), rgba(8, 26, 30, 0.22)),
+    rgba(7, 23, 27, 0.32);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.2),
-    0 20px 50px rgba(2, 12, 15, 0.24);
-  backdrop-filter: blur(22px) saturate(155%);
-  -webkit-backdrop-filter: blur(22px) saturate(155%);
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 18px 48px rgba(2, 12, 15, 0.3);
+  backdrop-filter: blur(26px) saturate(155%);
+  -webkit-backdrop-filter: blur(26px) saturate(155%);
 }
 
-.activityButton {
+.bottomTab {
   display: flex;
   min-width: 0;
-  min-height: 78px;
+  min-height: 69px;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  gap: 7px;
-  padding: 6px 2px;
+  gap: 5px;
+  padding: 4px 1px;
   border: 0;
-  border-radius: 26px;
+  border-radius: 23px;
   background: transparent;
-  color: rgba(250, 251, 247, 0.84);
-  transition: background 180ms ease, transform 180ms ease;
+  color: rgba(250, 251, 247, 0.68);
+  font-size: 9px;
+  font-weight: 670;
+  letter-spacing: 0.04em;
+  transition: background 180ms ease, color 180ms ease, opacity 180ms ease;
 }
 
-.activityButton:active {
-  background: rgba(255, 255, 255, 0.13);
-  transform: scale(0.96);
+.bottomTab:disabled {
+  opacity: 0.35;
 }
 
-.activityOrb {
+.bottomTabActive {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fbfcf8;
+}
+
+.bottomTabIcon {
   display: inline-flex;
-  width: 46px;
-  height: 46px;
+  width: 38px;
+  height: 38px;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: 50%;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.46),
-    0 7px 18px rgba(2, 14, 17, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.38);
 }
 
-.activityName {
-  overflow: hidden;
-  max-width: 100%;
-  font-size: 11px;
-  font-weight: 650;
-  letter-spacing: 0.04em;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.bottomTabIcon .icon {
+  width: 21px;
+  height: 21px;
+}
+
+.fishTabIcon {
+  background: linear-gradient(135deg, #d4e3dd, #86acac);
 }
 
 .icon {
@@ -467,18 +544,12 @@
   height: 24px;
 }
 
-.recordSection {
-  margin-top: 26px;
-}
-
-.recordList,
 .cardGrid {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.recordCard,
 .emptyCard,
 .cardDrop,
 .cardItem {
@@ -487,7 +558,6 @@
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
-.recordCard,
 .emptyCard,
 .cardItem {
   display: flex;
@@ -497,31 +567,12 @@
   border-radius: 22px;
 }
 
-.recordActivity,
 .cardItemTitle {
   margin: 0;
   color: rgba(247, 248, 243, 0.58);
   font-size: 10px;
   font-weight: 650;
   letter-spacing: 0.1em;
-}
-
-.recordCopy {
-  display: -webkit-box;
-  overflow: hidden;
-  margin: 8px 0 0;
-  color: rgba(250, 250, 246, 0.84);
-  font-size: 13px;
-  line-height: 1.55;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-}
-
-.recordDuration {
-  flex: 0 0 auto;
-  color: rgba(247, 248, 243, 0.48);
-  font-size: 10px;
-  white-space: nowrap;
 }
 
 .noiseButton,
@@ -657,7 +708,9 @@
 
 .resultStage {
   justify-content: flex-start;
+  overflow-y: auto;
   padding-bottom: 108px;
+  overscroll-behavior: contain;
 }
 
 .resultLead {
@@ -755,12 +808,15 @@
   bottom: 0;
   left: 0;
   z-index: 11;
+  display: flex;
   width: min(100%, 500px);
-  max-height: 84vh;
-  max-height: 84dvh;
-  overflow-y: auto;
+  height: min(84vh, 760px);
+  height: min(84dvh, 760px);
+  max-height: calc(100dvh - max(16px, env(safe-area-inset-top)));
+  overflow: hidden;
+  flex-direction: column;
   margin: 0 auto;
-  padding: 12px 18px max(26px, env(safe-area-inset-bottom));
+  padding: 12px 18px 0;
   border: 1px solid rgba(255, 255, 255, 0.48);
   border-bottom: 0;
   border-radius: 36px 36px 0 0;
@@ -778,6 +834,7 @@
 .sheetHandle {
   width: 38px;
   height: 4px;
+  flex: 0 0 auto;
   margin: 0 auto 12px;
   border-radius: 999px;
   background: rgba(32, 54, 56, 0.16);
@@ -788,12 +845,32 @@
   min-height: 46px;
   align-items: center;
   justify-content: space-between;
+  flex: 0 0 auto;
   gap: 16px;
+}
+
+.sheetPinned {
+  flex: 0 0 auto;
+}
+
+.sheetBody {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding-bottom: max(26px, env(safe-area-inset-bottom));
+  overscroll-behavior: contain;
+  scroll-padding-bottom: max(26px, env(safe-area-inset-bottom));
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sheetBody::-webkit-scrollbar {
+  display: none;
 }
 
 .sheetTitle {
   margin: 0;
-  font-size: 25px;
+  font-size: 22px;
   font-weight: 730;
   letter-spacing: -0.035em;
 }
@@ -819,6 +896,58 @@
   margin-top: 20px;
 }
 
+.locationCascade {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.cascadeField {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.cascadeButton {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(32, 54, 56, 0.11);
+  border-radius: 15px;
+  padding: 0 28px;
+  background: rgba(255, 255, 255, 0.48);
+  color: #203638;
+  font-size: 11px;
+  text-align: center;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.52);
+}
+
+.cascadeButton > span:first-child {
+  overflow: hidden;
+  width: 100%;
+  min-width: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cascadeButton:disabled {
+  opacity: 0.45;
+}
+
+.cascadeButtonIcon {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  color: rgba(32, 54, 56, 0.48);
+  font-size: 14px;
+  line-height: 1;
+  transform: translateY(-50%);
+}
+
 .field {
   display: flex;
   flex-direction: column;
@@ -827,7 +956,7 @@
 
 .fieldLabel {
   color: rgba(32, 54, 56, 0.58);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 650;
   letter-spacing: 0.06em;
 }
@@ -856,6 +985,21 @@
 .cityChoiceWrap .choiceChip {
   width: 100%;
   padding-inline: 8px;
+}
+
+.expandOccupationButton {
+  width: 100%;
+  min-height: 40px;
+  border: 0;
+  background: transparent;
+  color: rgba(32, 54, 56, 0.5);
+  font-size: 11px;
+  font-weight: 680;
+  letter-spacing: 0.08em;
+}
+
+.expandOccupationButtonActive {
+  color: #264447;
 }
 
 .customCityField {
@@ -949,6 +1093,17 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.locationOptionGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.locationOptionButton {
+  min-height: 50px;
+  padding: 7px 10px;
+  line-height: 1.35;
+  white-space: normal;
+}
+
 .cityRankButton {
   display: flex;
   min-width: 0;
@@ -1025,6 +1180,287 @@
   margin-top: 18px;
 }
 
+.libraryTabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  margin-top: 14px;
+  padding: 5px;
+  border-radius: 18px;
+  background: rgba(32, 54, 56, 0.07);
+}
+
+.libraryTabs button {
+  min-height: 43px;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  color: rgba(32, 54, 56, 0.58);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.libraryTabs button small {
+  margin-left: 3px;
+  font-size: 9px;
+  font-weight: 620;
+  opacity: 0.6;
+}
+
+.libraryTabs .libraryTabActive {
+  background: rgba(255, 255, 255, 0.64);
+  color: #203638;
+  box-shadow: 0 6px 18px rgba(24, 48, 51, 0.08);
+}
+
+.logList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.loadMoreHint {
+  margin: 2px 0 0;
+  padding: 10px 0 2px;
+  color: rgba(32, 54, 56, 0.42);
+  font-size: 10px;
+  font-weight: 620;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.logItem {
+  padding: 16px;
+  border: 1px solid rgba(32, 54, 56, 0.09);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.38);
+}
+
+.logItem header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: rgba(32, 54, 56, 0.58);
+  font-size: 10px;
+  font-weight: 680;
+}
+
+.logItem time {
+  flex: 0 0 auto;
+  font-weight: 560;
+}
+
+.logCopy {
+  margin: 10px 0 0;
+  color: #203638;
+  font-family: "Songti SC", "STSong", serif;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.logFood {
+  margin: 10px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid rgba(32, 54, 56, 0.08);
+  color: rgba(32, 54, 56, 0.68);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.fishLogItem {
+  padding-bottom: 14px;
+}
+
+.fishLogPreview {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+  padding: 10px;
+  border: 1px solid rgba(32, 54, 56, 0.07);
+  border-radius: 17px;
+  background: rgba(219, 232, 226, 0.34);
+}
+
+.fishLogImageWrap {
+  position: relative;
+  min-height: 72px;
+  overflow: hidden;
+  border-radius: 13px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.68), rgba(197, 217, 211, 0.26));
+}
+
+.fishLogImage {
+  padding: 7px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 10px rgba(30, 61, 62, 0.16));
+}
+
+.fishLogCopy {
+  min-width: 0;
+}
+
+.fishLogCopy > div {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.fishLogCopy strong {
+  font-size: 14px;
+  letter-spacing: -0.02em;
+}
+
+.fishLogCopy em {
+  overflow: hidden;
+  color: rgba(32, 54, 56, 0.42);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 8px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fishLogCopy p {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 7px 0 0;
+  color: rgba(32, 54, 56, 0.62);
+  font-size: 10px;
+  line-height: 1.55;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.backpackPanel {
+  margin-top: 18px;
+}
+
+.backpackPanel > .emptyCard {
+  margin-top: 10px;
+}
+
+.backpackHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 17px;
+  border: 1px solid rgba(32, 54, 56, 0.08);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.38);
+}
+
+.backpackHeader p,
+.backpackHeader strong,
+.backpackAmount {
+  margin: 0;
+}
+
+.backpackHeader p {
+  color: rgba(32, 54, 56, 0.48);
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+}
+
+.backpackHeader strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 19px;
+  letter-spacing: -0.03em;
+}
+
+.backpackHeader > span {
+  max-width: 150px;
+  color: rgba(32, 54, 56, 0.46);
+  font-size: 9px;
+  line-height: 1.5;
+  text-align: right;
+}
+
+.backpackGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-top: 10px;
+}
+
+.backpackItem {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 15px;
+  border: 1px solid rgba(32, 54, 56, 0.08);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.36);
+}
+
+.backpackFoodMark {
+  display: inline-flex;
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  border: 1px solid rgba(32, 54, 56, 0.08);
+  border-radius: 50%;
+  background: linear-gradient(145deg, rgba(231, 239, 217, 0.86), rgba(188, 211, 198, 0.72));
+  color: rgba(32, 54, 56, 0.72);
+  font-family: "Songti SC", "STSong", serif;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.backpackFoodName {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.backpackFoodName strong,
+.backpackFoodName small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.backpackFoodName strong {
+  font-size: 13px;
+}
+
+.backpackFoodName small {
+  margin-top: 3px;
+  color: rgba(32, 54, 56, 0.42);
+  font-size: 8px;
+}
+
+.backpackAmount {
+  flex: 0 0 auto;
+  font-size: 22px;
+  font-weight: 680;
+  letter-spacing: -0.04em;
+}
+
+.backpackAmount small {
+  margin-left: 3px;
+  color: rgba(32, 54, 56, 0.5);
+  font-size: 10px;
+  font-weight: 620;
+  letter-spacing: 0;
+}
+
+.sheet .emptyCard {
+  border-color: rgba(32, 54, 56, 0.08);
+  background: rgba(255, 255, 255, 0.34);
+  color: rgba(32, 54, 56, 0.56);
+}
+
 .cardItem {
   align-items: flex-start;
   border-color: rgba(32, 54, 56, 0.09);
@@ -1058,6 +1494,8 @@
 
 .onboardingCard {
   width: min(100%, 468px);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
   padding: 24px 20px max(22px, env(safe-area-inset-bottom));
   border: 1px solid rgba(255, 255, 255, 0.48);
   border-radius: 34px;
@@ -1090,7 +1528,6 @@
   color: #f7f9f4;
 }
 
-.activityButton:focus-visible,
 .albumButton:focus-visible,
 .settingsButton:focus-visible,
 .noiseButton:focus-visible,
@@ -1106,6 +1543,24 @@
 .textInput:focus-visible {
   outline: 3px solid rgba(225, 241, 217, 0.9);
   outline-offset: 3px;
+}
+
+.bottomTab:focus-visible,
+.libraryTabs button:focus-visible,
+.cascadeButton:focus-visible,
+.expandOccupationButton:focus-visible {
+  outline: 3px solid rgba(225, 241, 217, 0.9);
+  outline-offset: 3px;
+}
+
+@media (max-width: 380px) {
+  .locationCascade {
+    grid-template-columns: 1fr;
+  }
+
+  .welcomeTitle {
+    font-size: 29px;
+  }
 }
 
 @media (min-width: 768px) {

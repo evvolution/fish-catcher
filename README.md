@@ -1,16 +1,17 @@
 # 间隙时光 / Gap Moment
 
-一个把碎片时间还给用户的移动端森林。它不做提醒、打卡、排名或效率评价，只提供一次进入、四种驻足方式、计时、名句结果与私人卡册。
+一个把碎片时间还给用户的移动端森林。它不做提醒、打卡、排名或效率评价，只提供一次进入、四种驻足方式、看鱼计时、名句结果与私人卡册。
 
 ## 当前能力
 
 - Next.js 16 with the App Router
 - Prisma 7 / MySQL 内容与账号模型
-- 游客本地优先的森林、计时、结果、卡册和设置闭环
+- 游客本地优先的森林、计时、结果、卡册、日志背包和设置闭环
 - 4 条时段问候、880 条行为结果、320 条掉落卡片（共 1,204 条内容资产）
 - 1,200 条结果/卡片均具备场景、情感内核、心理需要、文字动作和能量标签
 - 120 条论坛议题原创微评论：V2EX、Hacker News、Reddit 各 40 条，轻松与深度各 60 条，并带观察/过期日期
 - 200 种鱼类百科轮播：中文名、学名、习性、分布、来源与统一透明底图片
+- 全国省 / 市 / 区县三级联动、GDP 前 50 城市的 100 条地方食物与未收录城市通用换算
 - 微信、Google、手机验证码和游客身份的服务端接口骨架
 - 隐藏的内容运营页 `/operator`
 
@@ -144,10 +145,12 @@ npm run lint
 npm run typecheck
 npm run check:quotes
 npm run check:fishes
+npm run check:regions
 npm run check:assets
 npm run build:quotes
 npm run build:forums
 npm run build:fishes
+npm run build:regions
 npm run build:assets
 npm run prisma:generate
 npm run prisma:studio

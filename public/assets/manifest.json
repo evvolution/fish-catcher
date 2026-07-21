@@ -3,28 +3,34 @@
   "basePath": "/assets",
   "files": [
     {
-      "path": "backgrounds/forest-light-path.jpg",
-      "bytes": 252758,
-      "sha256": "56ac563e36ed3e87b6431e49743b776fe254314ea2285f6b0feb4caac6e2e11f",
-      "contentType": "image/jpeg"
+      "path": "backgrounds/forest-light-path.webp",
+      "bytes": 88940,
+      "sha256": "db285a5a19c13360bcd762cdc988f87f92e7e17d2c9a3b849cef0b0ce7685871",
+      "contentType": "image/webp"
     },
     {
-      "path": "backgrounds/mist-lake-dawn.jpg",
-      "bytes": 136331,
-      "sha256": "9808eb097f10304e165f08c9cf5784fe13bfb8783ae5e137c38e7aec6a548277",
-      "contentType": "image/jpeg"
+      "path": "backgrounds/mist-lake-dawn.webp",
+      "bytes": 33492,
+      "sha256": "55ef024bf2d1c1a0aa0ec2d17dcd10efed9fd88cc3cdeb7bc84b1df3059f8a68",
+      "contentType": "image/webp"
     },
     {
-      "path": "backgrounds/mountain-dusk.jpg",
-      "bytes": 181789,
-      "sha256": "4afc5a36165aa3c45f0cb55c5522c52f3759e0478677a737a3be0e391e9924e6",
-      "contentType": "image/jpeg"
+      "path": "backgrounds/mountain-dusk.webp",
+      "bytes": 53188,
+      "sha256": "419f8e4cbb464a7aaafe1ce4223a0a01aaf54e4235e41155e35d26415dadc238",
+      "contentType": "image/webp"
     },
     {
-      "path": "backgrounds/tea-window-night.jpg",
-      "bytes": 293307,
-      "sha256": "f8da92c4dc308ef6a372c57de033c27aae76c71566a7de0e8eba57a25dd35fab",
-      "contentType": "image/jpeg"
+      "path": "backgrounds/tea-window-night.webp",
+      "bytes": 131118,
+      "sha256": "a5e8d14b06c5279aee3bd5b9479be90f4ba3a69700b598ea17e823d65e94d1ed",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "data/regional-catalog.json",
+      "bytes": 365968,
+      "sha256": "7bc00642edd3cd68742eddf8726d1b0b4c46ac8bae9361da593c0cd1b4713ce0",
+      "contentType": "application/json"
     },
     {
       "path": "fishes/achilles-tang.webp",

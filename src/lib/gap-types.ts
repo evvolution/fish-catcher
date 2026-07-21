@@ -133,7 +133,7 @@ export type FishSpeciesRecord = {
   imagePath: string;
   chinaProtectionStatus: ChinaProtectionStatus;
   citesAppendix: "I" | "II" | "NONE";
-  threeHaveStatus: "NOT_APPLICABLE";
+  threeHaveStatus: "NOT_APPLICABLE" | "LISTED";
   toxicityStatus: FishToxicityStatus;
   edibilityStatus: FishEdibilityStatus;
   legalReviewedAt: string;
@@ -149,8 +149,13 @@ export type ForestCatalog = {
 };
 
 export type GuestProfile = {
+  provinceCode: string | null;
+  provinceName: string | null;
+  cityCode: string | null;
   citySlug: string | null;
   cityName: string | null;
+  districtCode: string | null;
+  districtName: string | null;
   industrySlug: string | null;
   industryName: string | null;
   hasSeenOnboarding: boolean;
@@ -178,10 +183,14 @@ export type MomentRecord = {
   backgroundSlug: string | null;
   snackSummary: string | null;
   droppedCardId: string | null;
+  fishSlug?: string | null;
+  fishName?: string | null;
+  fishImagePath?: string | null;
 };
 
 export type GuestForestStore = {
   profile: GuestProfile;
+  totalAttentionCents: number;
   recentCopyIds: string[];
   records: MomentRecord[];
   cards: CollectedCard[];

@@ -9,25 +9,25 @@
 
 ## 本地素材清单
 
-### `public/assets/backgrounds/mist-lake-dawn.jpg`
+### `public/assets/backgrounds/mist-lake-dawn.webp`
 
 - 来源页：https://pixabay.com/photos/misty-mountains-sunrise-lake-summer-7303991/
 - 作者：JoshuaWoroniecki
 - 用途建议：清晨、发呆、静默感
 
-### `public/assets/backgrounds/forest-light-path.jpg`
+### `public/assets/backgrounds/forest-light-path.webp`
 
 - 来源页：https://pixabay.com/photos/forest-fog-path-sunrays-green-7456238/
 - 作者：jplenio
 - 用途建议：透气、散步、明亮但不刺眼的白天
 
-### `public/assets/backgrounds/mountain-dusk.jpg`
+### `public/assets/backgrounds/mountain-dusk.webp`
 
 - 来源页：https://pixabay.com/photos/mountains-lake-misty-sunrise-7500136/
 - 作者：jplenio
 - 用途建议：傍晚、散步、回收情绪
 
-### `public/assets/backgrounds/tea-window-night.jpg`
+### `public/assets/backgrounds/tea-window-night.webp`
 
 - 来源页：https://pixabay.com/photos/sunrays-trees-forest-fog-sunset-8283601/
 - 作者：jplenio

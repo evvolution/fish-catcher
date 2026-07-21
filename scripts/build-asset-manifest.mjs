@@ -12,6 +12,7 @@ const contentTypes = new Map([
   [".jpeg", "image/jpeg"],
   [".webp", "image/webp"],
   [".svg", "image/svg+xml"],
+  [".json", "application/json"],
   [".ttf", "font/ttf"],
   [".otf", "font/otf"],
 ]);

@@ -1,13 +1,15 @@
 "use client";
 
-import type { MutableRefObject, ReactNode } from "react";
+import type { MutableRefObject, ReactNode, UIEvent } from "react";
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
 import { createPortal } from "react-dom";
 
 import {
+  appendFishViewingToStore,
   appendResultToStore,
+  buildFoodBackpack,
   buildSnackSummary,
   createEmptyGuestStore,
   formatDuration,
@@ -25,20 +27,29 @@ import type {
   ForestResult,
   GuestForestStore,
 } from "@/lib/gap-types";
+import { regionalCatalog, type RegionalCity } from "@/lib/regional-catalog";
+import { shuffleFishOrder } from "@/lib/fish-order";
 import styles from "./forest.module.css";
 
 const STORAGE_KEY = "gap-moment.guest-store.v1";
-const CUSTOM_CITY_VALUE = "__custom_city__";
 const CUSTOM_OCCUPATION_VALUE = "__custom_occupation__";
-const PRIMARY_CITY_VALUES = ["beijing", "shanghai", "guangzhou", "shenzhen"];
 const PRIMARY_OCCUPATION_VALUES = ["programmer", "medical", "teacher", "accounting"];
+const LIBRARY_PAGE_SIZE = 6;
 
-type CityOption = {
+type SelectOption = {
   value: string;
   label: string;
 };
 
-type OccupationOption = CityOption;
+type OccupationOption = SelectOption;
+
+type LocationDraft = {
+  mode: "standard" | "custom";
+  provinceCode: string;
+  cityCode: string;
+  districtCode: string;
+  customName: string;
+};
 
 const OCCUPATION_SHORT_LABELS: Record<string, string> = {
   programmer: "程序设计",
@@ -56,57 +67,6 @@ const PROTECTION_LABELS: Record<FishSpeciesRecord["chinaProtectionStatus"], stri
   WILD_ONLY_CITES_APPROVED_II: "野生二级",
 };
 
-const TOXICITY_LABELS: Record<FishSpeciesRecord["toxicityStatus"], string> = {
-  NONE_KNOWN: "无已知",
-  VENOMOUS: "有毒棘",
-  TOXIC_TISSUE: "组织有毒",
-  TOXIC_PART: "局部有毒",
-  ELECTRIC: "强电风险",
-  CIGUATERA_RISK: "雪卡风险",
-};
-
-const EDIBILITY_LABELS: Record<FishSpeciesRecord["edibilityStatus"], string> = {
-  EDIBLE: "可食用",
-  CONDITIONAL: "谨慎食用",
-  NOT_RECOMMENDED: "不建议",
-  LEGAL_PROHIBITED: "法律禁食",
-  WILD_ONLY_PROHIBITED: "野生禁食",
-};
-
-// 2025 full-year GDP order. The first four shortcuts intentionally follow 北上广深, not this ranking.
-const GDP_CITY_OPTIONS: CityOption[] = [
-  { value: "shanghai", label: "上海" },
-  { value: "beijing", label: "北京" },
-  { value: "shenzhen", label: "深圳" },
-  { value: "chongqing", label: "重庆" },
-  { value: "guangzhou", label: "广州" },
-  { value: "suzhou", label: "苏州" },
-  { value: "chengdu", label: "成都" },
-  { value: "hangzhou", label: "杭州" },
-  { value: "wuhan", label: "武汉" },
-  { value: "nanjing", label: "南京" },
-  { value: "ningbo", label: "宁波" },
-  { value: "tianjin", label: "天津" },
-  { value: "qingdao", label: "青岛" },
-  { value: "wuxi", label: "无锡" },
-  { value: "changsha", label: "长沙" },
-  { value: "zhengzhou", label: "郑州" },
-  { value: "fuzhou", label: "福州" },
-  { value: "jinan", label: "济南" },
-  { value: "hefei", label: "合肥" },
-  { value: "xian", label: "西安" },
-  { value: "quanzhou", label: "泉州" },
-  { value: "foshan", label: "佛山" },
-  { value: "nantong", label: "南通" },
-  { value: "dongguan", label: "东莞" },
-  { value: "yantai", label: "烟台" },
-  { value: "changzhou", label: "常州" },
-  { value: "tangshan", label: "唐山" },
-  { value: "wenzhou", label: "温州" },
-  { value: "dalian", label: "大连" },
-  { value: "xuzhou", label: "徐州" },
-];
-
 const activityIconPaths: Record<string, string> = {
   cloud: "/assets/icons/cloud.svg",
   cup: "/assets/icons/coffee.svg",
@@ -116,6 +76,7 @@ const activityIconPaths: Record<string, string> = {
 
 type ViewState = "forest" | "timer" | "result";
 type SheetState = null | "album" | "settings";
+type LibraryTab = "cards" | "logs" | "backpack";
 
 type TimerState = {
   activitySlug: string;
@@ -136,26 +97,31 @@ type AmbientAudioHandle = {
 export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
   const [welcomeVisible, setWelcomeVisible] = useState(true);
   const [welcomeFishIndex, setWelcomeFishIndex] = useState(0);
+  const [welcomeFishOrder, setWelcomeFishOrder] = useState(catalog.fishes);
   const [store, setStore] = useState<GuestForestStore>(createEmptyGuestStore);
   const [hasHydrated, setHasHydrated] = useState(false);
   const [view, setView] = useState<ViewState>("forest");
   const [sheet, setSheet] = useState<SheetState>(null);
+  const [libraryTab, setLibraryTab] = useState<LibraryTab>("cards");
+  const [visibleCardCount, setVisibleCardCount] = useState(LIBRARY_PAGE_SIZE);
+  const [visibleLogCount, setVisibleLogCount] = useState(LIBRARY_PAGE_SIZE);
   const [timer, setTimer] = useState<TimerState | null>(null);
   const [elapsedMs, setElapsedMs] = useState(0);
   const [result, setResult] = useState<ForestResult | null>(null);
   const [homeGreetingId, setHomeGreetingId] = useState<string | null>(null);
   const [homeBackgroundSlug, setHomeBackgroundSlug] = useState<string | null>(null);
-  const [cityDraft, setCityDraft] = useState<string>("");
-  const [customCityDraft, setCustomCityDraft] = useState<string>("");
+  const [locationDraft, setLocationDraft] = useState<LocationDraft>(createDefaultLocationDraft);
   const [industryDraft, setIndustryDraft] = useState<string>("");
   const [customIndustryDraft, setCustomIndustryDraft] = useState<string>("");
   const ambientAudioRef = useRef<AmbientAudioHandle | null>(null);
+  const libraryBodyRef = useRef<HTMLDivElement | null>(null);
+  const fishViewingStartedAtRef = useRef(Date.now());
 
   const activities = catalog.activities;
-  const cities = catalog.cities;
   const fishes = catalog.fishes;
-  const welcomeFish = fishes.length ? fishes[welcomeFishIndex % fishes.length] : null;
-  const cityOptions = GDP_CITY_OPTIONS;
+  const welcomeFish = welcomeFishOrder.length
+    ? welcomeFishOrder[welcomeFishIndex % welcomeFishOrder.length]
+    : null;
   const industryOptions = useMemo(
     () =>
       catalog.dimensionGroups.find((group) => group.key === "industry")?.options.map((option) => ({
@@ -163,6 +129,16 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
         label: option.label,
       })) ?? [],
     [catalog.dimensionGroups],
+  );
+  const backpackItems = useMemo(
+    () => buildFoodBackpack(store.profile, store.totalAttentionCents),
+    [store.profile, store.totalAttentionCents],
+  );
+  const homeQuoteCandidates = useMemo(
+    () => catalog.copyEntries.filter(
+      (entry) => entry.kind === "GREETING" || (entry.kind === "RESULT" && entry.content.length <= 42),
+    ),
+    [catalog.copyEntries],
   );
 
   const backgroundMap = useMemo(
@@ -175,29 +151,45 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
   );
   const copyMap = useMemo(() => new Map(catalog.copyEntries.map((entry) => [entry.id, entry])), [catalog.copyEntries]);
 
+  const advanceHomeQuote = useEffectEvent(() => {
+    setHomeGreetingId((current) => {
+      const candidates = homeQuoteCandidates.filter((entry) => entry.id !== current);
+      return candidates[Math.floor(Math.random() * candidates.length)]?.id ?? current;
+    });
+  });
+
+  const advanceWelcomeFish = useEffectEvent(() => {
+    setWelcomeFishIndex((current) => {
+      if (current + 1 < welcomeFishOrder.length) return current + 1;
+
+      setWelcomeFishOrder(shuffleFishOrder(fishes, welcomeFishOrder.at(-1)?.slug));
+      return 0;
+    });
+  });
+
   useEffect(() => {
-    if (!welcomeVisible || fishes.length < 2) {
+    if (!welcomeVisible || welcomeFishOrder.length < 2) {
       return;
     }
 
     const interval = window.setInterval(() => {
-      setWelcomeFishIndex((current) => (current + 1) % fishes.length);
+      advanceWelcomeFish();
     }, 5_000);
 
     return () => {
       window.clearInterval(interval);
     };
-  }, [fishes.length, welcomeVisible]);
+  }, [welcomeFishOrder.length, welcomeVisible]);
 
   useEffect(() => {
-    if (!welcomeVisible || fishes.length < 2) {
+    if (!welcomeVisible || welcomeFishOrder.length < 2) {
       return;
     }
 
-    const nextFish = fishes[(welcomeFishIndex + 1) % fishes.length];
+    const nextFish = welcomeFishOrder[(welcomeFishIndex + 1) % welcomeFishOrder.length];
     const image = new window.Image();
     image.src = nextFish.imagePath;
-  }, [fishes, welcomeFishIndex, welcomeVisible]);
+  }, [welcomeFishIndex, welcomeFishOrder, welcomeVisible]);
 
   useEffect(() => {
     if (!welcomeVisible) {
@@ -215,12 +207,8 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
     try {
       const saved = window.localStorage.getItem(STORAGE_KEY);
       const nextStore = saved ? sanitizeGuestStore(JSON.parse(saved)) : createEmptyGuestStore();
-      const knownCity = cityOptions.find(
-        (city) => city.value === nextStore.profile.citySlug || city.label === nextStore.profile.cityName,
-      );
       setStore(nextStore);
-      setCityDraft(knownCity ? knownCity.value : nextStore.profile.cityName ? CUSTOM_CITY_VALUE : "beijing");
-      setCustomCityDraft(knownCity ? "" : nextStore.profile.cityName ?? "");
+      setLocationDraft(locationDraftFromProfile(nextStore.profile));
       const knownIndustry = industryOptions.find((option) => option.value === nextStore.profile.industrySlug);
       setIndustryDraft(
         knownIndustry ? knownIndustry.value : nextStore.profile.industryName ? CUSTOM_OCCUPATION_VALUE : "",
@@ -229,14 +217,13 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
     } catch {
       const empty = createEmptyGuestStore();
       setStore(empty);
-      setCityDraft("beijing");
-      setCustomCityDraft("");
+      setLocationDraft(createDefaultLocationDraft());
       setIndustryDraft("");
       setCustomIndustryDraft("");
     } finally {
       setHasHydrated(true);
     }
-  }, [cities, cityOptions, industryOptions]);
+  }, [industryOptions]);
 
   useEffect(() => {
     if (!hasHydrated) {
@@ -294,6 +281,18 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
 
   const onboardingOpen =
     hasHydrated && (!store.profile.hasSeenOnboarding || (!store.profile.citySlug && !store.profile.cityName));
+  useEffect(() => {
+    if (view !== "forest" || welcomeVisible || sheet || onboardingOpen || homeQuoteCandidates.length < 2) return;
+
+    const interval = window.setInterval(() => {
+      advanceHomeQuote();
+    }, 5_000);
+
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, [homeQuoteCandidates.length, onboardingOpen, sheet, view, welcomeVisible]);
+
   const greeting =
     homeGreetingId && copyMap.has(homeGreetingId)
       ? (copyMap.get(homeGreetingId) as CopywritingRecord)
@@ -305,8 +304,19 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
     catalog.backgrounds[0]?.slug ??
     null;
   const currentBackgroundRecord = currentBackground ? backgroundMap.get(currentBackground) ?? null : null;
-  const activeCity = store.profile.citySlug ? cities.find((city) => city.slug === store.profile.citySlug) ?? null : null;
-  const activeCityName = activeCity?.name ?? store.profile.cityName;
+  const activeProfileCity = regionalCatalog.cities.find(
+    (city) => city.code === store.profile.cityCode || city.slug === store.profile.citySlug,
+  );
+  const activeRegionParts = [
+    store.profile.provinceName,
+    activeProfileCity?.officialName ?? store.profile.cityName,
+    store.profile.districtName,
+  ].filter(
+    (name): name is string => Boolean(name),
+  );
+  const activeRegionLabel = activeRegionParts
+    .filter((name, index, parts) => index === 0 || name.replace(/市$/, "") !== parts[index - 1].replace(/市$/, ""))
+    .join("");
   const activeIndustryLabel = store.profile.industrySlug
     ? industryOptions.find((option) => option.value === store.profile.industrySlug)?.label ?? null
     : store.profile.industryName;
@@ -399,7 +409,7 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
     const background =
       (timer.backgroundSlug ? backgroundMap.get(timer.backgroundSlug) ?? null : null) ??
       pickBackground(catalog, activity.slug, store.profile, endedAt);
-    const snackSummary = buildSnackSummary(catalog, store.profile.citySlug, durationSec);
+    const snackSummary = buildSnackSummary(store.profile, durationSec);
     const droppedCard = maybeDropCard(catalog, activity, store.profile, endedAt, background?.slug ?? null);
 
     stopAmbientAudio(ambientAudioRef);
@@ -449,23 +459,80 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
     }));
   }
 
+  function handleOpenFish() {
+    fishViewingStartedAtRef.current = Date.now();
+    setWelcomeVisible(true);
+  }
+
+  function handleDismissFish() {
+    if (!fishViewingStartedAtRef.current) return;
+
+    const endedAt = new Date();
+    const startedAt = new Date(Math.min(fishViewingStartedAtRef.current, endedAt.getTime()));
+    const durationSec = Math.max(1, Math.floor((endedAt.getTime() - startedAt.getTime()) / 1000));
+    fishViewingStartedAtRef.current = 0;
+
+    if (welcomeFish) {
+      setStore((current) => appendFishViewingToStore(current, {
+        fish: welcomeFish,
+        durationSec,
+        snackSummary: buildSnackSummary(current.profile, durationSec),
+        endedAt,
+        startedAt,
+      }));
+    }
+    setWelcomeVisible(false);
+  }
+
+  function openLibrary(tab: LibraryTab) {
+    setLibraryTab(tab);
+    setVisibleCardCount(LIBRARY_PAGE_SIZE);
+    setVisibleLogCount(LIBRARY_PAGE_SIZE);
+    setSheet("album");
+  }
+
+  function changeLibraryTab(tab: LibraryTab) {
+    setLibraryTab(tab);
+    libraryBodyRef.current?.scrollTo({ top: 0 });
+  }
+
+  function handleLibraryScroll(event: UIEvent<HTMLDivElement>) {
+    if (libraryTab === "backpack") return;
+
+    const viewport = event.currentTarget;
+    if (viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight > 96) return;
+
+    if (libraryTab === "cards") {
+      setVisibleCardCount((count) => Math.min(count + LIBRARY_PAGE_SIZE, store.cards.length));
+    } else {
+      setVisibleLogCount((count) => Math.min(count + LIBRARY_PAGE_SIZE, store.records.length));
+    }
+  }
+
   function handleSaveProfile() {
-    const selectedCity = cityOptions.find((city) => city.value === cityDraft);
-    const catalogCity = selectedCity ? cities.find((city) => city.slug === selectedCity.value) : null;
-    const cityName = selectedCity?.label ?? (cityDraft === CUSTOM_CITY_VALUE ? customCityDraft.trim() : "");
+    const selectedCity = locationDraft.mode === "standard"
+      ? regionalCatalog.cities.find((city) => city.code === locationDraft.cityCode)
+      : undefined;
+    const selectedDistrict = selectedCity?.districts.find((district) => district.code === locationDraft.districtCode);
+    const cityName = locationDraft.mode === "custom" ? locationDraft.customName.trim() : selectedCity?.name ?? "";
     const selectedIndustry = industryOptions.find((option) => option.value === industryDraft);
     const industryName =
       selectedIndustry?.label ?? (industryDraft === CUSTOM_OCCUPATION_VALUE ? customIndustryDraft.trim() : "");
 
-    if (!cityName || (industryDraft === CUSTOM_OCCUPATION_VALUE && !industryName)) {
+    if (!cityName || (locationDraft.mode === "standard" && !selectedDistrict) || (industryDraft === CUSTOM_OCCUPATION_VALUE && !industryName)) {
       return;
     }
 
     setStore((current) => ({
       ...current,
       profile: {
-        citySlug: catalogCity?.slug ?? null,
+        provinceCode: selectedCity?.provinceCode ?? null,
+        provinceName: selectedCity?.provinceName ?? null,
+        cityCode: selectedCity?.code ?? null,
+        citySlug: selectedCity?.slug ?? null,
         cityName: cityName.slice(0, 32),
+        districtCode: selectedDistrict?.code ?? null,
+        districtName: selectedDistrict?.name ?? null,
         industrySlug: selectedIndustry?.value ?? null,
         industryName: industryName ? industryName.slice(0, 32) : null,
         hasSeenOnboarding: true,
@@ -477,7 +544,13 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
   return (
     <main className={styles.page}>
       <AnimatePresence>
-        {welcomeVisible ? <WelcomeOverlay fish={welcomeFish} onDismiss={() => setWelcomeVisible(false)} /> : null}
+        {welcomeVisible ? (
+          <WelcomeOverlay
+            fish={welcomeFish}
+            preload={welcomeFishIndex === 0}
+            onDismiss={handleDismissFish}
+          />
+        ) : null}
       </AnimatePresence>
 
       <div className={styles.backgroundViewport} aria-hidden="true">
@@ -507,13 +580,18 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
             transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
           >
             <header className={styles.header}>
-              <button type="button" className={styles.albumButton} onClick={() => setSheet("album")}>
+              <button
+                type="button"
+                className={styles.albumButton}
+                aria-label="打开卡册和摸鱼日志"
+                onClick={() => openLibrary("cards")}
+              >
                 <AssetIcon src="/assets/icons/book.svg" />
-                <span>卡册{store.cards.length ? ` ${store.cards.length}` : ""}</span>
               </button>
               <div className={styles.profileTools}>
                 <span className={styles.profileSummary}>
-                  {[activeCityName, activeIndustryLabel].filter(Boolean).join(" · ") || "区域 / 职业"}
+                  <span className={styles.profileIndustry}>{activeIndustryLabel ?? "未设置职业"}</span>
+                  <span className={styles.profileRegion}>{activeRegionLabel || "未设置地区"}</span>
                 </span>
                 <button
                   type="button"
@@ -527,47 +605,20 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
             </header>
 
             <section className={styles.heroCard}>
-              <h1 className={styles.heroTitle}>{greeting?.content ?? "先停一下，不急着把自己交回给待办。"}</h1>
-              <p className={styles.heroMeta}>{greeting?.title}</p>
+              <AnimatePresence initial={false} mode="wait">
+                <motion.div
+                  key={greeting?.id ?? "home-quote-fallback"}
+                  className={styles.heroQuote}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <h1 className={styles.heroTitle}>{greeting?.content ?? "先停一下，不急着把自己交回给待办。"}</h1>
+                  <p className={styles.heroMeta}>{greeting?.title}</p>
+                </motion.div>
+              </AnimatePresence>
             </section>
-
-            <section className={styles.actionSection}>
-              <div className={styles.activityGrid}>
-                {activities.map((activity) => (
-                  <button
-                    key={activity.slug}
-                    type="button"
-                    className={styles.activityButton}
-                    aria-label={activity.name}
-                    onClick={() => handleStartActivity(activity)}
-                  >
-                    <span
-                      className={styles.activityOrb}
-                      style={{
-                        background: `linear-gradient(135deg, ${activity.colorStart ?? "#dfe6e0"} 0%, ${activity.colorEnd ?? "#a6bbae"} 100%)`,
-                      }}
-                    >
-                      <AssetIcon src={activityIconPaths[activity.iconKey] ?? activityIconPaths.cloud} />
-                    </span>
-                    <span className={styles.activityName}>{activity.name}</span>
-                  </button>
-                ))}
-              </div>
-            </section>
-
-            {store.records.length ? <section className={styles.recordSection}>
-              <div className={styles.recordList}>
-                {store.records.slice(0, 2).map((record) => (
-                  <article key={record.id} className={styles.recordCard}>
-                    <div>
-                      <p className={styles.recordActivity}>{record.activityName}</p>
-                      <p className={styles.recordCopy}>{record.copyContent}</p>
-                    </div>
-                    <span className={styles.recordDuration}>{formatDuration(record.durationSec)}</span>
-                  </article>
-                ))}
-              </div>
-            </section> : null}
 
           </motion.section>
         ) : null}
@@ -643,57 +694,190 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
                 type="button"
                 className={styles.secondaryButton}
                 onClick={() => {
-                  setSheet("album");
+                  openLibrary("logs");
                   handleBackToForest();
                 }}
               >
-                卡册
+                查看日志
               </button>
             </div>
           </motion.section>
         ) : null}
       </AnimatePresence>
 
+        {view !== "result" && !onboardingOpen ? (
+          <nav className={styles.bottomTabBar} aria-label="摸鱼方式">
+            {activities.map((activity) => {
+              const isActive = timer?.activitySlug === activity.slug;
+              const isLocked = Boolean(timer && !isActive);
+              return (
+                <button
+                  key={activity.slug}
+                  type="button"
+                  className={isActive ? `${styles.bottomTab} ${styles.bottomTabActive}` : styles.bottomTab}
+                  aria-current={isActive ? "page" : undefined}
+                  disabled={isLocked}
+                  onClick={() => (isActive ? setView("timer") : handleStartActivity(activity))}
+                >
+                  <span
+                    className={styles.bottomTabIcon}
+                    style={{
+                      background: `linear-gradient(135deg, ${activity.colorStart ?? "#dfe6e0"}, ${activity.colorEnd ?? "#a6bbae"})`,
+                    }}
+                  >
+                    <AssetIcon src={activityIconPaths[activity.iconKey] ?? activityIconPaths.cloud} />
+                  </span>
+                  <span>{activity.name}</span>
+                </button>
+              );
+            })}
+            <button
+              type="button"
+              className={styles.bottomTab}
+              onClick={handleOpenFish}
+            >
+              <span className={`${styles.bottomTabIcon} ${styles.fishTabIcon}`}>
+                <AssetIcon src="/assets/icons/fish.svg" />
+              </span>
+              <span>看鱼</span>
+            </button>
+          </nav>
+        ) : null}
+
         <AnimatePresence>
         {sheet === "album" && view === "forest" ? (
-          <OverlaySheet title="卡册" onClose={() => setSheet(null)}>
-            <div className={styles.cardGrid}>
-              {store.cards.length ? (
-                store.cards.map((card) => (
-                  <article key={card.id} className={styles.cardItem}>
-                    <div>
-                      <p className={styles.cardItemTitle}>{card.title}</p>
-                      <p className={styles.cardItemContent}>{card.content}</p>
-                    </div>
-                    <button
-                      type="button"
-                      className={styles.deleteButton}
-                      aria-label={`删除 ${card.title}`}
-                      onClick={() => handleDeleteCard(card.id)}
-                    >
-                      <AssetIcon src="/assets/icons/trash.svg" />
-                    </button>
+          <OverlaySheet
+            title="我的摸鱼"
+            onClose={() => setSheet(null)}
+            bodyRef={libraryBodyRef}
+            onBodyScroll={handleLibraryScroll}
+            stickyContent={(
+              <div className={styles.libraryTabs} role="tablist" aria-label="卡册、日志和背包">
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={libraryTab === "cards"}
+                  className={libraryTab === "cards" ? styles.libraryTabActive : undefined}
+                  onClick={() => changeLibraryTab("cards")}
+                >
+                  卡册 <small>{store.cards.length} 张</small>
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={libraryTab === "logs"}
+                  className={libraryTab === "logs" ? styles.libraryTabActive : undefined}
+                  onClick={() => changeLibraryTab("logs")}
+                >
+                  日志 <small>{store.records.length} 次</small>
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={libraryTab === "backpack"}
+                  className={libraryTab === "backpack" ? styles.libraryTabActive : undefined}
+                  onClick={() => changeLibraryTab("backpack")}
+                >
+                  背包 <small>{backpackItems.length} 种</small>
+                </button>
+              </div>
+            )}
+          >
+            {libraryTab === "cards" ? (
+              <div className={styles.cardGrid}>
+                {store.cards.length ? (
+                  store.cards.slice(0, visibleCardCount).map((card) => (
+                    <article key={card.id} className={styles.cardItem}>
+                      <div>
+                        <p className={styles.cardItemTitle}>{card.title}</p>
+                        <p className={styles.cardItemContent}>{card.content}</p>
+                      </div>
+                      <button
+                        type="button"
+                        className={styles.deleteButton}
+                        aria-label={`删除 ${card.title}`}
+                        onClick={() => handleDeleteCard(card.id)}
+                      >
+                        <AssetIcon src="/assets/icons/trash.svg" />
+                      </button>
+                    </article>
+                  ))
+                ) : (
+                  <article className={styles.emptyCard}>还没有卡片掉落。</article>
+                )}
+                {visibleCardCount < store.cards.length ? <p className={styles.loadMoreHint}>继续下滑，加载更多</p> : null}
+              </div>
+            ) : libraryTab === "logs" ? (
+              <div className={styles.logList}>
+                {store.records.length ? store.records.slice(0, visibleLogCount).map((record) => (
+                  <article
+                    key={record.id}
+                    className={record.fishSlug ? `${styles.logItem} ${styles.fishLogItem}` : styles.logItem}
+                  >
+                    <header>
+                      <span>{record.activityName} · {formatDuration(record.durationSec)}</span>
+                      <time dateTime={record.endedAt}>{formatLogDate(record.endedAt)}</time>
+                    </header>
+                    {record.fishSlug && record.fishImagePath ? (
+                      <div className={styles.fishLogPreview}>
+                        <div className={styles.fishLogImageWrap}>
+                          <Image
+                            src={record.fishImagePath}
+                            alt={record.fishName ?? "本次看到的鱼"}
+                            fill
+                            sizes="92px"
+                            className={styles.fishLogImage}
+                          />
+                        </div>
+                        <div className={styles.fishLogCopy}>
+                          <div>
+                            <strong>{record.fishName ?? "看鱼"}</strong>
+                            <em>{record.copyTitle}</em>
+                          </div>
+                          <p>{record.copyContent}</p>
+                        </div>
+                      </div>
+                    ) : <p className={styles.logCopy}>{record.copyContent}</p>}
+                    {record.snackSummary ? <p className={styles.logFood}>{record.snackSummary}</p> : null}
                   </article>
-                ))
-              ) : (
-                <article className={styles.emptyCard}>还没有卡片掉落。</article>
-              )}
-            </div>
+                )) : <article className={styles.emptyCard}>第一条摸鱼日志，等你亲自写下。</article>}
+                {visibleLogCount < store.records.length ? <p className={styles.loadMoreHint}>继续下滑，加载更多</p> : null}
+              </div>
+            ) : (
+              <div className={styles.backpackPanel}>
+                <header className={styles.backpackHeader}>
+                  <div>
+                    <p>累计收进背包</p>
+                    <strong>{backpackItems.length} 种食物</strong>
+                  </div>
+                  <span>零散时光会优先凑成完整份数</span>
+                </header>
+                {backpackItems.length ? (
+                  <div className={styles.backpackGrid}>
+                    {backpackItems.map((item) => (
+                      <article key={`${item.name}-${item.unit}`} className={styles.backpackItem}>
+                        <span className={styles.backpackFoodMark} aria-hidden="true">{item.name.slice(0, 1)}</span>
+                        <div className={styles.backpackFoodName}>
+                          <strong>{item.name}</strong>
+                          <small>{item.isPartial ? "零头继续积攒中" : "已凑成完整份数"}</small>
+                        </div>
+                        <p className={styles.backpackAmount}>
+                          {formatBackpackAmount(item.amount)}<small>{item.unit}</small>
+                        </p>
+                      </article>
+                    ))}
+                  </div>
+                ) : (
+                  <article className={styles.emptyCard}>背包还是空的，摸一会儿鱼就有了。</article>
+                )}
+              </div>
+            )}
           </OverlaySheet>
         ) : null}
 
         {sheet === "settings" && view === "forest" ? (
           <OverlaySheet title="区域 / 职业" onClose={() => setSheet(null)}>
             <div className={styles.settingsPanel}>
-              <CityPicker
-                idPrefix="settings"
-                cityOptions={cityOptions}
-                cityDraft={cityDraft}
-                customCityDraft={customCityDraft}
-                onCityChange={setCityDraft}
-                onCustomCityChange={setCustomCityDraft}
-              />
-
               <OccupationPicker
                 idPrefix="settings"
                 occupationOptions={industryOptions}
@@ -703,13 +887,19 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
                 onCustomOccupationChange={setCustomIndustryDraft}
               />
 
+              <LocationPicker
+                idPrefix="settings"
+                value={locationDraft}
+                onChange={setLocationDraft}
+              />
+
               <div className={styles.sheetActions}>
                 <button
                   type="button"
                   className={styles.primaryButton}
                   onClick={handleSaveProfile}
                   disabled={
-                    !isCityDraftValid(cityDraft, customCityDraft, cityOptions) ||
+                    !isLocationDraftValid(locationDraft) ||
                     !isOccupationDraftValid(industryDraft, customIndustryDraft, industryOptions)
                   }
                 >
@@ -736,13 +926,10 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
             >
               <h2 className={styles.onboardingTitle}>你在哪里？</h2>
 
-              <CityPicker
+              <LocationPicker
                 idPrefix="onboarding"
-                cityOptions={cityOptions}
-                cityDraft={cityDraft}
-                customCityDraft={customCityDraft}
-                onCityChange={setCityDraft}
-                onCustomCityChange={setCustomCityDraft}
+                value={locationDraft}
+                onChange={setLocationDraft}
               />
 
               <OccupationPicker
@@ -759,7 +946,7 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
                 className={styles.primaryButton}
                 onClick={handleSaveProfile}
                 disabled={
-                  !isCityDraftValid(cityDraft, customCityDraft, cityOptions) ||
+                  !isLocationDraftValid(locationDraft) ||
                   !isOccupationDraftValid(industryDraft, customIndustryDraft, industryOptions)
                 }
               >
@@ -774,12 +961,21 @@ export default function ForestClient({ catalog }: { catalog: ForestCatalog }) {
   );
 }
 
-function WelcomeOverlay({ fish, onDismiss }: { fish: FishSpeciesRecord | null; onDismiss: () => void }) {
+function WelcomeOverlay({
+  fish,
+  onDismiss,
+  preload,
+}: {
+  fish: FishSpeciesRecord | null;
+  onDismiss: () => void;
+  preload: boolean;
+}) {
   const protectionLabel = fish
     ? fish.chinaProtectionStatus === "NONE" && fish.citesAppendix !== "NONE"
       ? `CITES ${fish.citesAppendix}`
       : PROTECTION_LABELS[fish.chinaProtectionStatus]
     : "";
+  const protectionNotice = fish ? getFishProtectionNotice(fish, protectionLabel) : null;
 
   return (
     <motion.section
@@ -793,7 +989,7 @@ function WelcomeOverlay({ fish, onDismiss }: { fish: FishSpeciesRecord | null; o
       transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
     >
       <Image
-        src="/assets/backgrounds/mist-lake-dawn.jpg"
+        src="/assets/backgrounds/mist-lake-dawn.webp"
         alt=""
         fill
         priority
@@ -823,7 +1019,7 @@ function WelcomeOverlay({ fish, onDismiss }: { fish: FishSpeciesRecord | null; o
                       src={fish.imagePath}
                       alt={fish.commonNameZh}
                       fill
-                      priority={fish.slug === "ocellaris-clownfish"}
+                      priority={preload}
                       sizes="(min-width: 768px) 430px, calc(100vw - 48px)"
                       className={styles.welcomeFishImage}
                     />
@@ -835,29 +1031,13 @@ function WelcomeOverlay({ fish, onDismiss }: { fish: FishSpeciesRecord | null; o
                       <p className={styles.welcomeScientificName}>{fish.scientificName}</p>
                     </div>
                     <p className={styles.welcomeFishSummary}>{fish.summary}</p>
-                    <div
-                      className={styles.welcomeFishStatusGrid}
-                      aria-label={`截至${fish.legalReviewedAt}：保护状态${protectionLabel}，三有不适用，毒性${TOXICITY_LABELS[fish.toxicityStatus]}，食用建议${EDIBILITY_LABELS[fish.edibilityStatus]}`}
-                    >
-                      <span>
-                        <small>保护</small>
-                        <strong>{protectionLabel}</strong>
-                      </span>
-                      <span>
-                        <small>三有</small>
-                        <strong>不适用</strong>
-                      </span>
-                      <span>
-                        <small>毒性</small>
-                        <strong>{TOXICITY_LABELS[fish.toxicityStatus]}</strong>
-                      </span>
-                      <span>
-                        <small>食用</small>
-                        <strong>{EDIBILITY_LABELS[fish.edibilityStatus]}</strong>
-                      </span>
-                    </div>
                     <p className={styles.welcomeFishFact}><span>习性</span>{fish.habits}</p>
                     <p className={styles.welcomeFishFact}><span>分布</span>{fish.distribution}</p>
+                    {protectionNotice ? (
+                      <p className={styles.welcomeProtectionNote} role="note">
+                        <span>保护提示</span>{protectionNotice}
+                      </p>
+                    ) : null}
                   </figcaption>
                 </motion.figure>
               ) : null}
@@ -871,39 +1051,80 @@ function WelcomeOverlay({ fish, onDismiss }: { fish: FishSpeciesRecord | null; o
   );
 }
 
-function CityPicker({
-  cityDraft,
-  cityOptions,
-  customCityDraft,
+function getFishProtectionNotice(fish: FishSpeciesRecord, protectionLabel: string) {
+  const protectedSpecies = fish.chinaProtectionStatus !== "NONE" || fish.citesAppendix !== "NONE";
+  const threeHaveSpecies = fish.threeHaveStatus === "LISTED";
+
+  if (!protectedSpecies && !threeHaveSpecies) return null;
+  if (protectedSpecies && threeHaveSpecies) {
+    return `${protectionLabel}，并列入“三有”名录；野生个体请勿随意捕捉或交易。`;
+  }
+  if (threeHaveSpecies) return "已列入“三有”名录；野生个体请勿随意捕捉或交易。";
+  return `${protectionLabel}；野生个体请以现行名录及当地规定为准。`;
+}
+
+function LocationPicker({
   idPrefix,
-  onCityChange,
-  onCustomCityChange,
+  onChange,
+  value,
 }: {
-  cityDraft: string;
-  cityOptions: CityOption[];
-  customCityDraft: string;
   idPrefix: string;
-  onCityChange: (value: string) => void;
-  onCustomCityChange: (value: string) => void;
+  onChange: (value: LocationDraft) => void;
+  value: LocationDraft;
 }) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const labelId = `${idPrefix}-city-label`;
-  const dialogTitleId = `${idPrefix}-city-dialog-title`;
-  const primaryCityOptions = PRIMARY_CITY_VALUES.map((value) => cityOptions.find((city) => city.value === value)).filter(
-    (city): city is CityOption => Boolean(city),
-  );
-  const expandedSelection = cityOptions.find(
-    (city) => city.value === cityDraft && !PRIMARY_CITY_VALUES.includes(city.value),
-  );
+  const [activeLevel, setActiveLevel] = useState<"province" | "city" | "district" | null>(null);
+  const dialogTitleId = `${idPrefix}-location-dialog-title`;
+  const selectedCity = regionalCatalog.cities.find((city) => city.code === value.cityCode);
+  const selectedProvince = regionalCatalog.regions.find((province) => province.code === value.provinceCode);
+  const availableCities = selectedProvince
+    ? regionalCatalog.cities.filter((city) => city.provinceCode === selectedProvince.code)
+    : [];
+  const availableDistricts = selectedCity?.districts ?? [];
+  const activeOptions: SelectOption[] = activeLevel === "province"
+    ? regionalCatalog.regions.map((province) => ({ value: province.code, label: province.name }))
+    : activeLevel === "city"
+      ? availableCities.map((city) => ({ value: city.code, label: city.officialName }))
+      : activeLevel === "district"
+        ? availableDistricts.map((district) => ({ value: district.code, label: district.name }))
+        : [];
+  const activeValue = activeLevel === "province"
+    ? value.provinceCode
+    : activeLevel === "city"
+      ? value.cityCode
+      : value.districtCode;
+  const activeTitle = activeLevel === "province" ? "选择省级地区" : activeLevel === "city" ? "选择市 / 州" : "选择区 / 县";
+
+  function chooseCity(city: RegionalCity) {
+    onChange({
+      mode: "standard",
+      provinceCode: city.provinceCode,
+      cityCode: city.code,
+      districtCode: city.districts[0]?.code ?? city.code,
+      customName: "",
+    });
+  }
+
+  function chooseLocationOption(optionValue: string) {
+    if (activeLevel === "province") {
+      const city = regionalCatalog.cities.find((item) => item.provinceCode === optionValue);
+      if (city) chooseCity(city);
+    } else if (activeLevel === "city") {
+      const city = regionalCatalog.cities.find((item) => item.code === optionValue);
+      if (city) chooseCity(city);
+    } else if (activeLevel === "district") {
+      onChange({ ...value, mode: "standard", districtCode: optionValue, customName: "" });
+    }
+    setActiveLevel(null);
+  }
 
   useEffect(() => {
-    if (!isExpanded) {
+    if (!activeLevel) {
       return;
     }
 
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setIsExpanded(false);
+        setActiveLevel(null);
       }
     };
 
@@ -911,72 +1132,66 @@ function CityPicker({
     return () => {
       window.removeEventListener("keydown", closeOnEscape);
     };
-  }, [isExpanded]);
+  }, [activeLevel]);
 
   return (
     <div className={styles.field}>
-      <span id={labelId} className={styles.fieldLabel}>城市</span>
-      <div className={`${styles.choiceWrap} ${styles.cityChoiceWrap}`} role="group" aria-labelledby={labelId}>
-        {primaryCityOptions.map((city) => (
+      <div className={styles.locationCascade} role="group" aria-label="地区">
+        <div className={styles.cascadeField}>
           <button
-            key={city.value}
             type="button"
-            className={
-              cityDraft === city.value ? `${styles.choiceChip} ${styles.choiceChipActive}` : styles.choiceChip
-            }
-            onClick={() => onCityChange(city.value)}
+            className={styles.cascadeButton}
+            aria-label="选择省级地区"
+            aria-haspopup="dialog"
+            aria-expanded={activeLevel === "province"}
+            onClick={() => setActiveLevel("province")}
           >
-            {city.label}
+            <span>{selectedProvince?.name ?? "请选择"}</span>
+            <span className={styles.cascadeButtonIcon} aria-hidden="true">⌄</span>
           </button>
-        ))}
-        <button
-          type="button"
-          className={expandedSelection ? `${styles.choiceChip} ${styles.choiceChipActive}` : styles.choiceChip}
-          aria-haspopup="dialog"
-          aria-expanded={isExpanded}
-          onClick={() => setIsExpanded(true)}
-        >
-          展开
-        </button>
-        <button
-          type="button"
-          className={
-            cityDraft === CUSTOM_CITY_VALUE ? `${styles.choiceChip} ${styles.choiceChipActive}` : styles.choiceChip
-          }
-          onClick={() => onCityChange(CUSTOM_CITY_VALUE)}
-          aria-expanded={cityDraft === CUSTOM_CITY_VALUE}
-        >
-          自定义
-        </button>
-      </div>
-      {expandedSelection ? <span className={styles.citySelectionNote}>已选 · {expandedSelection.label}</span> : null}
-      {cityDraft === CUSTOM_CITY_VALUE ? (
-        <div className={styles.customCityField}>
-          <input
-            className={styles.textInput}
-            value={customCityDraft}
-            maxLength={32}
-            autoComplete="address-level2"
-            placeholder="输入城市或地区"
-            aria-label="自定义城市或地区"
-            onChange={(event) => onCustomCityChange(event.target.value)}
-          />
-          <span className={styles.fieldHint}>只用于问候展示；没有对应城市时不进行小吃换算。</span>
         </div>
-      ) : null}
+        <div className={styles.cascadeField}>
+          <button
+            type="button"
+            className={styles.cascadeButton}
+            aria-label="选择市或州"
+            aria-haspopup="dialog"
+            aria-expanded={activeLevel === "city"}
+            disabled={!selectedProvince}
+            onClick={() => setActiveLevel("city")}
+          >
+            <span>{selectedCity?.officialName ?? "请选择"}</span>
+            <span className={styles.cascadeButtonIcon} aria-hidden="true">⌄</span>
+          </button>
+        </div>
+        <div className={styles.cascadeField}>
+          <button
+            type="button"
+            className={styles.cascadeButton}
+            aria-label="选择区或县"
+            aria-haspopup="dialog"
+            aria-expanded={activeLevel === "district"}
+            disabled={!selectedCity}
+            onClick={() => setActiveLevel("district")}
+          >
+            <span>{availableDistricts.find((district) => district.code === value.districtCode)?.name ?? "请选择"}</span>
+            <span className={styles.cascadeButtonIcon} aria-hidden="true">⌄</span>
+          </button>
+        </div>
+      </div>
       {typeof document !== "undefined"
         ? createPortal(
             <AnimatePresence>
-              {isExpanded ? (
+              {activeLevel ? (
                 <>
                   <motion.button
                     type="button"
                     className={styles.cityPickerBackdrop}
-                    aria-label="关闭城市列表"
+                    aria-label="关闭地区列表"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    onClick={() => setIsExpanded(false)}
+                    onClick={() => setActiveLevel(null)}
                   />
                   <motion.section
                     className={styles.cityPickerDialog}
@@ -989,49 +1204,35 @@ function CityPicker({
                     transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                   >
                     <header className={styles.cityPickerHeader}>
-                      <h3 id={dialogTitleId} className={styles.cityPickerTitle}>选择城市</h3>
+                      <h3 id={dialogTitleId} className={styles.cityPickerTitle}>{activeTitle}</h3>
                       <button
                         type="button"
                         className={styles.closeButton}
                         aria-label="关闭"
-                        onClick={() => setIsExpanded(false)}
+                        onClick={() => setActiveLevel(null)}
                       >
                         <AssetIcon src="/assets/icons/close.svg" />
                       </button>
                     </header>
 
-                    <div className={styles.cityRankGrid}>
-                      {cityOptions.map((city) => (
+                    <div className={`${styles.cityRankGrid} ${styles.locationOptionGrid}`} role="listbox">
+                      {activeOptions.map((option) => (
                         <button
-                          key={city.value}
+                          key={option.value}
                           type="button"
                           className={
-                            cityDraft === city.value
-                              ? `${styles.cityRankButton} ${styles.cityRankButtonActive}`
-                              : styles.cityRankButton
+                            activeValue === option.value
+                              ? `${styles.cityRankButton} ${styles.locationOptionButton} ${styles.cityRankButtonActive}`
+                              : `${styles.cityRankButton} ${styles.locationOptionButton}`
                           }
-                          aria-pressed={cityDraft === city.value}
-                          onClick={() => {
-                            onCityChange(city.value);
-                            setIsExpanded(false);
-                          }}
+                          role="option"
+                          aria-selected={activeValue === option.value}
+                          onClick={() => chooseLocationOption(option.value)}
                         >
-                          <span>{city.label}</span>
+                          <span>{option.label}</span>
                         </button>
                       ))}
                     </div>
-
-                    <button
-                      type="button"
-                      className={styles.cityCustomAction}
-                      onClick={() => {
-                        onCityChange(CUSTOM_CITY_VALUE);
-                        setIsExpanded(false);
-                      }}
-                    >
-                      <span>自定义城市或地区</span>
-                      <span aria-hidden="true">→</span>
-                    </button>
                   </motion.section>
                 </>
               ) : null}
@@ -1043,14 +1244,15 @@ function CityPicker({
   );
 }
 
-function isCityDraftValid(
-  cityDraft: string,
-  customCityDraft: string,
-  cityOptions: CityOption[],
-) {
-  return cityDraft === CUSTOM_CITY_VALUE
-    ? customCityDraft.trim().length > 0
-    : cityOptions.some((city) => city.value === cityDraft);
+function isLocationDraftValid(value: LocationDraft) {
+  if (value.mode === "custom") return value.customName.trim().length > 0;
+
+  const city = regionalCatalog.cities.find((item) => item.code === value.cityCode);
+  return Boolean(
+    city &&
+    city.provinceCode === value.provinceCode &&
+    city.districts.some((district) => district.code === value.districtCode),
+  );
 }
 
 function OccupationPicker({
@@ -1092,7 +1294,7 @@ function OccupationPicker({
 
   return (
     <div className={styles.field}>
-      <span id={labelId} className={styles.fieldLabel}>职业</span>
+      <span id={labelId} className={styles.fieldLabel}>你的行业 / 职业</span>
       <div className={`${styles.choiceWrap} ${styles.cityChoiceWrap}`} role="group" aria-labelledby={labelId}>
         {primaryOptions.map((occupation) => (
           <button
@@ -1111,15 +1313,6 @@ function OccupationPicker({
         ))}
         <button
           type="button"
-          className={expandedSelection ? `${styles.choiceChip} ${styles.choiceChipActive}` : styles.choiceChip}
-          aria-haspopup="dialog"
-          aria-expanded={isExpanded}
-          onClick={() => setIsExpanded(true)}
-        >
-          展开
-        </button>
-        <button
-          type="button"
           className={
             occupationDraft === CUSTOM_OCCUPATION_VALUE
               ? `${styles.choiceChip} ${styles.choiceChipActive}`
@@ -1129,6 +1322,19 @@ function OccupationPicker({
           onClick={() => onOccupationChange(CUSTOM_OCCUPATION_VALUE)}
         >
           自定义
+        </button>
+        <button
+          type="button"
+          className={
+            expandedSelection
+              ? `${styles.expandOccupationButton} ${styles.expandOccupationButtonActive}`
+              : styles.expandOccupationButton
+          }
+          aria-haspopup="dialog"
+          aria-expanded={isExpanded}
+          onClick={() => setIsExpanded(true)}
+        >
+          展开
         </button>
       </div>
       {expandedSelection ? <span className={styles.citySelectionNote}>已选 · {expandedSelection.label}</span> : null}
@@ -1237,12 +1443,18 @@ function isOccupationDraftValid(
 }
 
 function OverlaySheet({
+  bodyRef,
   children,
+  onBodyScroll,
   onClose,
+  stickyContent,
   title,
 }: {
+  bodyRef?: MutableRefObject<HTMLDivElement | null>;
   children: ReactNode;
+  onBodyScroll?: (event: UIEvent<HTMLDivElement>) => void;
   onClose: () => void;
+  stickyContent?: ReactNode;
   title: string;
 }) {
   return (
@@ -1273,7 +1485,10 @@ function OverlaySheet({
             <AssetIcon src="/assets/icons/close.svg" />
           </button>
         </header>
-        {children}
+        {stickyContent ? <div className={styles.sheetPinned}>{stickyContent}</div> : null}
+        <div ref={bodyRef} className={styles.sheetBody} onScroll={onBodyScroll}>
+          {children}
+        </div>
       </motion.section>
     </>
   );
@@ -1346,6 +1561,52 @@ function stopAmbientAudio(audioRef: MutableRefObject<AmbientAudioHandle | null>)
   current.source.stop();
   void current.context.close();
   audioRef.current = null;
+}
+
+function createDefaultLocationDraft(): LocationDraft {
+  const city = regionalCatalog.cities.find((item) => item.slug === "beijing") ?? regionalCatalog.cities[0];
+  return {
+    mode: "standard",
+    provinceCode: city?.provinceCode ?? "",
+    cityCode: city?.code ?? "",
+    districtCode: city?.districts[0]?.code ?? "",
+    customName: "",
+  };
+}
+
+function locationDraftFromProfile(profile: GuestForestStore["profile"]): LocationDraft {
+  const city = regionalCatalog.cities.find(
+    (item) =>
+      item.code === profile.cityCode ||
+      item.slug === profile.citySlug ||
+      item.name === profile.cityName ||
+      item.officialName === profile.cityName,
+  );
+
+  if (!city) {
+    return profile.cityName
+      ? { mode: "custom", provinceCode: "", cityCode: "", districtCode: "", customName: profile.cityName }
+      : createDefaultLocationDraft();
+  }
+
+  const district = city.districts.find((item) => item.code === profile.districtCode) ?? city.districts[0];
+  return {
+    mode: "standard",
+    provinceCode: city.provinceCode,
+    cityCode: city.code,
+    districtCode: district?.code ?? city.code,
+    customName: "",
+  };
+}
+
+function formatLogDate(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "刚刚";
+  return new Intl.DateTimeFormat("zh-CN", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }).format(date);
+}
+
+function formatBackpackAmount(value: number) {
+  return Number.isInteger(value) ? `${value}` : value.toFixed(2).replace(/0$/, "");
 }
 
 function resolveHomeAtmosphere(catalog: ForestCatalog, profile: GuestForestStore["profile"]) {

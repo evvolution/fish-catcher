@@ -521,7 +521,7 @@ const backgroundSeeds: BackgroundSeed[] = [
   {
     slug: "mist-lake-dawn",
     title: "雾湖清晨",
-    imagePath: "/assets/backgrounds/mist-lake-dawn.jpg",
+    imagePath: "/assets/backgrounds/mist-lake-dawn.webp",
     sourceName: "Pixabay",
     sourcePageUrl: "https://pixabay.com/photos/misty-mountains-sunrise-lake-summer-7303991/",
     photographerName: "JoshuaWoroniecki",
@@ -535,7 +535,7 @@ const backgroundSeeds: BackgroundSeed[] = [
   {
     slug: "forest-light-path",
     title: "林间光路",
-    imagePath: "/assets/backgrounds/forest-light-path.jpg",
+    imagePath: "/assets/backgrounds/forest-light-path.webp",
     sourceName: "Pixabay",
     sourcePageUrl: "https://pixabay.com/photos/forest-fog-path-sunrays-green-7456238/",
     photographerName: "jplenio",
@@ -549,7 +549,7 @@ const backgroundSeeds: BackgroundSeed[] = [
   {
     slug: "mountain-dusk",
     title: "山谷晚风",
-    imagePath: "/assets/backgrounds/mountain-dusk.jpg",
+    imagePath: "/assets/backgrounds/mountain-dusk.webp",
     sourceName: "Pixabay",
     sourcePageUrl: "https://pixabay.com/photos/mountains-lake-misty-sunrise-7500136/",
     photographerName: "jplenio",
@@ -563,7 +563,7 @@ const backgroundSeeds: BackgroundSeed[] = [
   {
     slug: "golden-forest-rest",
     title: "窗边夜色",
-    imagePath: "/assets/backgrounds/tea-window-night.jpg",
+    imagePath: "/assets/backgrounds/tea-window-night.webp",
     sourceName: "Pixabay",
     sourcePageUrl: "https://pixabay.com/photos/sunrays-trees-forest-fog-sunset-8283601/",
     photographerName: "jplenio",
