@@ -174,4 +174,4 @@ npm run prisma:studio
 - `src/lib/auth-config.ts`: auth-related environment variable contract
 - `app/pages/index.vue`: forest entry
 
-所有需要上传 OSS 的静态资源统一位于 `oss-upload/fish/assets`，完整目录上传到 `oss://apexres/fish/assets/`，由 `https://apex-res.nefelibata.ink/fish/assets/` 提供；Nuxt 应用部署在 `https://fish.nefelibata.ink`。鱼类图片的抓取、来源记录、透明前景分割和 960×640 WebP 标准化由 `npm run build:fishes` 完成。`npm run build:fonts` 会从应用文案生成 WOFF2 字体子集，原始字体仅保留在 `assets/font-sources`。`npm run build:assets` 会生成带 SHA-256 的完整上传清单，防盗链、CORS 与验证步骤见 `docs/oss-static-assets-migration.md`。
+所有需要上传 OSS 的静态资源统一位于 `oss-upload/fish/assets`，完整目录上传到 `oss://apexres/fish/assets/`，由 `https://apex-res.nefelibata.ink/fish/assets/` 提供；Nuxt 应用部署在 `https://fish.nefelibata.ink`。鱼类图片的抓取、来源记录、透明前景分割和 960×640 WebP 标准化由 `npm run build:fishes` 完成。项目只保留已经按应用文案字集化的 WOFF2，不保留原始字体。`npm run build:assets` 会生成带 SHA-256 的完整上传清单，防盗链、CORS 与验证步骤见 `docs/oss-static-assets-migration.md`。

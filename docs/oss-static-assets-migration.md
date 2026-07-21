@@ -8,7 +8,7 @@
 ossutil cp -r oss-upload/fish/assets/ oss://apexres/fish/assets/ --update
 ```
 
-不要上传 `.output/`、`.nuxt/`、`assets/font-sources/`、源码或数据库文件。`fish.nefelibata.ink` 部署 Nuxt 应用，`apex-res.nefelibata.ink` 只提供静态资源。
+不要上传 `.output/`、`.nuxt/`、源码或数据库文件。原始字体不进入仓库和部署产物。`fish.nefelibata.ink` 部署 Nuxt 应用，`apex-res.nefelibata.ink` 只提供静态资源。
 
 当前目录包含 221 个待上传对象：
 
