@@ -1,15 +1,15 @@
 import assert from "node:assert/strict";
 import { writeFileSync } from "node:fs";
 import {
-  GAP_SEMANTIC_VERSION,
-  scoreGapSemanticActivityFit,
-} from "../src/lib/gap-semantics.ts";
-import { assertGapCopyPolicy } from "./gap-content-policy.mjs";
+  MOYU_SEMANTIC_VERSION,
+  scoreMoyuSemanticActivityFit,
+} from "../src/lib/moyu-semantics.ts";
+import { assertMoyuCopyPolicy } from "./moyu-content-policy.mjs";
 
-const VERSION = `2026-07-18-v${GAP_SEMANTIC_VERSION}`;
+const VERSION = `2026-07-18-v${MOYU_SEMANTIC_VERSION}`;
 const OBSERVED_AT = "2026-07-18";
 const EXPIRES_AT = "2026-10-18";
-const OUTPUT_URL = new URL("../src/lib/gap-forum-copy.json", import.meta.url);
+const OUTPUT_URL = new URL("../src/lib/moyu-forum-copy.json", import.meta.url);
 const ACTIVITIES = ["drift", "tea", "breathe", "stroll"];
 
 const threads = [
@@ -540,7 +540,7 @@ assert.deepEqual(countBy(entries, "tone"), { deep: 60, light: 60 });
 assert.deepEqual(countBy(entries, "activitySlug"), { breathe: 30, drift: 30, stroll: 30, tea: 30 });
 assert.deepEqual(countBy(entries, "kind"), { CARD: 30, RESULT: 90 });
 for (const entry of entries) {
-  assertGapCopyPolicy(entry);
+  assertMoyuCopyPolicy(entry);
   assert.ok(entry.content.length >= 16 && entry.content.length <= 120, `${entry.slug} content length is invalid`);
 }
 
@@ -576,7 +576,7 @@ function assignActivities(entries) {
 function rankActivities(entry) {
   return ACTIVITIES.map((activitySlug) => ({
     activitySlug,
-    score: scoreGapSemanticActivityFit(analyzeForumSemantics(entry), activitySlug),
+    score: scoreMoyuSemanticActivityFit(analyzeForumSemantics(entry), activitySlug),
   })).toSorted((left, right) => right.score - left.score || left.activitySlug.localeCompare(right.activitySlug));
 }
 
@@ -587,7 +587,7 @@ function profile(scenes, emotionalCores, psychologicalNeed, literaryGesture, ene
 function analyzeForumSemantics(entry) {
   const semantics = semanticProfiles[entry.topic];
   assert.ok(semantics, `unknown forum semantic profile: ${entry.topic}`);
-  return { version: GAP_SEMANTIC_VERSION, ...semantics, confidence: "high" };
+  return { version: MOYU_SEMANTIC_VERSION, ...semantics, confidence: "high" };
 }
 
 function countBy(entries, key) {

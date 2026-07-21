@@ -13,9 +13,10 @@
 # testing
 /coverage
 
-# next.js
+# nuxt
+/.nuxt/
+/.output/
 /.next/
-/out/
 
 # production
 /build
@@ -39,7 +40,6 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
 
 # prisma
 /src/generated/prisma

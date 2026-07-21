@@ -9,7 +9,7 @@ import { promisify } from "node:util";
 import sharp from "sharp";
 
 const projectRoot = process.cwd();
-const assetDirectory = path.join(projectRoot, "public/assets/fishes");
+const assetDirectory = path.join(projectRoot, "oss-upload/fish/assets/fishes");
 const catalogPath = path.join(projectRoot, "src/lib/fish-species.json");
 const refresh = process.argv.includes("--refresh");
 const preferFishBase = process.argv.includes("--prefer-fishbase");

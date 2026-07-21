@@ -1,8 +1,8 @@
-# 间隙时光 Brief 0401
+# 摸鱼 Brief 0401
 
 ## 这轮我们在做什么
 
-这轮的核心目标，是把你提出的「间隙时光 / Gap Moment」从一份有灵魂的 PRD，落成一个可以真实体验的游客优先 MVP。
+这轮的核心目标，是把你提出的「摸鱼 / 摸鱼」从一份有灵魂的 PRD，落成一个可以真实体验的游客优先 MVP。
 
 我们有意先不纠结完整用户体系，而是优先走通下面这条主线：
 
@@ -38,9 +38,9 @@
 
 同时补了内容匹配和游客本地存储逻辑：
 
-- [gap-content.ts](g:/2026/fish-catcher/src/lib/gap-content.ts)
-- [gap-engine.ts](g:/2026/fish-catcher/src/lib/gap-engine.ts)
-- [gap-types.ts](g:/2026/fish-catcher/src/lib/gap-types.ts)
+- [moyu-content.ts](g:/2026/fish-catcher/src/lib/moyu-content.ts)
+- [moyu-engine.ts](g:/2026/fish-catcher/src/lib/moyu-engine.ts)
+- [moyu-types.ts](g:/2026/fish-catcher/src/lib/moyu-types.ts)
 
 ### 3. 样例数据与素材
 
@@ -55,8 +55,8 @@
 
 示例背景图来自免费可商用图库，已经下载到项目内：
 
-- [backgrounds](g:/2026/fish-catcher/public/assets/backgrounds)
-- [gap-moment-asset-sources.md](g:/2026/fish-catcher/docs/gap-moment-asset-sources.md)
+- `oss-upload/fish/assets/backgrounds`
+- `docs/moyu-asset-sources.md`
 
 ### 4. 游客 MVP 主流程
 
@@ -147,21 +147,11 @@
 
 当前沿用的是现有连接目标 `8.138.17.6:3306/fish`。
 
-### 2. Next.js 的慢文件系统提示
+### 2. Nuxt / Vite 迁移状态
 
-你提到过：
+当前应用只保留 Nuxt、Vue 与 Vite 构建链。旧框架源码、配置、依赖和构建目录均已移除，类型检查通过独立的 `npm run typecheck` 执行。
 
-`Slow filesystem detected`
-
-这个我已经解释过，本质是开发环境文件读写慢的性能警告，不是功能错误。常见原因是项目在非本地 SSD、网络盘、映射盘或被安全软件扫描。
-
-### 3. `./forest-client` 模块找不到
-
-我修过一次导入路径问题，把森林页改成了别名导入：
-
-- [forest/page.tsx](g:/2026/fish-catcher/src/app/forest/page.tsx)
-
-### 4. Prisma Client 过期导致的运行时报错
+### 3. Prisma Client 过期导致的运行时报错
 
 你遇到过这类错误：
 
@@ -170,20 +160,20 @@
 这轮我已经做了两层保护：
 
 - 在 `package.json` 加了 `predev`、`prebuild`、`postinstall` 自动执行 `prisma generate`
-- 在 [gap-content.ts](g:/2026/fish-catcher/src/lib/gap-content.ts) 补了运行时守卫，旧 Client 时给出更明确的提示
+- 在 [moyu-content.ts](g:/2026/fish-catcher/src/lib/moyu-content.ts) 补了运行时守卫，旧 Client 时给出更明确的提示
 
 相关文件：
 
 - [package.json](g:/2026/fish-catcher/package.json)
-- [gap-content.ts](g:/2026/fish-catcher/src/lib/gap-content.ts)
+- [moyu-content.ts](g:/2026/fish-catcher/src/lib/moyu-content.ts)
 
 ## 已写入项目的文档
 
 除了这份 brief，项目里已经有这些文档：
 
-- [gap-moment-prd.md](g:/2026/fish-catcher/docs/gap-moment-prd.md)
-- [gap-moment-build-log.md](g:/2026/fish-catcher/docs/gap-moment-build-log.md)
-- [gap-moment-asset-sources.md](g:/2026/fish-catcher/docs/gap-moment-asset-sources.md)
+- [moyu-prd.md](g:/2026/fish-catcher/docs/moyu-prd.md)
+- [moyu-build-log.md](g:/2026/fish-catcher/docs/moyu-build-log.md)
+- [moyu-asset-sources.md](g:/2026/fish-catcher/docs/moyu-asset-sources.md)
 
 这份 [brief-0401.md](g:/2026/fish-catcher/docs/brief-0401.md) 更偏“本轮对话总结 + 当前状态快照 + 下次接力入口”。
 
@@ -218,4 +208,4 @@
 
 ## 一句话结论
 
-这轮我们已经把「间隙时光」从一个很动人的产品想法，推进成了一个有结构、有数据底座、有内容台、能实际体验的游客优先 MVP，并完成了前台收口与第一轮质感打磨。
+这轮我们已经把「摸鱼」从一个很动人的产品想法，推进成了一个有结构、有数据底座、有内容台、能实际体验的游客优先 MVP，并完成了前台收口与第一轮质感打磨。

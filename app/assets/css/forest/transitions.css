@@ -1,0 +1,53 @@
+.welcome-fade-enter-active,
+.welcome-fade-leave-active {
+  transition: opacity 0.72s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.fish-fade-enter-active,
+.fish-fade-leave-active {
+  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.28s ease;
+}
+
+.welcome-fade-enter-from,
+.welcome-fade-leave-to,
+.fish-fade-enter-from,
+.fish-fade-leave-to,
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.stage-enter-active,
+.stage-leave-active,
+.quote-enter-active,
+.quote-leave-active {
+  transition: opacity 0.34s cubic-bezier(0.22, 1, 0.36, 1), transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.stage-enter-from,
+.quote-enter-from {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+.stage-leave-to,
+.quote-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.dialog-rise-enter-active,
+.dialog-rise-leave-active {
+  transition: opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1), transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dialog-rise-enter-from,
+.dialog-rise-leave-to {
+  opacity: 0;
+  transform: translateY(28px) scale(0.97);
+}

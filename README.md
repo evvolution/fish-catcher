@@ -1,10 +1,10 @@
-# 间隙时光 / Gap Moment
+# 摸鱼
 
 一个把碎片时间还给用户的移动端森林。它不做提醒、打卡、排名或效率评价，只提供一次进入、四种驻足方式、看鱼计时、名句结果与私人卡册。
 
 ## 当前能力
 
-- Next.js 16 with the App Router
+- Nuxt 4 / Vue 3 / Vite 8 / Nitro
 - Prisma 7 / MySQL 内容与账号模型
 - 游客本地优先的森林、计时、结果、卡册、日志背包和设置闭环
 - 4 条时段问候、880 条行为结果、320 条掉落卡片（共 1,204 条内容资产）
@@ -15,7 +15,9 @@
 - 微信、Google、手机验证码和游客身份的服务端接口骨架
 - 隐藏的内容运营页 `/operator`
 
-设计原则与素材逻辑见 [`docs/design-system-2026.md`](docs/design-system-2026.md)，内容语义见 [`docs/content-semantics.md`](docs/content-semantics.md)，图片、图标与古典文案来源见 [`docs/gap-moment-asset-sources.md`](docs/gap-moment-asset-sources.md)。
+设计原则与素材逻辑见 [`docs/design-system-2026.md`](docs/design-system-2026.md)，内容语义见 [`docs/content-semantics.md`](docs/content-semantics.md)，图片、图标与古典文案来源见 [`docs/moyu-asset-sources.md`](docs/moyu-asset-sources.md)。
+
+生产服务器的 Git 拉取、构建、Prisma 迁移、PM2 与宝塔反代流程见 [`docs/server-deployment.md`](docs/server-deployment.md)。
 
 ## Start
 
@@ -72,7 +74,8 @@ This project now includes a working H5-first auth skeleton:
 Configure the following in `.env`:
 
 ```bash
-NEXT_PUBLIC_APP_URL="http://localhost:3000"
+NUXT_PUBLIC_APP_URL="http://localhost:3000"
+NUXT_PUBLIC_ASSET_BASE_URL="https://apex-res.nefelibata.ink/fish"
 AUTH_SESSION_DAYS="30"
 PHONE_CODE_TTL_MINUTES="5"
 ```
@@ -104,7 +107,7 @@ Your webhook will receive `phone`, `code`, `scene`, `signName`, and `templateCod
 ```bash
 GOOGLE_CLIENT_ID=""
 GOOGLE_CLIENT_SECRET=""
-NEXT_PUBLIC_APP_URL="https://your-domain.com"
+NUXT_PUBLIC_APP_URL="https://fish.nefelibata.ink"
 ```
 
 Google callback path is:
@@ -119,7 +122,7 @@ Google callback path is:
 WECHAT_APP_ID=""
 WECHAT_APP_SECRET=""
 WECHAT_OAUTH_SCOPE="snsapi_userinfo"
-NEXT_PUBLIC_APP_URL="https://your-domain.com"
+NUXT_PUBLIC_APP_URL="https://fish.nefelibata.ink"
 ```
 
 WeChat callback path is:
@@ -147,6 +150,7 @@ npm run check:quotes
 npm run check:fishes
 npm run check:regions
 npm run check:assets
+npm run check:deployment
 npm run build:quotes
 npm run build:forums
 npm run build:fishes
@@ -158,13 +162,16 @@ npm run prisma:studio
 
 `check:quotes` 离线验证全部 1,200 条语料的数量、去重、地区/时代/语言平衡、论坛语气、来源、时效、低俗词与政治敏感过滤；`build:quotes` 会联网从公版来源重建冻结语料，`build:forums` 会从已核验的热点清单重建 120 条原创评论，通常只在内容版本升级或热点到期时运行。
 
-## Suggested places to extend
+## Project structure
 
-- `src/app`: pages, layouts, and route handlers
+- `app/pages`: Nuxt pages
+- `app/components`: small view components grouped by feature
+- `app/composables`: forest state, lifecycle and browser capabilities
+- `server/api`: Nitro API handlers
 - `prisma/schema.prisma`: database models
 - `src/lib/prisma.ts`: shared Prisma client
-- `src/lib/auth.ts`: auth, session, and provider helpers
+- `src/lib/auth.ts`: auth/session/provider domain helpers
 - `src/lib/auth-config.ts`: auth-related environment variable contract
-- `src/app/page.tsx`: forest entry with the full-screen fish overlay
+- `app/pages/index.vue`: forest entry
 
-所有可上传 OSS 的静态资源统一位于 `public/assets`；鱼类图片的抓取、来源记录、透明前景分割和 960×640 WebP 标准化由 `npm run build:fishes` 完成。`npm run build:fonts` 会从应用文案生成 WOFF2 字体子集，原始字体仅保留在 `assets/font-sources`。`npm run build:assets` 会生成带 SHA-256 的迁移清单，完整步骤见 `docs/oss-static-assets-migration.md`。
+所有需要上传 OSS 的静态资源统一位于 `oss-upload/fish/assets`，完整目录上传到 `oss://apexres/fish/assets/`，由 `https://apex-res.nefelibata.ink/fish/assets/` 提供；Nuxt 应用部署在 `https://fish.nefelibata.ink`。鱼类图片的抓取、来源记录、透明前景分割和 960×640 WebP 标准化由 `npm run build:fishes` 完成。`npm run build:fonts` 会从应用文案生成 WOFF2 字体子集，原始字体仅保留在 `assets/font-sources`。`npm run build:assets` 会生成带 SHA-256 的完整上传清单，防盗链、CORS 与验证步骤见 `docs/oss-static-assets-migration.md`。

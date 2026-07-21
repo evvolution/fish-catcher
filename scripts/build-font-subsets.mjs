@@ -9,9 +9,13 @@ const execFileAsync = promisify(execFile);
 const projectRoot = process.cwd();
 const checkOnly = process.argv.includes("--check");
 const sourceRoot = path.join(projectRoot, "assets/font-sources");
-const outputRoot = path.join(projectRoot, "public/assets/fonts");
-const corpusRoots = [path.join(projectRoot, "src"), path.join(projectRoot, "public/assets/data")];
-const textExtensions = new Set([".json", ".ts", ".tsx"]);
+const outputRoot = path.join(projectRoot, "oss-upload/fish/assets/fonts");
+const corpusRoots = [
+  path.join(projectRoot, "app"),
+  path.join(projectRoot, "src"),
+  path.join(projectRoot, "oss-upload/fish/assets/data"),
+];
+const textExtensions = new Set([".json", ".ts", ".vue"]);
 const fonts = [
   ["Alibaba-PuHuiTi-Medium.ttf", "Alibaba-PuHuiTi-Medium.subset.woff2"],
   ["SourceHanSerifSC-Medium.otf", "SourceHanSerifSC-Medium.subset.woff2"],
@@ -20,7 +24,7 @@ const alwaysIncluded =
   Array.from({ length: 95 }, (_, index) => String.fromCodePoint(0x20 + index)).join("") +
   "　，。！？；：、“”‘’（）【】《》〈〉…—·￥℃°％‰№™©®＋－×÷＝≈≠≤≥→←↑↓•✓";
 
-const temporaryRoot = await fs.mkdtemp(path.join(os.tmpdir(), "fish-catcher-fonts-"));
+const temporaryRoot = await fs.mkdtemp(path.join(os.tmpdir(), "moyu-fonts-"));
 
 try {
   const corpusFiles = (await Promise.all(corpusRoots.map(walkTextFiles))).flat().sort();

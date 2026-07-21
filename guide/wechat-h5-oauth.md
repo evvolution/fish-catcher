@@ -22,7 +22,7 @@
 当前项目实际使用的回调地址为：
 
 ```text
-${NEXT_PUBLIC_APP_URL}/api/auth/wechat/callback
+${NUXT_PUBLIC_APP_URL}/api/auth/wechat/callback
 ```
 
 例如正式域名为 `https://moyu.example.com` 时，回调地址就是：
@@ -86,7 +86,7 @@ moyu.example.com/api/auth/wechat/callback
 在项目根目录 `.env` 中填写：
 
 ```bash
-NEXT_PUBLIC_APP_URL="https://你的域名"
+NUXT_PUBLIC_APP_URL="https://你的域名"
 WECHAT_APP_ID="你的公众号 AppID"
 WECHAT_APP_SECRET="你的公众号 AppSecret"
 WECHAT_OAUTH_SCOPE="snsapi_userinfo"

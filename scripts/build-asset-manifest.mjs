@@ -4,8 +4,11 @@ import path from "node:path";
 import process from "node:process";
 
 const projectRoot = process.cwd();
-const assetRoot = path.join(projectRoot, "public/assets");
+const uploadRoot = "oss-upload/fish/assets";
+const assetRoot = path.join(projectRoot, uploadRoot);
 const manifestPath = path.join(assetRoot, "manifest.json");
+const ossPrefix = "fish/assets/";
+const assetBaseUrl = "https://apex-res.nefelibata.ink/fish/assets";
 const checkOnly = process.argv.includes("--check");
 const contentTypes = new Map([
   [".jpg", "image/jpeg"],
@@ -27,17 +30,33 @@ const entries = await Promise.all(
     const relativePath = path.relative(assetRoot, filePath).split(path.sep).join("/");
     return {
       path: relativePath,
+      ossKey: `${ossPrefix}${relativePath}`,
+      url: `${assetBaseUrl}/${relativePath}`,
       bytes: bytes.byteLength,
       sha256: createHash("sha256").update(bytes).digest("hex"),
       contentType: contentTypes.get(path.extname(filePath).toLowerCase()) ?? "application/octet-stream",
     };
   }),
 );
-const manifest = `${JSON.stringify({ version: 1, basePath: "/assets", files: entries }, null, 2)}\n`;
+const manifest = `${JSON.stringify({
+  version: 2,
+  bucket: "apexres",
+  uploadRoot,
+  ossPrefix,
+  assetBaseUrl,
+  objectCount: entries.length + 1,
+  payloadBytes: entries.reduce((total, entry) => total + entry.bytes, 0),
+  manifestObject: {
+    path: "manifest.json",
+    ossKey: `${ossPrefix}manifest.json`,
+    url: `${assetBaseUrl}/manifest.json`,
+  },
+  files: entries,
+}, null, 2)}\n`;
 
 if (checkOnly) {
   const current = await fs.readFile(manifestPath, "utf8").catch(() => "");
-  if (current !== manifest) throw new Error("public/assets/manifest.json is stale; run npm run build:assets");
+  if (current !== manifest) throw new Error(`${uploadRoot}/manifest.json is stale; run npm run build:assets`);
   console.log(`asset manifest: ${entries.length} files are current`);
 } else {
   await fs.writeFile(manifestPath, manifest, "utf8");

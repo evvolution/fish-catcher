@@ -1,17 +1,20 @@
 {
-  "name": "fish-catcher",
+  "name": "moyu",
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=20.19.0"
+  },
   "scripts": {
     "predev": "npm run prisma:generate",
-    "dev": "next dev",
+    "dev": "nuxt dev",
     "prebuild": "npm run prisma:generate",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
-    "build:quotes": "node scripts/build-gap-copy-corpus.mjs",
+    "build": "nuxt build",
+    "start": "node .output/server/index.mjs",
+    "lint": "eslint scripts",
+    "typecheck": "nuxt typecheck",
+    "build:quotes": "node scripts/build-moyu-copy-corpus.mjs",
     "build:forums": "node scripts/build-forum-copy.mjs",
     "build:fishes": "node scripts/build-fish-catalog.mjs && node scripts/apply-fish-safety-profiles.mjs",
     "build:regions": "node scripts/build-regional-catalog.mjs",
@@ -22,30 +25,31 @@
     "check:fonts": "node scripts/build-font-subsets.mjs --check",
     "check:backpack": "node --experimental-strip-types scripts/check-food-backpack.mjs",
     "check:assets": "node scripts/build-asset-manifest.mjs --check",
-    "check:quotes": "node scripts/check-gap-quotes.mjs",
-    "postinstall": "prisma generate",
+    "check:deployment": "node --experimental-strip-types scripts/check-deployment-boundaries.mjs",
+    "check:server-deployment": "node scripts/check-server-deployment.mjs",
+    "check:quotes": "node scripts/check-moyu-quotes.mjs",
+    "postinstall": "prisma generate && nuxt prepare",
     "prisma:generate": "prisma generate",
     "prisma:migrate:dev": "prisma migrate dev",
+    "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio"
   },
   "dependencies": {
     "@prisma/adapter-mariadb": "^7.6.0",
     "@prisma/client": "^7.6.0",
     "mariadb": "^3.4.5",
-    "motion": "^12.38.0",
-    "next": "16.2.1",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "nuxt": "4.5.0",
+    "vue": "3.5.40",
+    "vue-router": "5.2.0"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/node": "^22",
     "dotenv": "^17.3.1",
     "eslint": "^9",
-    "eslint-config-next": "16.2.1",
     "postcss": "^8.5.8",
     "prisma": "^7.6.0",
-    "typescript": "^5"
+    "sharp": "0.35.3",
+    "typescript": "^5",
+    "vue-tsc": "3.3.7"
   }
 }

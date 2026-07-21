@@ -5,6 +5,7 @@ import process from "node:process";
 import sharp from "sharp";
 
 const projectRoot = process.cwd();
+const uploadRoot = path.join(projectRoot, "oss-upload/fish");
 const entries = JSON.parse(await fs.readFile(path.join(projectRoot, "src/lib/fish-species.json"), "utf8"));
 
 assert(entries.length === 200, `expected 200 records, received ${entries.length}`);
@@ -91,21 +92,31 @@ for (const entry of entries) {
     assert(entry.edibilityStatus === "WILD_ONLY_PROHIBITED", `${entry.slug}: wild-only protection must affect edibility`);
   }
 
-  const metadata = await sharp(path.join(projectRoot, "public", entry.imagePath)).metadata();
+  const imagePath = path.join(uploadRoot, entry.imagePath.replace(/^\//, ""));
+  const metadata = await sharp(imagePath).metadata();
   assert(metadata.format === "webp", `${entry.slug}: image is not WebP`);
   assert(metadata.width === 960 && metadata.height === 640, `${entry.slug}: image is not 960x640`);
   assert(metadata.hasAlpha, `${entry.slug}: image has no alpha channel`);
-  assert(!(await sharp(path.join(projectRoot, "public", entry.imagePath)).stats()).isOpaque, `${entry.slug}: image background is opaque`);
+  assert(!(await sharp(imagePath).stats()).isOpaque, `${entry.slug}: image background is opaque`);
 }
 
 assert(entries.filter((entry) => entry.chinaProtectionStatus !== "NONE").length === 10, "unexpected national protection count");
 assert(entries.filter((entry) => entry.citesAppendix !== "NONE").length === 21, "unexpected CITES count");
 
-const publicEntries = (await fs.readdir(path.join(projectRoot, "public"))).filter((entry) => !entry.startsWith("."));
-assert(publicEntries.length === 1 && publicEntries[0] === "assets", "public must contain only the assets root");
+await fs.access(path.join(uploadRoot, "assets/manifest.json"));
+await assertMissing(path.join(projectRoot, "public/assets"), "OSS assets must not be copied into Nuxt public output");
 
 console.log("fish catalog: 200 sourced, legally tagged records and 200 transparent OSS-ready images are valid");
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
+}
+
+async function assertMissing(filePath, message) {
+  try {
+    await fs.access(filePath);
+  } catch {
+    return;
+  }
+  throw new Error(message);
 }

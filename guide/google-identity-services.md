@@ -12,7 +12,7 @@
 当前项目实际使用的回调地址为：
 
 ```text
-${NEXT_PUBLIC_APP_URL}/api/auth/google/callback
+${NUXT_PUBLIC_APP_URL}/api/auth/google/callback
 ```
 
 例如正式域名为 `https://moyu.example.com` 时，回调地址就是：
@@ -91,7 +91,7 @@ https://你的域名/api/auth/google/callback
 
 注意：
 
-- 这一项必须和项目里的 `NEXT_PUBLIC_APP_URL` 完全对应
+- 这一项必须和项目里的 `NUXT_PUBLIC_APP_URL` 完全对应
 - 如果域名、协议、端口、路径有任何不一致，就会出现 `redirect_uri_mismatch`
 
 ## 六、把配置写回项目
@@ -99,7 +99,7 @@ https://你的域名/api/auth/google/callback
 在项目根目录 `.env` 中填写：
 
 ```bash
-NEXT_PUBLIC_APP_URL="https://你的域名"
+NUXT_PUBLIC_APP_URL="https://你的域名"
 GOOGLE_CLIENT_ID="你的 Google Client ID"
 GOOGLE_CLIENT_SECRET="你的 Google Client Secret"
 ```
@@ -134,7 +134,7 @@ GOOGLE_CLIENT_SECRET="你的 Google Client Secret"
 检查这 3 处是否完全一致：
 
 - Google Cloud Console 里的 `Authorized redirect URIs`
-- `.env` 里的 `NEXT_PUBLIC_APP_URL`
+- `.env` 里的 `NUXT_PUBLIC_APP_URL`
 - 项目实际访问域名
 
 ### 2. 页面能打开，但 Google 登录按钮不可用

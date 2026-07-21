@@ -1,11 +1,11 @@
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
-import { PrismaClient } from "@/generated/prisma/client";
+import { PrismaClient } from "~~/src/generated/prisma/client";
 
 const globalForPrisma = globalThis as typeof globalThis & {
   prisma?: PrismaClient;
 };
 
-const requiredGapModelDelegates = [
+const requiredMoyuModelDelegates = [
   "momentActivity",
   "dimensionGroup",
   "copywritingEntry",
@@ -14,7 +14,7 @@ const requiredGapModelDelegates = [
   "fishSpecies",
 ] as const;
 
-const requiredGapModelFields = {
+const requiredMoyuModelFields = {
   FishSpecies: ["chinaProtectionStatus", "citesAppendix", "toxicityStatus", "edibilityStatus", "legalReviewedAt"],
 } as const;
 
@@ -50,10 +50,10 @@ function createPrismaClient() {
 }
 
 function isCurrentPrismaClient(client: PrismaClient) {
-  if (!requiredGapModelDelegates.every((delegate) => delegate in client)) return false;
+  if (!requiredMoyuModelDelegates.every((delegate) => delegate in client)) return false;
 
   const models = (client as RuntimeModelClient)._runtimeDataModel?.models;
-  return Object.entries(requiredGapModelFields).every(([modelName, requiredFields]) => {
+  return Object.entries(requiredMoyuModelFields).every(([modelName, requiredFields]) => {
     const fields = new Set(models?.[modelName]?.fields?.map((field) => field.name));
     return requiredFields.every((field) => fields.has(field));
   });
@@ -69,7 +69,7 @@ const currentPrisma = globalForPrisma.prisma ?? createPrismaClient();
 
 if (!isCurrentPrismaClient(currentPrisma)) {
   void currentPrisma.$disconnect();
-  throw new Error('Prisma Client schema is stale. Run "npm run prisma:generate" and restart the Next.js process.');
+  throw new Error('Prisma Client schema is stale. Run "npm run prisma:generate" and restart the Nuxt process.');
 }
 
 export const prisma = currentPrisma;

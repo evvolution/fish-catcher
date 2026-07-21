@@ -1,0 +1,312 @@
+.cardGrid {
+  margin-top: 18px;
+}
+
+.libraryTabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  margin-top: 14px;
+  padding: 5px;
+  border-radius: 18px;
+  background: rgba(32, 54, 56, 0.07);
+}
+
+.libraryTabs button {
+  min-height: 43px;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  color: rgba(32, 54, 56, 0.58);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.libraryTabs button small {
+  margin-left: 3px;
+  font-size: 9px;
+  font-weight: 620;
+  opacity: 0.6;
+}
+
+.libraryTabs .libraryTabActive {
+  background: rgba(255, 255, 255, 0.64);
+  color: #203638;
+  box-shadow: 0 6px 18px rgba(24, 48, 51, 0.08);
+}
+
+.logList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.loadMoreHint {
+  margin: 2px 0 0;
+  padding: 10px 0 2px;
+  color: rgba(32, 54, 56, 0.42);
+  font-size: 10px;
+  font-weight: 620;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.logItem {
+  padding: 16px;
+  border: 1px solid rgba(32, 54, 56, 0.09);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.38);
+}
+
+.logItem header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: rgba(32, 54, 56, 0.58);
+  font-size: 10px;
+  font-weight: 680;
+}
+
+.logItem time {
+  flex: 0 0 auto;
+  font-weight: 560;
+}
+
+.logCopy {
+  margin: 10px 0 0;
+  color: #203638;
+  font-family: var(--font-serif);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.logFood {
+  margin: 10px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid rgba(32, 54, 56, 0.08);
+  color: rgba(32, 54, 56, 0.68);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.fishLogItem {
+  padding-bottom: 14px;
+}
+
+.fishLogPreview {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+  padding: 10px;
+  border: 1px solid rgba(32, 54, 56, 0.07);
+  border-radius: 17px;
+  background: rgba(219, 232, 226, 0.34);
+}
+
+.fishLogImageWrap {
+  position: relative;
+  min-height: 72px;
+  overflow: hidden;
+  border-radius: 13px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.68), rgba(197, 217, 211, 0.26));
+}
+
+.fishLogImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 7px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 10px rgba(30, 61, 62, 0.16));
+}
+
+.fishLogCopy {
+  min-width: 0;
+}
+
+.fishLogCopy > div {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.fishLogCopy strong {
+  font-size: 14px;
+  letter-spacing: -0.02em;
+}
+
+.fishLogCopy em {
+  overflow: hidden;
+  color: rgba(32, 54, 56, 0.42);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 8px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fishLogCopy p {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 7px 0 0;
+  color: rgba(32, 54, 56, 0.62);
+  font-size: 10px;
+  line-height: 1.55;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.backpackPanel {
+  margin-top: 18px;
+}
+
+.backpackPanel > .emptyCard {
+  margin-top: 10px;
+}
+
+.backpackHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 17px;
+  border: 1px solid rgba(32, 54, 56, 0.08);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.38);
+}
+
+.backpackHeader p,
+.backpackHeader strong,
+.backpackAmount {
+  margin: 0;
+}
+
+.backpackHeader p {
+  color: rgba(32, 54, 56, 0.48);
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+}
+
+.backpackHeader strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 19px;
+  letter-spacing: -0.03em;
+}
+
+.backpackHeader > span {
+  max-width: 150px;
+  color: rgba(32, 54, 56, 0.46);
+  font-size: 9px;
+  line-height: 1.5;
+  text-align: right;
+}
+
+.backpackGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-top: 10px;
+}
+
+.backpackItem {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 15px;
+  border: 1px solid rgba(32, 54, 56, 0.08);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.36);
+}
+
+.backpackFoodMark {
+  display: inline-flex;
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  border: 1px solid rgba(32, 54, 56, 0.08);
+  border-radius: 50%;
+  background: linear-gradient(145deg, rgba(231, 239, 217, 0.86), rgba(188, 211, 198, 0.72));
+  color: rgba(32, 54, 56, 0.72);
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.backpackFoodName {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.backpackFoodName strong,
+.backpackFoodName small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.backpackFoodName strong {
+  font-size: 13px;
+}
+
+.backpackFoodName small {
+  margin-top: 3px;
+  color: rgba(32, 54, 56, 0.42);
+  font-size: 8px;
+}
+
+.backpackAmount {
+  flex: 0 0 auto;
+  font-size: 22px;
+  font-weight: 680;
+  letter-spacing: -0.04em;
+}
+
+.backpackAmount small {
+  margin-left: 3px;
+  color: rgba(32, 54, 56, 0.5);
+  font-size: 10px;
+  font-weight: 620;
+  letter-spacing: 0;
+}
+
+.sheet .emptyCard {
+  border-color: rgba(32, 54, 56, 0.08);
+  background: rgba(255, 255, 255, 0.34);
+  color: rgba(32, 54, 56, 0.56);
+}
+
+.cardItem {
+  align-items: flex-start;
+  border-color: rgba(32, 54, 56, 0.09);
+  background: rgba(255, 255, 255, 0.36);
+  color: #203638;
+}
+
+.cardItemTitle {
+  color: rgba(32, 54, 56, 0.52);
+}
+
+.cardItemContent {
+  margin: 10px 0 0;
+  font-family: var(--font-serif);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.deleteButton {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+}

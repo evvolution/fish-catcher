@@ -9,9 +9,9 @@ export const oauthStateCookieNames = {
 } as const;
 
 export const authConfigKeys = {
-  app: ["NEXT_PUBLIC_APP_URL"] as const,
-  google: ["NEXT_PUBLIC_APP_URL", "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"] as const,
-  wechat: ["NEXT_PUBLIC_APP_URL", "WECHAT_APP_ID", "WECHAT_APP_SECRET"] as const,
+  app: ["NUXT_PUBLIC_APP_URL"] as const,
+  google: ["NUXT_PUBLIC_APP_URL", "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"] as const,
+  wechat: ["NUXT_PUBLIC_APP_URL", "WECHAT_APP_ID", "WECHAT_APP_SECRET"] as const,
   smsWebhook: ["SMS_WEBHOOK_URL"] as const,
 } as const;
 
@@ -33,7 +33,7 @@ export function getSmsProvider() {
 }
 
 export function getBaseAppUrl() {
-  return process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ?? "";
+  return process.env.NUXT_PUBLIC_APP_URL?.replace(/\/$/, "") ?? "";
 }
 
 export function getGoogleRedirectUri() {

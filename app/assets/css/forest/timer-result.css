@@ -1,0 +1,246 @@
+.cardGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.emptyCard,
+.cardDrop,
+.cardItem {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(8, 24, 28, 0.34);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.emptyCard,
+.cardItem {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 15px 16px;
+  border-radius: 22px;
+}
+
+.cardItemTitle {
+  margin: 0;
+  color: rgba(247, 248, 243, 0.58);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+}
+
+.noiseButton,
+.endButton,
+.pauseButton,
+.primaryButton,
+.secondaryButton,
+.choiceChip,
+.cityRankButton,
+.cityCustomAction,
+.deleteButton,
+.closeButton {
+  border: 0;
+  border-radius: 999px;
+}
+
+.timerStage,
+.resultStage {
+  justify-content: space-between;
+}
+
+.timerTopBar {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.timerActivity {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+}
+
+.noiseButton {
+  display: inline-flex;
+  width: 46px;
+  height: 46px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(9, 27, 31, 0.2);
+  color: #f8faf5;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+}
+
+.noiseButtonActive {
+  background: rgba(214, 234, 209, 0.24);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 0 0 5px rgba(214, 234, 209, 0.08);
+}
+
+.timerCenter {
+  position: relative;
+  display: flex;
+  width: min(72vw, 310px);
+  aspect-ratio: 1;
+  align-self: center;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(244, 249, 242, 0.12);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(224, 241, 231, 0.1), transparent 66%);
+  box-shadow:
+    0 0 0 20px rgba(231, 244, 236, 0.025),
+    0 0 80px rgba(188, 224, 210, 0.1);
+  animation: breathe 5.5s ease-in-out infinite;
+}
+
+.timerValue {
+  margin: 0;
+  font-size: clamp(38px, 11vw, 58px);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  text-shadow: 0 4px 24px rgba(2, 12, 15, 0.22);
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(0.985); opacity: 0.88; }
+  50% { transform: scale(1.02); opacity: 1; }
+}
+
+.timerControls,
+.resultActions,
+.sheetActions {
+  display: grid;
+  gap: 10px;
+}
+
+.timerControls,
+.resultActions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.endButton,
+.pauseButton,
+.primaryButton,
+.secondaryButton {
+  display: inline-flex;
+  min-height: 54px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 18px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.pauseButton,
+.primaryButton {
+  background: linear-gradient(145deg, #eef4e7, #cddcb9);
+  color: #173236;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    0 12px 28px rgba(2, 15, 17, 0.2);
+}
+
+.endButton,
+.secondaryButton {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(9, 27, 31, 0.2);
+  color: #f8faf5;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+}
+
+.resultStage {
+  justify-content: flex-start;
+  overflow-y: auto;
+  padding-bottom: 108px;
+  overscroll-behavior: contain;
+}
+
+.resultLead {
+  margin: 4px 0 0;
+  color: rgba(247, 248, 243, 0.58);
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+}
+
+.resultDuration {
+  margin: 12px 0 0;
+  font-size: clamp(38px, 11vw, 54px);
+  font-weight: 680;
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+
+.resultCopy {
+  max-width: 430px;
+  margin: clamp(44px, 9vh, 82px) 0 0;
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 7.6vw, 40px);
+  font-weight: 600;
+  line-height: 1.47;
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+  white-space: pre-line;
+}
+
+.resultCopyLong {
+  font-size: clamp(20px, 5.4vw, 29px);
+  line-height: 1.55;
+}
+
+.resultSource {
+  margin: 16px 0 0;
+  color: rgba(247, 248, 243, 0.54);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.resultSnack {
+  margin: 24px 0 0;
+  color: rgba(247, 248, 243, 0.66);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.cardDrop {
+  margin-top: 28px;
+  padding: 20px;
+  border-radius: 28px;
+}
+
+.cardDropTitle {
+  margin: 0;
+  color: rgba(247, 248, 243, 0.54);
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+}
+
+.cardDropContent {
+  margin: 12px 0 0;
+  font-family: var(--font-serif);
+  font-size: 18px;
+  line-height: 1.65;
+  white-space: pre-line;
+}
+
+.resultActions {
+  position: fixed;
+  right: max(20px, calc((100vw - 500px) / 2 + 20px));
+  bottom: max(18px, env(safe-area-inset-bottom));
+  left: max(20px, calc((100vw - 500px) / 2 + 20px));
+  z-index: 5;
+}

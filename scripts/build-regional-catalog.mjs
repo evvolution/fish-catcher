@@ -182,7 +182,7 @@ const output = {
   ],
 };
 
-const target = path.join(process.cwd(), "public/assets/data/regional-catalog.json");
+const target = path.join(process.cwd(), "oss-upload/fish/assets/data/regional-catalog.json");
 await mkdir(path.dirname(target), { recursive: true });
 await writeFile(target, `${JSON.stringify(output, null, 2)}\n`, "utf8");
 console.log(`Wrote ${target}: ${regions.length} provinces, ${cities.length} cities, ${cities.flatMap((city) => city.districts).length} districts, ${foods.flatMap((city) => city.items).length} local foods`);

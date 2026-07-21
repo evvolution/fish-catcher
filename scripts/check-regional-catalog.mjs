@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 
-const catalog = JSON.parse(await readFile("public/assets/data/regional-catalog.json", "utf8"));
+const catalog = JSON.parse(await readFile("oss-upload/fish/assets/data/regional-catalog.json", "utf8"));
 const fail = (message) => { throw new Error(message); };
 const citySlugs = new Set(catalog.cities.map((city) => city.slug));
 const cityCodes = new Set(catalog.cities.map((city) => city.code));
