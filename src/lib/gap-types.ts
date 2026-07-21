@@ -97,17 +97,33 @@ export type CityRecord = {
   snacks: SnackRecord[];
 };
 
+export type FishSpeciesRecord = {
+  id: string;
+  slug: string;
+  commonNameZh: string;
+  commonNameEn: string;
+  scientificName: string;
+  habitatLabel: string;
+  summary: string;
+  habits: string;
+  distribution: string;
+  imagePath: string;
+};
+
 export type ForestCatalog = {
   activities: ActivityRecord[];
   dimensionGroups: DimensionGroupRecord[];
   backgrounds: BackgroundRecord[];
   copyEntries: CopywritingRecord[];
   cities: CityRecord[];
+  fishes: FishSpeciesRecord[];
 };
 
 export type GuestProfile = {
   citySlug: string | null;
+  cityName: string | null;
   industrySlug: string | null;
+  industryName: string | null;
   hasSeenOnboarding: boolean;
 };
 

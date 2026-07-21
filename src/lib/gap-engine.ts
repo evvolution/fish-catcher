@@ -19,7 +19,9 @@ export function createEmptyGuestStore(): GuestForestStore {
   return {
     profile: {
       citySlug: null,
+      cityName: null,
       industrySlug: null,
+      industryName: null,
       hasSeenOnboarding: false,
     },
     recentCopyIds: [],
@@ -41,7 +43,9 @@ export function sanitizeGuestStore(value: unknown): GuestForestStore {
   return {
     profile: {
       citySlug: typeof profile.citySlug === "string" ? profile.citySlug : null,
+      cityName: typeof profile.cityName === "string" ? profile.cityName.slice(0, 32) : null,
       industrySlug: typeof profile.industrySlug === "string" ? profile.industrySlug : null,
+      industryName: typeof profile.industryName === "string" ? profile.industryName.slice(0, 32) : null,
       hasSeenOnboarding: Boolean(profile.hasSeenOnboarding),
     },
     recentCopyIds: Array.isArray(candidate.recentCopyIds)

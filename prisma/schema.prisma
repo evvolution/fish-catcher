@@ -327,3 +327,29 @@ model CitySnack {
   @@index([cityId, sortOrder, isActive], map: "idx_city_snacks_city_sort_active")
   @@map("city_snacks")
 }
+
+model FishSpecies {
+  id                 String   @id @default(cuid()) @db.VarChar(191)
+  slug               String   @unique @db.VarChar(80)
+  commonNameZh       String   @map("common_name_zh") @db.VarChar(80)
+  commonNameEn       String   @map("common_name_en") @db.VarChar(120)
+  scientificName     String   @unique @map("scientific_name") @db.VarChar(120)
+  habitatLabel       String   @map("habitat_label") @db.VarChar(80)
+  summary            String   @db.Text
+  habits             String   @db.Text
+  distribution       String   @db.Text
+  imagePath          String   @map("image_path") @db.VarChar(255)
+  sourceName         String   @map("source_name") @db.VarChar(64)
+  sourcePageUrl      String   @map("source_page_url") @db.VarChar(500)
+  imageSourceName    String   @map("image_source_name") @db.VarChar(64)
+  imageSourcePageUrl String   @map("image_source_page_url") @db.VarChar(500)
+  imageAuthor        String?  @map("image_author") @db.VarChar(191)
+  licenseLabel       String?  @map("license_label") @db.VarChar(120)
+  sortOrder          Int      @default(0) @map("sort_order")
+  isActive           Boolean  @default(true) @map("is_active")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  @@index([sortOrder, isActive], map: "idx_fish_species_sort_active")
+  @@map("fish_species")
+}

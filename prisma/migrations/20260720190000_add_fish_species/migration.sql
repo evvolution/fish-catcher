@@ -1,0 +1,27 @@
+CREATE TABLE `fish_species` (
+    `id` VARCHAR(191) NOT NULL,
+    `slug` VARCHAR(80) NOT NULL,
+    `common_name_zh` VARCHAR(80) NOT NULL,
+    `common_name_en` VARCHAR(120) NOT NULL,
+    `scientific_name` VARCHAR(120) NOT NULL,
+    `habitat_label` VARCHAR(80) NOT NULL,
+    `summary` TEXT NOT NULL,
+    `habits` TEXT NOT NULL,
+    `distribution` TEXT NOT NULL,
+    `image_path` VARCHAR(255) NOT NULL,
+    `source_name` VARCHAR(64) NOT NULL,
+    `source_page_url` VARCHAR(500) NOT NULL,
+    `image_source_name` VARCHAR(64) NOT NULL,
+    `image_source_page_url` VARCHAR(500) NOT NULL,
+    `image_author` VARCHAR(191) NULL,
+    `license_label` VARCHAR(120) NULL,
+    `sort_order` INTEGER NOT NULL DEFAULT 0,
+    `is_active` BOOLEAN NOT NULL DEFAULT true,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `fish_species_slug_key`(`slug`),
+    UNIQUE INDEX `fish_species_scientific_name_key`(`scientific_name`),
+    INDEX `idx_fish_species_sort_active`(`sort_order`, `is_active`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

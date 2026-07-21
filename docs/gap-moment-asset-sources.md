@@ -46,6 +46,16 @@
 - 本地目录：`public/assets/icons`
 - 用途：行为、计时、卡册和设置等界面图标；下载后仅调整了颜色和线宽，未用 CSS 或组件路径临摹
 
+## 鱼类轮播资料与图片
+
+- 物种资料主源：[FishBase](https://www.fishbase.se/search.php)，以学名索引核对栖息环境、习性和地理分布；前台中文为项目原创摘要，不复制来源正文。
+- 图片源：[Wikimedia Commons](https://commons.wikimedia.org/wiki/Category:Fish) 与 [FishBase](https://www.fishbase.se/)，保存每张图片的来源页、作者与许可或来源条款。
+- 本地目录：`public/assets/fishes`；200 张图片全部经过 macOS Vision 前景分割，统一为 960×640 透明 WebP，并采用相同主体尺度、留白、亮度与饱和度处理。
+- 冻结清单：`src/lib/fish-species.json`；每条包含中英文名、学名、栖息类型、习性、分布、简介、资料源、图片源和许可。
+- 重建命令：`npm run build:fishes`；仅重建指定条目可运行 `node scripts/build-fish-catalog.mjs --refresh=slug-a,slug-b`。
+- 静态资源根目录统一为 `public/assets`，下分 `backgrounds`、`fishes`、`fonts` 与 `icons`；后续迁移 OSS 只需替换这一层资源前缀。
+- 文件级迁移清单位于 `public/assets/manifest.json`，部署检查表见 `docs/oss-static-assets-migration.md`。
+
 ## 跨文化公版文案
 
 - 手工核对库：中国哲学书电子化计划（https://ctext.org/）、维基文库（https://zh.wikisource.org/），80 条。

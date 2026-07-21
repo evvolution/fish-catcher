@@ -10,6 +10,7 @@
 - 4 条时段问候、880 条行为结果、320 条掉落卡片（共 1,204 条内容资产）
 - 1,200 条结果/卡片均具备场景、情感内核、心理需要、文字动作和能量标签
 - 120 条论坛议题原创微评论：V2EX、Hacker News、Reddit 各 40 条，轻松与深度各 60 条，并带观察/过期日期
+- 200 种鱼类百科轮播：中文名、学名、习性、分布、来源与统一透明底图片
 - 微信、Google、手机验证码和游客身份的服务端接口骨架
 - 隐藏的内容运营页 `/operator`
 
@@ -142,8 +143,12 @@ Useful commands:
 npm run lint
 npm run typecheck
 npm run check:quotes
+npm run check:fishes
+npm run check:assets
 npm run build:quotes
 npm run build:forums
+npm run build:fishes
+npm run build:assets
 npm run prisma:generate
 npm run prisma:studio
 ```
@@ -157,4 +162,6 @@ npm run prisma:studio
 - `src/lib/prisma.ts`: shared Prisma client
 - `src/lib/auth.ts`: auth, session, and provider helpers
 - `src/lib/auth-config.ts`: auth-related environment variable contract
-- `src/app/page.tsx`: current welcome screen
+- `src/app/page.tsx`: forest entry with the full-screen fish overlay
+
+所有可上传 OSS 的静态资源统一位于 `public/assets`；鱼类图片的抓取、来源记录、透明前景分割和 960×640 WebP 标准化由 `npm run build:fishes` 完成。`npm run build:assets` 会生成带 SHA-256 的迁移清单，完整步骤见 `docs/oss-static-assets-migration.md`。

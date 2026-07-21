@@ -8,6 +8,216 @@
   isolation: isolate;
 }
 
+.welcomeOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow: hidden;
+  color: #f8faf5;
+  background: #14282d;
+  isolation: isolate;
+}
+
+.welcomeBackground,
+.welcomeScrim,
+.welcomeDismiss {
+  position: absolute;
+  inset: 0;
+}
+
+.welcomeBackground {
+  z-index: -2;
+  object-fit: cover;
+  object-position: 55% center;
+  transform: scale(1.025);
+  filter: saturate(0.76) contrast(1.04) brightness(0.68);
+}
+
+.welcomeScrim {
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(6, 19, 23, 0.3), rgba(5, 16, 19, 0.13) 42%, rgba(4, 13, 16, 0.72)),
+    radial-gradient(circle at 50% 17%, rgba(248, 239, 211, 0.2), transparent 32%);
+}
+
+.welcomeDismiss {
+  z-index: 1;
+  border: 0;
+  background: transparent;
+}
+
+.welcomeContent {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  width: min(100%, 500px);
+  min-height: 100vh;
+  min-height: 100dvh;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin: 0 auto;
+  padding:
+    max(28px, env(safe-area-inset-top))
+    24px
+    max(30px, env(safe-area-inset-bottom));
+  pointer-events: none;
+}
+
+.welcomeTitle {
+  margin: 0;
+  font-size: clamp(31px, 9vw, 48px);
+  font-weight: 740;
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+  text-align: center;
+  text-shadow: 0 8px 34px rgba(2, 12, 15, 0.32);
+  white-space: nowrap;
+}
+
+.welcomeFishStage {
+  position: relative;
+  width: min(100%, 430px);
+  height: clamp(410px, 56dvh, 500px);
+  margin-top: clamp(24px, 4vh, 38px);
+}
+
+.welcomeFishCard {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 34px;
+  background:
+    linear-gradient(155deg, rgba(224, 239, 233, 0.14), rgba(6, 22, 27, 0.22)),
+    rgba(8, 25, 29, 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 26px 70px rgba(2, 12, 15, 0.32);
+  backdrop-filter: blur(24px) saturate(145%);
+  -webkit-backdrop-filter: blur(24px) saturate(145%);
+}
+
+.welcomeFishContent {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+  margin: 0;
+  will-change: opacity;
+}
+
+.welcomeFishImageWrap {
+  position: relative;
+  min-height: 0;
+  flex: 0 0 50%;
+  overflow: hidden;
+}
+
+.welcomeFishImageWrap::after {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(4, 15, 18, 0.02), rgba(4, 15, 18, 0.36)),
+    linear-gradient(135deg, rgba(170, 215, 211, 0.08), rgba(8, 29, 34, 0.08));
+  content: "";
+}
+
+.welcomeFishImage {
+  padding: 10px;
+  object-fit: contain;
+  filter: drop-shadow(0 20px 26px rgba(2, 12, 15, 0.34)) saturate(0.9) contrast(1.02);
+}
+
+.welcomeHabitat {
+  position: absolute;
+  right: 14px;
+  bottom: 13px;
+  z-index: 1;
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  background: rgba(6, 22, 27, 0.3);
+  color: rgba(250, 251, 247, 0.82);
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.welcomeFishCopy {
+  min-height: 0;
+  flex: 1 1 50%;
+  padding: 18px 20px 20px;
+}
+
+.welcomeFishHeading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.welcomeFishName,
+.welcomeScientificName,
+.welcomeFishSummary,
+.welcomeFishFact,
+.welcomeHint {
+  margin: 0;
+}
+
+.welcomeFishName {
+  font-size: 23px;
+  font-weight: 730;
+  letter-spacing: -0.035em;
+}
+
+.welcomeScientificName {
+  overflow: hidden;
+  color: rgba(247, 249, 244, 0.46);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 9px;
+  font-style: italic;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.welcomeFishSummary {
+  margin-top: 7px;
+  color: rgba(249, 250, 246, 0.76);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.welcomeFishFact {
+  display: -webkit-box;
+  overflow: hidden;
+  margin-top: 7px;
+  color: rgba(246, 248, 242, 0.58);
+  font-size: 10px;
+  line-height: 1.5;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.welcomeFishFact span {
+  margin-right: 8px;
+  color: rgba(247, 249, 244, 0.82);
+  font-weight: 680;
+  letter-spacing: 0.08em;
+}
+
+.welcomeHint {
+  position: absolute;
+  bottom: max(14px, env(safe-area-inset-bottom));
+  color: rgba(248, 250, 245, 0.48);
+  font-size: 10px;
+  font-weight: 620;
+  letter-spacing: 0.12em;
+}
+
 .backgroundViewport {
   position: fixed;
   inset: 0;
@@ -64,24 +274,67 @@
     max(28px, env(safe-area-inset-bottom));
 }
 
-.stage {
-  padding-bottom: 116px;
-}
-
 .header {
   display: flex;
+  min-width: 0;
   align-items: center;
+  justify-content: space-between;
+  gap: 14px;
   min-height: 34px;
 }
 
-.brand {
-  margin: 0;
-  font-size: 14px;
+.albumButton,
+.settingsButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  color: #f8faf5;
+}
+
+.albumButton {
+  flex: 0 0 auto;
+  min-height: 42px;
+  gap: 8px;
+  padding: 0 4px;
+  background: transparent;
+  font-size: 12px;
   font-weight: 650;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.06em;
+}
+
+.profileTools {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 9px;
+}
+
+.profileSummary {
+  overflow: hidden;
+  color: rgba(247, 249, 244, 0.66);
+  font-size: 10px;
+  font-weight: 620;
+  letter-spacing: 0.08em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.settingsButton {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 50%;
+  background: rgba(8, 25, 29, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(18px) saturate(145%);
+  -webkit-backdrop-filter: blur(18px) saturate(145%);
 }
 
 .heroCard {
+  width: fit-content;
   max-width: 420px;
   margin-top: clamp(34px, 8vh, 72px);
 }
@@ -102,6 +355,7 @@
   font-size: 11px;
   font-weight: 580;
   letter-spacing: 0.1em;
+  text-align: right;
 }
 
 .actionSection {
@@ -231,58 +485,18 @@
   white-space: nowrap;
 }
 
-.bottomDock {
-  position: fixed;
-  bottom: max(14px, env(safe-area-inset-bottom));
-  left: 50%;
-  z-index: 5;
-  display: flex;
-  width: min(calc(100% - 32px), 468px);
-  justify-content: center;
-  gap: 4px;
-  padding: 7px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 999px;
-  background:
-    linear-gradient(145deg, rgba(231, 243, 239, 0.13), rgba(13, 31, 35, 0.18)),
-    rgba(8, 24, 28, 0.25);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.2),
-    0 18px 50px rgba(2, 12, 15, 0.3);
-  transform: translateX(-50%);
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-}
-
-.dockButton,
 .noiseButton,
 .endButton,
 .pauseButton,
 .primaryButton,
 .secondaryButton,
 .choiceChip,
+.cityRankButton,
+.cityCustomAction,
 .deleteButton,
 .closeButton {
   border: 0;
   border-radius: 999px;
-}
-
-.dockButton {
-  display: inline-flex;
-  min-width: 100px;
-  min-height: 46px;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-  padding: 0 16px;
-  background: transparent;
-  color: #f8faf5;
-  font-size: 12px;
-  font-weight: 650;
-}
-
-.dockButton:active {
-  background: rgba(255, 255, 255, 0.12);
 }
 
 .timerStage,
@@ -579,7 +793,7 @@
   letter-spacing: 0.06em;
 }
 
-.select {
+.textInput {
   width: 100%;
   min-height: 50px;
   border: 1px solid rgba(32, 54, 56, 0.12);
@@ -587,6 +801,156 @@
   padding: 0 15px;
   background: rgba(255, 255, 255, 0.52);
   color: #203638;
+  font: inherit;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+.textInput::placeholder {
+  color: rgba(32, 54, 56, 0.36);
+}
+
+.choiceWrap.cityChoiceWrap {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.cityChoiceWrap .choiceChip {
+  width: 100%;
+  padding-inline: 8px;
+}
+
+.customCityField {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 2px;
+}
+
+.fieldHint {
+  padding: 0 3px;
+  color: rgba(32, 54, 56, 0.48);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.citySelectionNote {
+  padding: 0 3px;
+  color: rgba(32, 54, 56, 0.56);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.05em;
+}
+
+.cityPickerBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  border: 0;
+  background: rgba(4, 13, 15, 0.42);
+  backdrop-filter: blur(14px) saturate(115%);
+  -webkit-backdrop-filter: blur(14px) saturate(115%);
+}
+
+.cityPickerDialog {
+  position: fixed;
+  right: 16px;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  left: 16px;
+  z-index: 41;
+  display: flex;
+  width: min(calc(100% - 32px), 468px);
+  max-height: calc(100dvh - 32px);
+  flex-direction: column;
+  gap: 16px;
+  margin: 0 auto;
+  padding: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.64);
+  border-radius: 34px;
+  background:
+    linear-gradient(155deg, rgba(251, 252, 248, 0.94), rgba(225, 234, 226, 0.88)),
+    rgba(239, 243, 237, 0.9);
+  color: #203638;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.86),
+    0 28px 90px rgba(2, 12, 15, 0.34);
+  backdrop-filter: blur(34px) saturate(165%);
+  -webkit-backdrop-filter: blur(34px) saturate(165%);
+}
+
+.cityPickerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cityPickerTitle {
+  margin: 0;
+  font-size: 27px;
+  font-weight: 740;
+  letter-spacing: -0.04em;
+}
+
+.cityRankGrid {
+  display: grid;
+  min-height: 0;
+  overflow-y: auto;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+  padding: 1px;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.cityRankGrid::-webkit-scrollbar {
+  display: none;
+}
+
+.occupationGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.cityRankButton {
+  display: flex;
+  min-width: 0;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  border: 1px solid rgba(32, 54, 56, 0.08);
+  background: rgba(255, 255, 255, 0.42);
+  color: rgba(32, 54, 56, 0.74);
+  font-size: 12px;
+  font-weight: 650;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.cityRankButtonActive {
+  border-color: transparent;
+  background: #264447;
+  color: #f7f9f4;
+  box-shadow: 0 9px 20px rgba(23, 50, 54, 0.18);
+}
+
+.occupationButton {
+  min-height: 52px;
+  padding: 7px 10px;
+  line-height: 1.35;
+  white-space: normal;
+}
+
+.cityCustomAction {
+  display: flex;
+  min-height: 50px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 17px;
+  border: 1px solid rgba(32, 54, 56, 0.1);
+  background: rgba(255, 255, 255, 0.46);
+  color: #264447;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .choiceWrap {
@@ -610,6 +974,12 @@
   background: #264447;
   color: #f7f9f4;
   box-shadow: 0 8px 18px rgba(23, 50, 54, 0.16);
+}
+
+.primaryButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  box-shadow: none;
 }
 
 .cardGrid {
@@ -682,16 +1052,19 @@
 }
 
 .activityButton:focus-visible,
-.dockButton:focus-visible,
+.albumButton:focus-visible,
+.settingsButton:focus-visible,
 .noiseButton:focus-visible,
 .endButton:focus-visible,
 .pauseButton:focus-visible,
 .primaryButton:focus-visible,
 .secondaryButton:focus-visible,
 .choiceChip:focus-visible,
+.cityRankButton:focus-visible,
+.cityCustomAction:focus-visible,
 .deleteButton:focus-visible,
 .closeButton:focus-visible,
-.select:focus-visible {
+.textInput:focus-visible {
   outline: 3px solid rgba(225, 241, 217, 0.9);
   outline-offset: 3px;
 }

@@ -5,6 +5,15 @@ const globalForPrisma = globalThis as typeof globalThis & {
   prisma?: PrismaClient;
 };
 
+const requiredGapModelDelegates = [
+  "momentActivity",
+  "dimensionGroup",
+  "copywritingEntry",
+  "backgroundAsset",
+  "cityGuide",
+  "fishSpecies",
+] as const;
+
 function createPrismaClient() {
   const host = process.env.DATABASE_HOST;
   const user = process.env.DATABASE_USER;
@@ -27,6 +36,15 @@ function createPrismaClient() {
   });
 
   return new PrismaClient({ adapter });
+}
+
+if (
+  globalForPrisma.prisma &&
+  !requiredGapModelDelegates.every((delegate) => delegate in globalForPrisma.prisma!)
+) {
+  // ponytail: delegate presence is the cheapest dev-time schema version check; predev still regenerates the client.
+  void globalForPrisma.prisma.$disconnect();
+  delete globalForPrisma.prisma;
 }
 
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();

@@ -5,12 +5,15 @@ import type {
   CopywritingRecord,
   DimensionGroupRecord,
   DimensionOptionRecord,
+  FishSpeciesRecord,
   ForestCatalog,
 } from "@/lib/gap-types";
 import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
+import { unstable_cache } from "next/cache";
 import gapCopyCorpusData from "@/lib/gap-copy-corpus.json";
 import gapForumCopyData from "@/lib/gap-forum-copy.json";
+import fishSpeciesData from "@/lib/fish-species.json";
 import { gapQuoteSeeds } from "@/lib/gap-quotes";
 import { semanticDimensionRefs, type GapSemanticAnalysis } from "@/lib/gap-semantics";
 
@@ -124,6 +127,17 @@ type CitySeed = {
   }>;
 };
 
+type FishSpeciesSeed = Omit<FishSpeciesRecord, "id"> & {
+  sourceName: string;
+  sourcePageUrl: string;
+  imageSourceName: string;
+  imageSourcePageUrl: string;
+  imageAuthor: string | null;
+  licenseLabel: string | null;
+  sortOrder: number;
+};
+
+const fishSpeciesSeeds = fishSpeciesData satisfies FishSpeciesSeed[];
 const dimensionGroupSeeds: DimensionGroupSeed[] = [
   {
     key: "time_of_day",
@@ -139,15 +153,40 @@ const dimensionGroupSeeds: DimensionGroupSeed[] = [
   },
   {
     key: "industry",
-    label: "行业",
+    label: "职业",
     kind: "INDUSTRY",
-    description: "给高压职业一点被理解的专属语气。",
+    description: "从现行国家职业分类中选取 30 个代表职业，给不同劳动节奏一点被理解的专属语气。",
     options: [
-      { slug: "programmer", label: "程序员", description: "长时间面对屏幕、上下文切换频繁。" },
-      { slug: "medical", label: "医护", description: "高压、值班、体力脑力同时在线。" },
-      { slug: "teacher", label: "教师", description: "情绪劳动多，需要慢慢回神。" },
-      { slug: "delivery", label: "外卖员", description: "奔波、时效、天气都在身上。" },
-      { slug: "office", label: "职场人", description: "会议、消息、待办堆叠的日常。" },
+      { slug: "programmer", label: "计算机程序设计员", description: "长时间面对屏幕、逻辑与上下文切换频繁。" },
+      { slug: "medical", label: "全科医师", description: "临床判断、沟通和值班压力同时在线。" },
+      { slug: "teacher", label: "中小学教师", description: "教学、备课和持续的情绪劳动交织。" },
+      { slug: "accounting", label: "会计专业人员", description: "数字、制度和截止时间要求高度准确。" },
+      { slug: "ai-trainer", label: "人工智能训练师", description: "在数据、标注、调优与人的判断之间往返。" },
+      { slug: "security-tester", label: "信息安全测试员", description: "持续寻找边界与漏洞，需要长时间集中注意。" },
+      { slug: "data-engineer", label: "数据分析处理工程技术人员", description: "从复杂数据里梳理结构、异常与结论。" },
+      { slug: "bim-technician", label: "建筑信息模型技术员", description: "在空间、协同和大量工程细节之间切换。" },
+      { slug: "nurse", label: "护士", description: "照护、轮班与突发状况带来持续身心负荷。" },
+      { slug: "preschool-teacher", label: "幼儿教育教师", description: "需要高密度关注、安全判断与温柔回应。" },
+      { slug: "lawyer", label: "律师", description: "事实、规则、表达与当事人的情绪共同在场。" },
+      { slug: "office", label: "人力资源管理专业人员", description: "在组织制度、沟通和人的具体处境之间协调。" },
+      { slug: "text-reporter", label: "文字记者", description: "追踪事实、赶时效，也承接现场的复杂感受。" },
+      { slug: "text-editor", label: "文字编辑", description: "反复校正信息、结构和语气，需要细密专注。" },
+      { slug: "advertising-designer", label: "广告设计师", description: "创意、审美、反馈与交付节点彼此拉扯。" },
+      { slug: "commercial-photographer", label: "商业摄影师", description: "在光线、现场、客户期待和后期之间奔走。" },
+      { slug: "social-worker", label: "社会工作者", description: "长期接住他人的困境，也需要为自己留出缓冲。" },
+      { slug: "ecommerce-specialist", label: "电子商务师", description: "商品、平台、运营和即时数据构成快速节奏。" },
+      { slug: "internet-marketer", label: "互联网营销师", description: "内容、流量和反馈实时变化，注意力消耗密集。" },
+      { slug: "logistics-specialist", label: "物流服务师", description: "协调路径、库存与异常，让许多环节准时衔接。" },
+      { slug: "courier", label: "快递员", description: "在路线、时效、天气和沟通之间持续移动。" },
+      { slug: "delivery", label: "网约配送员", description: "平台节奏、路况与每一单的时间压力都在身上。" },
+      { slug: "chinese-cook", label: "中式烹调师", description: "高温、站立、出餐节奏与味觉判断同时发生。" },
+      { slug: "barista", label: "咖啡师", description: "重复而精细的手作、服务交流和早晚班交织。" },
+      { slug: "agricultural-manager", label: "农业经理人", description: "天气、生产、市场和人员安排都具有不确定性。" },
+      { slug: "electrician", label: "电工", description: "在安全规范和现场故障之间保持谨慎专注。" },
+      { slug: "auto-mechanic", label: "汽车维修工", description: "诊断、拆装和体力工作需要稳定耐心。" },
+      { slug: "industrial-robot-operator", label: "工业机器人系统操作员", description: "设备节拍、参数和生产安全要求持续在场。" },
+      { slug: "elderly-care-worker", label: "养老护理员", description: "身体照护与情绪陪伴都需要耐力和温度。" },
+      { slug: "childcare-worker", label: "保育师", description: "照料细节密集，始终要关注儿童安全与感受。" },
     ],
   },
   {
@@ -321,6 +360,8 @@ const dimensionGroupSeeds: DimensionGroupSeed[] = [
     ],
   },
 ];
+
+const expectedDimensionOptionCount = dimensionGroupSeeds.reduce((total, group) => total + group.options.length, 0);
 
 const activitySeeds: ActivitySeed[] = [
   {
@@ -630,17 +671,25 @@ export async function ensureGapMomentSeedData() {
     backgroundCount,
     cityCount,
     groupCount,
+    dimensionOptionCount,
     managedCopyCount,
     generatedCopyCount,
     generatedDimensionLinkCount,
     staleGeneratedCopyCount,
     legacyActiveCount,
+    fishSpeciesCount,
   ] = await Promise.all([
     prisma.momentActivity.count(),
     prisma.copywritingEntry.count(),
     prisma.backgroundAsset.count(),
     prisma.cityGuide.count(),
     prisma.dimensionGroup.count(),
+    prisma.dimensionOption.count({
+      where: {
+        isActive: true,
+        group: { key: { in: dimensionGroupSeeds.map((group) => group.key) } },
+      },
+    }),
     prisma.copywritingEntry.count({ where: { slug: { in: copySeeds.map((entry) => entry.slug) } } }),
     prisma.copywritingEntry.count({
       where: {
@@ -664,6 +713,7 @@ export async function ensureGapMomentSeedData() {
       },
     }),
     prisma.copywritingEntry.count({ where: { slug: { in: legacyGeneratedCopySlugs }, isActive: true } }),
+    prisma.fishSpecies.count({ where: { isActive: true } }),
   ]);
 
   if (
@@ -672,11 +722,13 @@ export async function ensureGapMomentSeedData() {
     backgroundCount > 0 &&
     cityCount > 0 &&
     groupCount >= dimensionGroupSeeds.length &&
+    dimensionOptionCount === expectedDimensionOptionCount &&
     managedCopyCount === copySeeds.length &&
     generatedCopyCount === generatedCopySeeds.length &&
     generatedDimensionLinkCount === expectedGeneratedDimensionLinkCount &&
     staleGeneratedCopyCount === 0 &&
-    legacyActiveCount === 0
+    legacyActiveCount === 0 &&
+    fishSpeciesCount === fishSpeciesSeeds.length
   ) {
     return;
   }
@@ -814,6 +866,56 @@ export async function ensureGapMomentSeedData() {
       }
       }
 
+      if (fishSpeciesCount === 0) {
+        await tx.fishSpecies.createMany({
+          data: fishSpeciesSeeds.map((fish) => ({
+            slug: fish.slug,
+            commonNameZh: fish.commonNameZh,
+            commonNameEn: fish.commonNameEn,
+            scientificName: fish.scientificName,
+            habitatLabel: fish.habitatLabel,
+            summary: fish.summary,
+            habits: fish.habits,
+            distribution: fish.distribution,
+            imagePath: fish.imagePath,
+            sourceName: fish.sourceName,
+            sourcePageUrl: fish.sourcePageUrl,
+            imageSourceName: fish.imageSourceName,
+            imageSourcePageUrl: fish.imageSourcePageUrl,
+            imageAuthor: fish.imageAuthor,
+            licenseLabel: fish.licenseLabel,
+            sortOrder: fish.sortOrder,
+            isActive: true,
+          })),
+        });
+      } else {
+        for (const fish of fishSpeciesSeeds) {
+          const data = {
+            commonNameZh: fish.commonNameZh,
+            commonNameEn: fish.commonNameEn,
+            scientificName: fish.scientificName,
+            habitatLabel: fish.habitatLabel,
+            summary: fish.summary,
+            habits: fish.habits,
+            distribution: fish.distribution,
+            imagePath: fish.imagePath,
+            sourceName: fish.sourceName,
+            sourcePageUrl: fish.sourcePageUrl,
+            imageSourceName: fish.imageSourceName,
+            imageSourcePageUrl: fish.imageSourcePageUrl,
+            imageAuthor: fish.imageAuthor,
+            licenseLabel: fish.licenseLabel,
+            sortOrder: fish.sortOrder,
+            isActive: true,
+          };
+          await tx.fishSpecies.upsert({
+            where: { slug: fish.slug },
+            update: data,
+            create: { slug: fish.slug, ...data },
+          });
+        }
+      }
+
       const activityMap = await buildActivityIdMap(tx);
       const optionMap = await buildDimensionOptionIdMap(tx);
 
@@ -935,14 +1037,10 @@ export async function ensureGapMomentSeedData() {
   );
 }
 
-export async function getForestCatalog(): Promise<ForestCatalog> {
-  if (process.env.FOREST_STATIC_PREVIEW === "1" && process.env.NODE_ENV !== "production") {
-    return buildStaticForestCatalog();
-  }
-
+async function loadForestCatalog(): Promise<ForestCatalog> {
   await ensureGapMomentSeedData();
 
-  const [activities, dimensionGroups, backgrounds, copyEntries, cities] = await Promise.all([
+  const [activities, dimensionGroups, backgrounds, copyEntries, cities, fishes] = await Promise.all([
     prisma.momentActivity.findMany({
       where: {
         isActive: true,
@@ -1018,6 +1116,26 @@ export async function getForestCatalog(): Promise<ForestCatalog> {
             sortOrder: "asc",
           },
         },
+      },
+    }),
+    prisma.fishSpecies.findMany({
+      where: {
+        isActive: true,
+      },
+      orderBy: {
+        sortOrder: "asc",
+      },
+      select: {
+        id: true,
+        slug: true,
+        commonNameZh: true,
+        commonNameEn: true,
+        scientificName: true,
+        habitatLabel: true,
+        summary: true,
+        habits: true,
+        distribution: true,
+        imagePath: true,
       },
     }),
   ]);
@@ -1097,14 +1215,39 @@ export async function getForestCatalog(): Promise<ForestCatalog> {
         description: snack.description,
       })),
     })),
+    fishes: fishes.map((fish): FishSpeciesRecord => ({
+      id: fish.id,
+      slug: fish.slug,
+      commonNameZh: fish.commonNameZh,
+      commonNameEn: fish.commonNameEn,
+      scientificName: fish.scientificName,
+      habitatLabel: fish.habitatLabel,
+      summary: fish.summary,
+      habits: fish.habits,
+      distribution: fish.distribution,
+      imagePath: fish.imagePath,
+    })),
   };
+}
+
+const getCachedForestCatalog = unstable_cache(loadForestCatalog, ["forest-catalog-v4"], {
+  revalidate: 300,
+  tags: ["forest-catalog"],
+});
+
+export async function getForestCatalog(): Promise<ForestCatalog> {
+  if (process.env.FOREST_STATIC_PREVIEW === "1" && process.env.NODE_ENV !== "production") {
+    return buildStaticForestCatalog();
+  }
+
+  return getCachedForestCatalog();
 }
 
 export async function getOperatorConsoleData() {
   await ensureGapMomentSeedData();
 
   const catalog = await getForestCatalog();
-  const [allActivities, allBackgrounds, allCopyEntries, allCities] = await Promise.all([
+  const [allActivities, allBackgrounds, allCopyEntries, allCities, allFishes] = await Promise.all([
     prisma.momentActivity.findMany({
       orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
     }),
@@ -1130,6 +1273,9 @@ export async function getOperatorConsoleData() {
         },
       },
     }),
+    prisma.fishSpecies.findMany({
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+    }),
   ]);
 
   return {
@@ -1138,6 +1284,7 @@ export async function getOperatorConsoleData() {
     backgrounds: allBackgrounds,
     copyEntries: allCopyEntries,
     cities: allCities,
+    fishes: allFishes,
   };
 }
 
@@ -1402,6 +1549,24 @@ function buildStaticForestCatalog(): ForestCatalog {
         description: snack.description ?? null,
       })),
     })),
+    fishes: fishSpeciesSeeds.map((fish) => ({
+      id: `preview_fish_${fish.slug}`,
+      slug: fish.slug,
+      commonNameZh: fish.commonNameZh,
+      commonNameEn: fish.commonNameEn,
+      scientificName: fish.scientificName,
+      habitatLabel: fish.habitatLabel,
+      summary: fish.summary,
+      habits: fish.habits,
+      distribution: fish.distribution,
+      imagePath: fish.imagePath,
+      sourceName: fish.sourceName,
+      sourcePageUrl: fish.sourcePageUrl,
+      imageSourceName: fish.imageSourceName,
+      imageSourcePageUrl: fish.imageSourcePageUrl,
+      imageAuthor: fish.imageAuthor,
+      licenseLabel: fish.licenseLabel,
+    })),
   };
 }
 
@@ -1415,6 +1580,7 @@ function assertGapMomentDelegates() {
     "dimensionGroup",
     "dimensionOption",
     "citySnack",
+    "fishSpecies",
   ] as const;
   const missing = requiredDelegates.filter((key) => !prismaRecord[key]);
 
