@@ -9,14 +9,35 @@ const forest = useMoyuForest();
       class="welcomeOverlay"
       role="dialog"
       aria-modal="true"
-      aria-label="摸鱼"
+      :aria-label="forest.fishOverlayMode.value === 'entry' ? '进入摸鱼森林' : '看鱼'"
     >
       <MoyuAssetImage src="/assets/backgrounds/mist-lake-dawn.webp" alt="" class="welcomeBackground" />
       <div class="welcomeScrim" aria-hidden="true" />
-      <button type="button" class="welcomeDismiss" aria-label="进入森林" @click="forest.handleDismissFish" />
-      <div class="welcomeContent">
-        <h1 class="welcomeTitle">你一定要记得摸鱼</h1>
-        <div class="welcomeFishStage">
+      <button
+        type="button"
+        class="welcomeDismiss"
+        :aria-label="forest.fishOverlayMode.value === 'entry' ? '进入森林' : '回到森林'"
+        @click="forest.handleDismissFish"
+      />
+      <div class="welcomeContent" :class="{ welcomeDetailContent: forest.fishOverlayMode.value === 'detail' }">
+        <p class="welcomeEyebrow">{{ forest.fishOverlayMode.value === "entry" ? "一处不计算产出的地方" : "林中水域" }}</p>
+        <h1 class="welcomeTitle">{{ forest.fishOverlayMode.value === "entry" ? "你一定要记得摸鱼" : "看一会儿鱼" }}</h1>
+
+        <div v-if="forest.fishOverlayMode.value === 'entry'" class="welcomePortalStage">
+          <figure v-if="forest.welcomeFish.value" class="welcomePortalCard">
+            <MoyuAssetImage
+              :src="forest.welcomeFish.value.imagePath"
+              :alt="forest.welcomeFish.value.commonNameZh"
+              class="welcomePortalFish"
+            />
+            <figcaption>
+              <strong>{{ forest.welcomeFish.value.commonNameZh }}</strong>
+              <span>它只是从这里游过，不要求你记住什么。</span>
+            </figcaption>
+          </figure>
+        </div>
+
+        <div v-else class="welcomeFishStage">
           <div class="welcomeFishCard" aria-live="polite">
             <Transition name="fish-fade" mode="out-in">
               <figure
@@ -48,7 +69,15 @@ const forest = useMoyuForest();
             </Transition>
           </div>
         </div>
-        <p class="welcomeHint">轻触，回到森林</p>
+        <div v-if="forest.fishOverlayMode.value === 'detail'" class="welcomeFishActions">
+          <button type="button" class="welcomeFishAction" @click="forest.handleNextFish">换一条</button>
+          <button type="button" class="welcomeFishAction welcomeFishActionPrimary" @click="forest.handleDismissFish">
+            回到森林
+          </button>
+        </div>
+        <p class="welcomeHint">
+          {{ forest.fishOverlayMode.value === "entry" ? "轻触，进入森林" : "不需要认识它，只看一会儿也很好" }}
+        </p>
       </div>
     </section>
   </Transition>

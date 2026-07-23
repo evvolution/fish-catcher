@@ -1,13 +1,13 @@
-# 摸鱼示例背景图来源
+# 摸鱼背景图来源
 
 ## 许可说明
 
-- 来源平台：Pixabay
-- 许可说明页：https://pixabay.com/service/license-summary/
-- 当前用途：开发阶段示例背景素材
-- 下载日期：2026-04-01
+- Pixabay：原有 4 张，适用 [Pixabay Content License](https://pixabay.com/service/license-summary/)，下载日期为 2026-04-01。
+- Pexels：新增 40 张，适用 [Pexels License](https://www.pexels.com/license/)，页面明确允许在网站或应用中使用并修改图片；筛选与下载日期为 2026-07-23。
+- 哈苏大师赛学习评估集：109 张，来自公开报道中的 2026 决赛作品与获奖系列、2023 获奖系列；仅用于本地学习版视觉连续性评估，标记为 `Evaluation only — permission required for production`，不视为公开商用授权。
+- 所有图片都保留来源页、摄影师和许可名称。即使 Pexels 不强制署名，项目仍主动保留作者信息。
 
-## 本地素材清单
+## 原有 Pixabay 素材
 
 ### `oss-upload/fish/assets/backgrounds/mist-lake-dawn.webp`
 
@@ -33,10 +33,36 @@
 - 作者：jplenio
 - 用途建议：喝茶、停靠、带暖意的休息时刻
 
+## 新增 Pexels 素材
+
+- 冻结清单：[src/lib/moyu-backgrounds.json](../src/lib/moyu-backgrounds.json)，共 40 条；每条包含来源页、原图地址、摄影师、中文标题、中文场景文案、行为和时段标签。
+- 本地目录：`oss-upload/fish/assets/backgrounds`。连同原有 4 张和学习评估集，当前一共 153 张可轮换背景。
+- 四组各 10 张：薄雾湖泊对应「发呆」，林间光束与极简结构对应「透气」，远山和长曝光海岸对应「散步」，秋林与静物式风景对应「喝茶」。
+- 统一处理为 1280×853、质量 80 的 WebP，并降低少量饱和度与亮度，让前景文案更稳定。
+- 在线重建：`npm run build:backgrounds`。
+- 已有本地原图时可避免重复下载：`npm run build:backgrounds -- --source-dir=/absolute/path`；文件名格式为 `pexels-photo-{id}.jpg`。
+- 完整性检查：`npm run check:backgrounds`，验证清单唯一性、来源域名、元数据以及每张输出图的格式和尺寸。
+
+### 哈苏大师赛风格参考
+
+- 参考的是 [Hasselblad Masters 2026](https://www.hasselblad.com/inspiration/masters/2026/) 的公开分类与视觉描述：低饱和、负空间、柔光、静水或长曝光，以及接近抽象的自然结构。官方页面也说明每位参赛者按类别提交三张风格统一的作品。
+- [哈苏大师赛规则](https://www.hasselblad.com/inspiration/masters/2026/rules/)要求参赛者拥有作品权利并授予相应比赛使用许可；这不等于向公众开放复用。因此新增图只作为学习版评估集保存，并在元数据中明确要求取得许可后才能进入生产。
+- 评估集冻结清单为 [src/lib/moyu-masters-evaluation.json](../src/lib/moyu-masters-evaluation.json)：2026 七类决赛各 10 张裁切图（70 张）、2026 七位获奖者系列（21 张）、2023 六位获奖者系列（18 张），合计 109 张。2026 决赛裁切图保留分类与序号；官方报道未公开全部决赛者姓名，因此不臆造作者。
+- 构建脚本为 `scripts/build-masters-evaluation.mjs`，会从公开报道图集裁切/下载并统一为 1280×853 WebP；`npm run check:masters-eval` 会校验 109 张、来源域名、用途边界、活动均衡和输出尺寸。
+- 评估集单独重建：`npm run build:masters-eval`；背景总检查 `npm run check:backgrounds` 会同时检查 Pexels 与评估集。
+- 本地目录中原有的 8 张 `masters-` 前缀 Pexels 图仍是“哈苏风格参考”；新增 109 张使用 `masters-2026-finalist-*`、`masters-2026-winner-*` 和 `masters-2023-winner-*` 前缀，避免混淆。
+
+### 背景动态
+
+- Web 与 uni-app 的主背景、欢迎页背景统一使用 34 秒呼吸周期。
+- 缩放范围为 1.035–1.055，不平移、不旋转，避免产生明显的镜头炫技感。
+- 系统开启“减少动态效果”时停止循环，回到静态背景。
+
 ## 使用提醒
 
-- 当前示例素材用于产品原型和后台演示
-- 正式上线前，建议再做一次图片尺寸、压缩率、色调统一和许可复核
+- WebP 是经过裁切和压缩的项目版本，不作为原图或图库素材重新分发；学习评估集尤其不能在取得作者/主办方许可前用于正式生产或公开作品集。
+- 后续替换或新增图片时，必须同步更新冻结清单和作者信息，并重新运行背景与资产清单检查。
+- 许可或来源页面若发生变更，上线前应按冻结清单逐条复核。
 
 ## 界面图标
 

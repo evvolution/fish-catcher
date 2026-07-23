@@ -4,8 +4,8 @@
   "uploadRoot": "oss-upload/fish/assets",
   "ossPrefix": "fish/assets/",
   "assetBaseUrl": "https://apex-res.nefelibata.ink/fish/assets",
-  "objectCount": 221,
-  "payloadBytes": 10810950,
+  "objectCount": 370,
+  "payloadBytes": 25299128,
   "manifestObject": {
     "path": "manifest.json",
     "ossKey": "fish/assets/manifest.json",
@@ -13,11 +13,1075 @@
   },
   "files": [
     {
+      "path": "backgrounds/forest-autumn-morning.webp",
+      "ossKey": "fish/assets/backgrounds/forest-autumn-morning.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/forest-autumn-morning.webp",
+      "bytes": 237126,
+      "sha256": "7be13fdeee985cef7cd813493f799186a5a1744caf429bf79806cb155cc925dd",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/forest-bending-light.webp",
+      "ossKey": "fish/assets/backgrounds/forest-bending-light.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/forest-bending-light.webp",
+      "bytes": 231388,
+      "sha256": "c6fdbc7c59eb2b0d0d87d34f613892f74fe6b7a19e0428e9d4ad60685026f410",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/forest-dawn-rays.webp",
+      "ossKey": "fish/assets/backgrounds/forest-dawn-rays.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/forest-dawn-rays.webp",
+      "bytes": 250308,
+      "sha256": "b78efc45459a4d7a3bde71baff102524ec0fc0eb480ab04f03ad8c7d4e6e494e",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/forest-golden-opening.webp",
+      "ossKey": "fish/assets/backgrounds/forest-golden-opening.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/forest-golden-opening.webp",
+      "bytes": 218022,
+      "sha256": "38f9a35cd5dc9feaf09b22dad38932f06860d7b129aa30dbc939817f7241077d",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/forest-green-breath.webp",
+      "ossKey": "fish/assets/backgrounds/forest-green-breath.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/forest-green-breath.webp",
+      "bytes": 101612,
+      "sha256": "0110afd3a677e60a5458e57c8191d6b83e33c14f613fe2bd430a3441664723c4",
+      "contentType": "image/webp"
+    },
+    {
       "path": "backgrounds/forest-light-path.webp",
       "ossKey": "fish/assets/backgrounds/forest-light-path.webp",
       "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/forest-light-path.webp",
       "bytes": 88940,
       "sha256": "db285a5a19c13360bcd762cdc988f87f92e7e17d2c9a3b849cef0b0ce7685871",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/forest-rays-canopy.webp",
+      "ossKey": "fish/assets/backgrounds/forest-rays-canopy.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/forest-rays-canopy.webp",
+      "bytes": 145708,
+      "sha256": "cb32ac20c04617c8a668cfce20170bebcdc33eac1c7d57ae6820cf0b28e674a9",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/forest-road-rays.webp",
+      "ossKey": "fish/assets/backgrounds/forest-road-rays.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/forest-road-rays.webp",
+      "bytes": 247836,
+      "sha256": "ee52a3ff05c02e33204a02c78fb4694ba041bbeed6ba5acfa39b6414757adaae",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/forest-sun-star.webp",
+      "ossKey": "fish/assets/backgrounds/forest-sun-star.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/forest-sun-star.webp",
+      "bytes": 275866,
+      "sha256": "6322d305dd31021e888e94a3b417133524690ac463897d8bc3eaf97f9ce86e4e",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/lake-birds-twilight.webp",
+      "ossKey": "fish/assets/backgrounds/lake-birds-twilight.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/lake-birds-twilight.webp",
+      "bytes": 35486,
+      "sha256": "57081b38e0dcd310b2d361add0e3e395889d31c940888441c4098b1ab4646c20",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/lake-branch-reflection.webp",
+      "ossKey": "fish/assets/backgrounds/lake-branch-reflection.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/lake-branch-reflection.webp",
+      "bytes": 164326,
+      "sha256": "e389a1af9c59fd8acb4bbfd9a1164358d067d1496a90a84e7f26cd551faec1e7",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/lake-golden-grove.webp",
+      "ossKey": "fish/assets/backgrounds/lake-golden-grove.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/lake-golden-grove.webp",
+      "bytes": 71694,
+      "sha256": "6346010bad10823aa2f540cfd91826de323f9d80135d8ad78500218df32bd363",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/lake-mist-amber.webp",
+      "ossKey": "fish/assets/backgrounds/lake-mist-amber.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/lake-mist-amber.webp",
+      "bytes": 53056,
+      "sha256": "27b1c05ba5443a313800bdd3aabc36a161a75fd11c20bc1bdd9cdfe857d95494",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/lake-reeds-violet.webp",
+      "ossKey": "fish/assets/backgrounds/lake-reeds-violet.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/lake-reeds-violet.webp",
+      "bytes": 124456,
+      "sha256": "4712041217c2b11c8b0986b8722581ea67f3000114b2513acf921e1c1e3c07ad",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/lake-sunrise-cloud.webp",
+      "ossKey": "fish/assets/backgrounds/lake-sunrise-cloud.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/lake-sunrise-cloud.webp",
+      "bytes": 35732,
+      "sha256": "bf14998db9d39286328612b9c918fe7d0bb0139a257277f3db24530db25d61df",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/lake-violet-mirror.webp",
+      "ossKey": "fish/assets/backgrounds/lake-violet-mirror.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/lake-violet-mirror.webp",
+      "bytes": 48362,
+      "sha256": "316aa4f350bf37a84bf83e64662122694931aa234a00042eb219adadee254883",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/marsh-blue-mist.webp",
+      "ossKey": "fish/assets/backgrounds/marsh-blue-mist.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/marsh-blue-mist.webp",
+      "bytes": 11856,
+      "sha256": "3404e02b729d752e6c4f949a11f44f4d0af429d8fb96ca5e0b19fcb9b2c9cfb6",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2023-winner-architecture-01.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2023-winner-architecture-01.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2023-winner-architecture-01.webp",
+      "bytes": 79224,
+      "sha256": "eb76da788c291a6ff47339eda184e2712782243a727f054c6671da04a453c54a",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2023-winner-architecture-02.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2023-winner-architecture-02.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2023-winner-architecture-02.webp",
+      "bytes": 139714,
+      "sha256": "2ecfce73738256fcf77fcd27445e8145b92da7d914a9dea292b203b7ada304a3",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2023-winner-architecture-03.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2023-winner-architecture-03.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2023-winner-architecture-03.webp",
+      "bytes": 50670,
+      "sha256": "2dba4b870d4b758f119328eed3655b8790c8388dbc14b29db665ab047888dd9d",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2023-winner-art-01.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2023-winner-art-01.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2023-winner-art-01.webp",
+      "bytes": 20454,
+      "sha256": "52348473d19ea5e056f568d34a5f465e8ba622d494b4bd57ba5aec79c5941d53",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2023-winner-art-02.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2023-winner-art-02.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2023-winner-art-02.webp",
+      "bytes": 168550,
+      "sha256": "b785c73c20da90244a0520e18133b576c0bfe127c8d9bd9a606001ee0f90ad3a",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2023-winner-art-03.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2023-winner-art-03.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2023-winner-art-03.webp",
+      "bytes": 271240,
+      "sha256": "aaa1a6520a859c610275aa03faef139c58642414c860e81000d4c38e88ae9d1e",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2023-winner-landscape-01.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2023-winner-landscape-01.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2023-winner-landscape-01.webp",
+      "bytes": 92300,
+      "sha256": "617a4500a133e74a918be6a0f2aec3d2506d5a3a7edad39af2347868c1ec10ac",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2023-winner-landscape-02.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2023-winner-landscape-02.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2023-winner-landscape-02.webp",
+      "bytes": 47532,
+      "sha256": "340bfc9d032152370733f227d4157063254d06e528324c1730768f6be3ae6509",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2023-winner-landscape-03.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2023-winner-landscape-03.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2023-winner-landscape-03.webp",
+      "bytes": 55828,
+      "sha256": "81d6a058c1aa26e14ba9c5c4c1e42818e0d292fed08aa75a98ea1b776c73e8b7",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2023-winner-portrait-01.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2023-winner-portrait-01.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2023-winner-portrait-01.webp",
+      "bytes": 130782,
+      "sha256": "a000348e989c1d4b53c57174e38ac850fcb5e02e57494b8db62899bf409bde23",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2023-winner-portrait-02.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2023-winner-portrait-02.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2023-winner-portrait-02.webp",
+      "bytes": 122770,
+      "sha256": "d6a37bdef6ae18deb498b9fe822e5b92bee787c8366112ad97052e10c7a833cb",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2023-winner-portrait-03.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2023-winner-portrait-03.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2023-winner-portrait-03.webp",
+      "bytes": 179208,
+      "sha256": "7b8def97fe8804cbbae12371797b5133f4e12a2837decf6a94531797b62eca28",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2023-winner-project-21-01.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2023-winner-project-21-01.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2023-winner-project-21-01.webp",
+      "bytes": 309846,
+      "sha256": "60c92080195c187c5486e952f49411c0c8ae6d1a45c03f000d37c51ddf489fa2",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2023-winner-project-21-02.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2023-winner-project-21-02.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2023-winner-project-21-02.webp",
+      "bytes": 98452,
+      "sha256": "98da78a3ec20b7de03602501c2ee1902b6fa432944741ab0a27f5995a1c415b1",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2023-winner-project-21-03.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2023-winner-project-21-03.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2023-winner-project-21-03.webp",
+      "bytes": 39998,
+      "sha256": "91f0e9735c7cc6f1eba078b9bd77482b49b3b20f522550292cf5dcdceb6ea290",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2023-winner-street-01.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2023-winner-street-01.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2023-winner-street-01.webp",
+      "bytes": 124204,
+      "sha256": "09fcfe4db135c59edc06c8a7c770cae8f96e3bf9a934c5a34bbd60b0ca7da43a",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2023-winner-street-02.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2023-winner-street-02.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2023-winner-street-02.webp",
+      "bytes": 29542,
+      "sha256": "2cb66f3a44c8a5d6187e622ceba3dd4f25fb70d10f1f136fad492baa70a6642e",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2023-winner-street-03.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2023-winner-street-03.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2023-winner-street-03.webp",
+      "bytes": 59636,
+      "sha256": "650997207947891fb7803aee9a9223c012e09c6ea3298360c87597e38732c3aa",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-architecture-01.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-architecture-01.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-architecture-01.webp",
+      "bytes": 75764,
+      "sha256": "36e96eb2adfc5e8a82d13f8925e840242d637c0105ba7fc25408ef823611d85e",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-architecture-02.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-architecture-02.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-architecture-02.webp",
+      "bytes": 20588,
+      "sha256": "a9cffa91986ab287dfbfe484ca2fd807f427fcdf704e4d730c769c10a406bd9c",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-architecture-03.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-architecture-03.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-architecture-03.webp",
+      "bytes": 130966,
+      "sha256": "c529c18f073b3560b174a3edffe06593f60de89c1298f4aa89a0c28b500ac920",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-architecture-04.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-architecture-04.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-architecture-04.webp",
+      "bytes": 53136,
+      "sha256": "f39849da94faafdfe3f6c57be6315be304e89a0bd906e9a0ed85fb4e51cb6a15",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-architecture-05.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-architecture-05.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-architecture-05.webp",
+      "bytes": 160830,
+      "sha256": "7f2c555fedface75a125150a901e5ac8af1dc82d294a0226bea879f9f1cf9607",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-architecture-06.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-architecture-06.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-architecture-06.webp",
+      "bytes": 77466,
+      "sha256": "d6e1ca7fc6637fb2eebddc45093a7d95aeb0fb1d371b1b1663988ef78afa7725",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-architecture-07.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-architecture-07.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-architecture-07.webp",
+      "bytes": 41720,
+      "sha256": "81e85ce1d7809fa85cf6b02b8547a632a29d255ce28de08a4a1693e1c98585de",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-architecture-08.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-architecture-08.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-architecture-08.webp",
+      "bytes": 63094,
+      "sha256": "df3c958a8dc2f48a823f2349ad201336973b8dd9964cfa3008e5603ed88d8fa4",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-architecture-09.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-architecture-09.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-architecture-09.webp",
+      "bytes": 12142,
+      "sha256": "4867d538222360071aa1ac06e4afb37e1f24a852cd1125992adb7814b2c83e8e",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-architecture-10.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-architecture-10.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-architecture-10.webp",
+      "bytes": 106072,
+      "sha256": "b9900c4f91d243c0e7ea1ac9aefd80a33052ad66df942efb5f84dfc5423f87f1",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-art-01.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-art-01.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-art-01.webp",
+      "bytes": 29730,
+      "sha256": "a92f6f8e87d4c4195e4cbc835dc1517167c378332bcb0706234854f1f4d4ab48",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-art-02.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-art-02.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-art-02.webp",
+      "bytes": 71298,
+      "sha256": "a6a32f2f9d2296211dbe636d1de18627249e3416aa4c50cd362bef8b376ee06c",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-art-03.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-art-03.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-art-03.webp",
+      "bytes": 91888,
+      "sha256": "cf7aeba704b9eb59d88289912f2e78c1a3a7cf67f068f6ee508aa77a8bbbec0e",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-art-04.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-art-04.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-art-04.webp",
+      "bytes": 41610,
+      "sha256": "89e09b30609585c8278104025e568e8ecc3b4f20f066d8ee7363baecfebf5e6a",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-art-05.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-art-05.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-art-05.webp",
+      "bytes": 82286,
+      "sha256": "3d13704b4f11437593707101420cd26f225d9ab8455daebea7fab0867e618927",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-art-06.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-art-06.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-art-06.webp",
+      "bytes": 79288,
+      "sha256": "ca2801aea08651e2a6bfaf7f9d9e46ff671b68000b98eb07c73102d9d724dd3f",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-art-07.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-art-07.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-art-07.webp",
+      "bytes": 8542,
+      "sha256": "6677f409e5e01527c821802e9b1fd36e7004e282d2531b761571e474e7a31593",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-art-08.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-art-08.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-art-08.webp",
+      "bytes": 51326,
+      "sha256": "8da177de5be2c74ff603331fd7d4de5823ad2d9e90935866789dff86c9bf7c00",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-art-09.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-art-09.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-art-09.webp",
+      "bytes": 66848,
+      "sha256": "dc9857ad6b306376d673b782c58b258aa106c241a9fd82dee48c3bcdcf6d48bb",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-art-10.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-art-10.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-art-10.webp",
+      "bytes": 149518,
+      "sha256": "5c2fc077ea58900e80870e3bee4a567129b48e637f874354879c92483a39b821",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-landscape-01.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-landscape-01.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-landscape-01.webp",
+      "bytes": 288910,
+      "sha256": "0ca2347b9e88fcb97233720ed90b93c33476427ef4e5e7ef655af9e689c75ec8",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-landscape-02.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-landscape-02.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-landscape-02.webp",
+      "bytes": 225318,
+      "sha256": "61066b26de48ec7343a0a61ba5b8434ac276981e6a705377760614290f797515",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-landscape-03.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-landscape-03.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-landscape-03.webp",
+      "bytes": 93682,
+      "sha256": "92492f6dadf50ec89e39f70ceafd675523507926754c6faee9e8b59592133556",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-landscape-04.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-landscape-04.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-landscape-04.webp",
+      "bytes": 235030,
+      "sha256": "bc0bd7cfd85504b0f6d60783d812215862fab6a65605d9541cc4194e333184ea",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-landscape-05.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-landscape-05.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-landscape-05.webp",
+      "bytes": 361258,
+      "sha256": "6ffba31496c027a84c0441070aa9af52f05ba745bb5c90f9f88bbad400a79550",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-landscape-06.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-landscape-06.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-landscape-06.webp",
+      "bytes": 326478,
+      "sha256": "93036b5e5c3235c701638b401fb17cd240d6cefc74dc469d655795240e6ec7b5",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-landscape-07.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-landscape-07.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-landscape-07.webp",
+      "bytes": 106936,
+      "sha256": "160e6d87647c4f4a308139748ca2cd98c7acefe2f42e3e2f0c887841ef99c143",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-landscape-08.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-landscape-08.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-landscape-08.webp",
+      "bytes": 69840,
+      "sha256": "81f3dfe1bbeb150b9b83e3dd09172ea76418d1514f15a925dcaf91f928b2a76e",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-landscape-09.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-landscape-09.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-landscape-09.webp",
+      "bytes": 35578,
+      "sha256": "9114f9fb2e6dec8e7990a0d9b0908d194e2bb33b134feb977b61cc5fbf25f453",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-landscape-10.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-landscape-10.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-landscape-10.webp",
+      "bytes": 110408,
+      "sha256": "1061595a1cdb22812b30ed6176efc0783047bc012c09e0a38cef16da63bc1b7b",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-portrait-01.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-portrait-01.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-portrait-01.webp",
+      "bytes": 59852,
+      "sha256": "579506ac3997a0d753495bf60392e60ecb368b2cff6e1d35eaa04b39ecb4b56c",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-portrait-02.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-portrait-02.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-portrait-02.webp",
+      "bytes": 40538,
+      "sha256": "3753ad8931af03f90b765a033308e3b144a895485a323f314adbacd4e9058429",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-portrait-03.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-portrait-03.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-portrait-03.webp",
+      "bytes": 49180,
+      "sha256": "75c1eafcfdcfefc0b2b027f9b0f79471c8a4f6608f6db8022679fdb2026f4535",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-portrait-04.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-portrait-04.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-portrait-04.webp",
+      "bytes": 62092,
+      "sha256": "6433c181173c729c2fc5876e448f06c09f28f2a3c2b6b5b741ce4a9a67aaffa8",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-portrait-05.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-portrait-05.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-portrait-05.webp",
+      "bytes": 74192,
+      "sha256": "09d0b26c409ef6402be2c5d3f0b6adbedf86e4e0282712bdf4b4f356ab1547c7",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-portrait-06.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-portrait-06.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-portrait-06.webp",
+      "bytes": 143470,
+      "sha256": "6ee99db77b8a16dfa2eaaf1dc467d678c290f7dd370d278894e7070e7498da17",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-portrait-07.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-portrait-07.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-portrait-07.webp",
+      "bytes": 151322,
+      "sha256": "c2a93b609e43154dea4863d2e83dfb3fcd9ebdb7a11fd7d3be07e183b39fb614",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-portrait-08.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-portrait-08.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-portrait-08.webp",
+      "bytes": 105558,
+      "sha256": "e0a00981d3d89ae2cc786e42ea2a5dcb64ea5f0d77b6a104a75c84b3295af0ea",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-portrait-09.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-portrait-09.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-portrait-09.webp",
+      "bytes": 82364,
+      "sha256": "e91b7e650b8083f5796b741646d0dc3e6275911fda25502249ccffc27f765bb4",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-portrait-10.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-portrait-10.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-portrait-10.webp",
+      "bytes": 87716,
+      "sha256": "19ca10161c227b9a53a4475fbcac43495a77c69153381f5dfc41cc48f27b07f9",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-project-21-01.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-project-21-01.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-project-21-01.webp",
+      "bytes": 84678,
+      "sha256": "5b0cad0e9cf8e7b58bd4d7be6d120a4b0f880afe964f5319bd8ebad2277ab987",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-project-21-02.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-project-21-02.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-project-21-02.webp",
+      "bytes": 27110,
+      "sha256": "a25a3c9d805b8413392397dd2c865a95c3f7ebb05e5f8414d92a5aca15608041",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-project-21-03.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-project-21-03.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-project-21-03.webp",
+      "bytes": 87708,
+      "sha256": "3e6f69e920a79652b3495a0e84428ac4929c8fd074a41da008248280ba24e33f",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-project-21-04.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-project-21-04.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-project-21-04.webp",
+      "bytes": 34752,
+      "sha256": "d9c6dedfa17732fcd74d5ee37d3ca2a5d152ab836a82f65019e869ef470650be",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-project-21-05.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-project-21-05.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-project-21-05.webp",
+      "bytes": 26074,
+      "sha256": "ffdfc6883832a8e6a6265914b385c8533290434e6b114e53edb4da33022b97c0",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-project-21-06.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-project-21-06.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-project-21-06.webp",
+      "bytes": 29528,
+      "sha256": "4e5151c834578d5d69c2a93f7b8546bf4166758097e219dc817a018d5bfde521",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-project-21-07.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-project-21-07.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-project-21-07.webp",
+      "bytes": 36252,
+      "sha256": "748d1d2d9915532aaeafbe2b111a8e986f1050b1a70f10d36ee7cfe651d34937",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-project-21-08.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-project-21-08.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-project-21-08.webp",
+      "bytes": 113228,
+      "sha256": "2c4a1a5f6fef093958978dbba028d2dbfbd4ab1ea7a44fe60bc38ec69db0c99c",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-project-21-09.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-project-21-09.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-project-21-09.webp",
+      "bytes": 47624,
+      "sha256": "c1f1b1c1417a9277f7a9afda60a64e69388fae8eda5aa0fa3e29897879cab12b",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-project-21-10.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-project-21-10.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-project-21-10.webp",
+      "bytes": 39412,
+      "sha256": "7fb74dc1a7437496e77a244da10dcad16688ac941287879abbabb16fadf0bc34",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-street-01.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-street-01.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-street-01.webp",
+      "bytes": 57676,
+      "sha256": "1bedac14af4483c3d633ed6b1dee8b0bf62aee0f53ba58f77468b0932d3a902c",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-street-02.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-street-02.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-street-02.webp",
+      "bytes": 30368,
+      "sha256": "f402ea8a7739b6d9d9db7e5e851b03773681609c2762b1ac93e3eeb468eb930c",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-street-03.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-street-03.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-street-03.webp",
+      "bytes": 15868,
+      "sha256": "13ce8fc469a77613fa06a0341dafb0ba63aded1cee7a8a0be72abb35b92f4822",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-street-04.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-street-04.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-street-04.webp",
+      "bytes": 50894,
+      "sha256": "8b58f42a89c8097c18630ba90533bfd4878edeb0267a3df98529a82098cdd7f9",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-street-05.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-street-05.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-street-05.webp",
+      "bytes": 137036,
+      "sha256": "b5c63866cebe6a5224e9dc70a754ddb08e15bb50a465d4313efefc88c4fa92e3",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-street-06.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-street-06.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-street-06.webp",
+      "bytes": 16522,
+      "sha256": "88ebf1216630e5f706867dc328d367e0811cb146b51d4c89b6e8d87e073055af",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-street-07.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-street-07.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-street-07.webp",
+      "bytes": 96400,
+      "sha256": "0ae8acc459125dd23c0bf0fcc9a5046890c944742906362ef987f8ef7275db18",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-street-08.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-street-08.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-street-08.webp",
+      "bytes": 78032,
+      "sha256": "1ee9c76c43b9bddd8ca9d090f7e40718b857e7ac4dfee8d3a521c01c3baff0ee",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-street-09.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-street-09.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-street-09.webp",
+      "bytes": 45404,
+      "sha256": "55e192b7935f080048631fb903bd1ffc81a4fd7c8cf845c2d4d5f6c33766a18f",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-street-10.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-street-10.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-street-10.webp",
+      "bytes": 40156,
+      "sha256": "e6e1d41ff6ec2f6aaace713cbd0a03554eea3aa84648524bb45bb05ba7297b01",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-wildlife-01.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-wildlife-01.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-wildlife-01.webp",
+      "bytes": 34042,
+      "sha256": "d60744540a5e5e451407a3633e2cc5bf22b9cde8472b54742099be7e68a22d5d",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-wildlife-02.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-wildlife-02.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-wildlife-02.webp",
+      "bytes": 99032,
+      "sha256": "4c283eb3eba306ffde3856279a05e8e367d15f3f080942a7797e0d4ae7563402",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-wildlife-03.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-wildlife-03.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-wildlife-03.webp",
+      "bytes": 108902,
+      "sha256": "bda45543cb4dff9f194447348c87d9bdc031b3c7e11643dd2b77b9c6d60da534",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-wildlife-04.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-wildlife-04.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-wildlife-04.webp",
+      "bytes": 34784,
+      "sha256": "0a54213b8cf1ed656265dd41f3a355172e80aff23cc9bbd608879c32836909f4",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-wildlife-05.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-wildlife-05.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-wildlife-05.webp",
+      "bytes": 92624,
+      "sha256": "01f8234611e24d064270ff90859777dddd70cb2293c0e21e68beb8cb847a5a15",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-wildlife-06.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-wildlife-06.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-wildlife-06.webp",
+      "bytes": 86288,
+      "sha256": "a7112142857cb1b8ca137fd88ab39456ce9636ea27ab524f70952019481105ca",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-wildlife-07.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-wildlife-07.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-wildlife-07.webp",
+      "bytes": 64594,
+      "sha256": "d3ccf544804d1f1773f93c1b92b6cf5343bd4a1579e37a301604c757229249a1",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-wildlife-08.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-wildlife-08.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-wildlife-08.webp",
+      "bytes": 104218,
+      "sha256": "e25ba6e16fabf9c7098647ffbc119878f61c3b79d2879b92b9549e539ebb7d0a",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-wildlife-09.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-wildlife-09.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-wildlife-09.webp",
+      "bytes": 110272,
+      "sha256": "095aaac93ffe95797cf8b63a1ef37ba560b473572bae062c8929da2009f7286f",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-finalist-wildlife-10.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-finalist-wildlife-10.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-finalist-wildlife-10.webp",
+      "bytes": 383310,
+      "sha256": "057a38475bd0a57e38a2471b67ae168ebc5084f8a5d0358f0f8bf532b99db80e",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-winner-architecture-01.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-winner-architecture-01.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-winner-architecture-01.webp",
+      "bytes": 55370,
+      "sha256": "78f174ffc5315d6c5e764d037eb73b79ecb6996aa8708b69ab70890173ed6675",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-winner-architecture-02.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-winner-architecture-02.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-winner-architecture-02.webp",
+      "bytes": 54522,
+      "sha256": "41d0459ba7c548036740b1c809047c135bb011665381cd6d6b02e07421a1520a",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-winner-architecture-03.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-winner-architecture-03.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-winner-architecture-03.webp",
+      "bytes": 110422,
+      "sha256": "307e3042ae948e10373f902d2353fbcdd1a7d21e5372e3b8f8e58c2b890d707a",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-winner-art-01.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-winner-art-01.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-winner-art-01.webp",
+      "bytes": 80996,
+      "sha256": "add5b9e256595500997cc3432b9a9d69376ad5a5b19a28859711ac3e442a7531",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-winner-art-02.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-winner-art-02.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-winner-art-02.webp",
+      "bytes": 45574,
+      "sha256": "9f00f211446286e2f22907b249b968783c6487bf1dcb3be1ac03f771c9b8bdcc",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-winner-art-03.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-winner-art-03.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-winner-art-03.webp",
+      "bytes": 43098,
+      "sha256": "adab4f13ac6c14f6112f046e8e229261866940c2adb19955962a84cd6a6f46c1",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-winner-landscape-01.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-winner-landscape-01.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-winner-landscape-01.webp",
+      "bytes": 120730,
+      "sha256": "af6a854d87d764f0ef811df6219f27955279037a204e86503a4e88d903b514a1",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-winner-landscape-02.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-winner-landscape-02.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-winner-landscape-02.webp",
+      "bytes": 287670,
+      "sha256": "8a20b26fe423463e4e3d638464060ed0439335d42b164052dfce68cac24ee63a",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-winner-landscape-03.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-winner-landscape-03.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-winner-landscape-03.webp",
+      "bytes": 295226,
+      "sha256": "0d305168b56fef8cf5753324af5c3c5663981884b1b8464d5da0c1ec63bc9b5d",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-winner-portrait-01.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-winner-portrait-01.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-winner-portrait-01.webp",
+      "bytes": 51798,
+      "sha256": "a9d3de2c2b546a3458d88867b4edc72e34396b6fb97d369072024a8c25648c5a",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-winner-portrait-02.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-winner-portrait-02.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-winner-portrait-02.webp",
+      "bytes": 33280,
+      "sha256": "392189b00b0e5e7e78b916c5391f9f1a6032d88db94da1082d228e3263126520",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-winner-portrait-03.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-winner-portrait-03.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-winner-portrait-03.webp",
+      "bytes": 45534,
+      "sha256": "d85a35779a46c93c75ccbee9532eb22f0393aa0051c1b3af75d8940d181d6fbc",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-winner-project-21-01.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-winner-project-21-01.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-winner-project-21-01.webp",
+      "bytes": 22356,
+      "sha256": "b3625322384bf9c7f336d5e5cd746ee7d753217c5d95dfc7b448bd7d588bc8dd",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-winner-project-21-02.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-winner-project-21-02.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-winner-project-21-02.webp",
+      "bytes": 22998,
+      "sha256": "4d91e95e2e1ec8625e38b74df4daacc0eff2a19ed4fbcecda4e18729a544cc07",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-winner-project-21-03.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-winner-project-21-03.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-winner-project-21-03.webp",
+      "bytes": 31714,
+      "sha256": "b4c9bdb5dcac18756cedb5a1571ba0efa9ee053eebd9ad36102895b39828f30e",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-winner-street-01.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-winner-street-01.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-winner-street-01.webp",
+      "bytes": 44198,
+      "sha256": "f440f1d922141f66ca1aa1bc51fd5c6a3c0f9426aa9db6d4717867c7c41a8b72",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-winner-street-02.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-winner-street-02.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-winner-street-02.webp",
+      "bytes": 27822,
+      "sha256": "1c2edf5957734aeea241400c37e49ce1573a7026eaf8bd206bb9b42ad3a37aa6",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-winner-street-03.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-winner-street-03.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-winner-street-03.webp",
+      "bytes": 29126,
+      "sha256": "1a0e8a90291c51d4325ec2c519b5dc8fb1beec0c2a2c5036a7a7534bb5e6cd48",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-winner-wildlife-01.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-winner-wildlife-01.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-winner-wildlife-01.webp",
+      "bytes": 89824,
+      "sha256": "b53fb8fd2feeb110d31ad299d7216e54b1d43874872056afaa8b19af9456a743",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-winner-wildlife-02.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-winner-wildlife-02.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-winner-wildlife-02.webp",
+      "bytes": 139048,
+      "sha256": "ff4ebe8a7f9be26db6ff952ed128ff8b1674c20b4241b19b741b2fbca4e27e78",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-2026-winner-wildlife-03.webp",
+      "ossKey": "fish/assets/backgrounds/masters-2026-winner-wildlife-03.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-2026-winner-wildlife-03.webp",
+      "bytes": 150908,
+      "sha256": "839031987da6f266dd7ea0e5315b7c46a474268cf50c18db4e8ba620153bc227",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-branch-still-water.webp",
+      "ossKey": "fish/assets/backgrounds/masters-branch-still-water.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-branch-still-water.webp",
+      "bytes": 44024,
+      "sha256": "16a6f5edf64cd47149fb8aa89b0712db37a71da871d71c2b6fe5396b36c89aac",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-geometric-sea.webp",
+      "ossKey": "fish/assets/backgrounds/masters-geometric-sea.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-geometric-sea.webp",
+      "bytes": 219616,
+      "sha256": "b91bf6ea0baa39109047f04f00c9652b6d34345e9ca69939a1f55f5fb0b3e8c3",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-golden-long-exposure.webp",
+      "ossKey": "fish/assets/backgrounds/masters-golden-long-exposure.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-golden-long-exposure.webp",
+      "bytes": 58614,
+      "sha256": "2f1c1202ec541efe9e8d020ea4de96fcc02e65c40217bf89bb422c306fa3a469",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-ocean-poles.webp",
+      "ossKey": "fish/assets/backgrounds/masters-ocean-poles.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-ocean-poles.webp",
+      "bytes": 36162,
+      "sha256": "4dfdf015054c57cab147c887e2f07821642da0c3d8cfafdf06f5beeec3ba1da0",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-pines-in-fog.webp",
+      "ossKey": "fish/assets/backgrounds/masters-pines-in-fog.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-pines-in-fog.webp",
+      "bytes": 58920,
+      "sha256": "d843323005c737931a055aaabdd0481e964d606db76ace487b26956fd8eb0813",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-rocks-long-exposure.webp",
+      "ossKey": "fish/assets/backgrounds/masters-rocks-long-exposure.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-rocks-long-exposure.webp",
+      "bytes": 96976,
+      "sha256": "22e9b84004e3adf87c9fe4e17195161c6293c53335f00713e2606b8bd7f40958",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-solitary-tree.webp",
+      "ossKey": "fish/assets/backgrounds/masters-solitary-tree.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-solitary-tree.webp",
+      "bytes": 135120,
+      "sha256": "3275ec5443452b1190f409a1c8c55adc247fd5d3947af5cd59a948a41f750047",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/masters-stone-fog.webp",
+      "ossKey": "fish/assets/backgrounds/masters-stone-fog.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/masters-stone-fog.webp",
+      "bytes": 23978,
+      "sha256": "47f13e67c8fc10f61f6355097813dfb2bfadcef9f698c1277441ccb07f3d4c9f",
       "contentType": "image/webp"
     },
     {
@@ -29,6 +1093,22 @@
       "contentType": "image/webp"
     },
     {
+      "path": "backgrounds/mountain-crimson-ridge.webp",
+      "ossKey": "fish/assets/backgrounds/mountain-crimson-ridge.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/mountain-crimson-ridge.webp",
+      "bytes": 27636,
+      "sha256": "c7f730195839eb41aa4a199efe66a22ca1dfd9cb517722fbaed68b517ca24d71",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/mountain-distant-sun.webp",
+      "ossKey": "fish/assets/backgrounds/mountain-distant-sun.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/mountain-distant-sun.webp",
+      "bytes": 8818,
+      "sha256": "e2e4eed05f90513b1ba043e6fccf667de578ca8fd03c046377b2a6bf5a8a175e",
+      "contentType": "image/webp"
+    },
+    {
       "path": "backgrounds/mountain-dusk.webp",
       "ossKey": "fish/assets/backgrounds/mountain-dusk.webp",
       "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/mountain-dusk.webp",
@@ -37,11 +1117,123 @@
       "contentType": "image/webp"
     },
     {
+      "path": "backgrounds/mountain-haze-layers.webp",
+      "ossKey": "fish/assets/backgrounds/mountain-haze-layers.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/mountain-haze-layers.webp",
+      "bytes": 14646,
+      "sha256": "0f663a816588122933b685591302e02ad4e30b58ba60e33d8effbba22f0255ab",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/mountain-indigo-evening.webp",
+      "ossKey": "fish/assets/backgrounds/mountain-indigo-evening.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/mountain-indigo-evening.webp",
+      "bytes": 13962,
+      "sha256": "68a13ae55e627108b8da6dd081e7dff982ebebf44d0f153f5e88cefad4fc3324",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/mountain-orange-folds.webp",
+      "ossKey": "fish/assets/backgrounds/mountain-orange-folds.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/mountain-orange-folds.webp",
+      "bytes": 7878,
+      "sha256": "9332416d21cb0a173c020baecf307731b764a86400c908953367f6e7272eede6",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/mountain-pale-horizon.webp",
+      "ossKey": "fish/assets/backgrounds/mountain-pale-horizon.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/mountain-pale-horizon.webp",
+      "bytes": 13198,
+      "sha256": "e868575033d391056807e0f99b238764e037fbdd37bde6c1bbd5edb5f74d472e",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/mountain-rock-last-light.webp",
+      "ossKey": "fish/assets/backgrounds/mountain-rock-last-light.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/mountain-rock-last-light.webp",
+      "bytes": 143528,
+      "sha256": "a663d2f81b019f54e8178217686ea9c9f52e930fa4dfc2beca8d8600e28b407f",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/mountain-snow-afterglow.webp",
+      "ossKey": "fish/assets/backgrounds/mountain-snow-afterglow.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/mountain-snow-afterglow.webp",
+      "bytes": 51328,
+      "sha256": "44e895d84c1962901e6304e522e764703d7eaa05b43a7bbbbb893fcff8286736",
+      "contentType": "image/webp"
+    },
+    {
       "path": "backgrounds/tea-window-night.webp",
       "ossKey": "fish/assets/backgrounds/tea-window-night.webp",
       "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/tea-window-night.webp",
       "bytes": 131118,
       "sha256": "a5e8d14b06c5279aee3bd5b9479be90f4ba3a69700b598ea17e823d65e94d1ed",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/twilight-autumn-clouds.webp",
+      "ossKey": "fish/assets/backgrounds/twilight-autumn-clouds.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/twilight-autumn-clouds.webp",
+      "bytes": 105666,
+      "sha256": "919a4c6fb34d3c099200a49d60fe6563ad9ae4dba82254d21ce7fefb83377f98",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/twilight-blue-treetops.webp",
+      "ossKey": "fish/assets/backgrounds/twilight-blue-treetops.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/twilight-blue-treetops.webp",
+      "bytes": 229208,
+      "sha256": "f1f523b6a1a27269c5979cab47ec9a6cb339d6299cdb47e236a45555a0a69cef",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/twilight-dark-birches.webp",
+      "ossKey": "fish/assets/backgrounds/twilight-dark-birches.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/twilight-dark-birches.webp",
+      "bytes": 62022,
+      "sha256": "8c37ebc154002efd4cc03f5c45c373f72525f059637919f118bf680c9729a41d",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/twilight-forest-long-shadows.webp",
+      "ossKey": "fish/assets/backgrounds/twilight-forest-long-shadows.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/twilight-forest-long-shadows.webp",
+      "bytes": 134812,
+      "sha256": "eab032dd0c50cb19dcf77e9a31497756745e651877a559b2bf179a7dcddcf5ad",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/twilight-leaves-fog.webp",
+      "ossKey": "fish/assets/backgrounds/twilight-leaves-fog.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/twilight-leaves-fog.webp",
+      "bytes": 260280,
+      "sha256": "62a0ff09c4f7a27a8772d10e874f87fcda366970cf4e69a5d14be3d9ad529668",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/twilight-meadow-edge.webp",
+      "ossKey": "fish/assets/backgrounds/twilight-meadow-edge.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/twilight-meadow-edge.webp",
+      "bytes": 119538,
+      "sha256": "cbb0dbfd9a3103c88ec6b99e742cdadb3407febc101867a6970c57ad3a88d909",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/twilight-pink-mountains.webp",
+      "ossKey": "fish/assets/backgrounds/twilight-pink-mountains.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/twilight-pink-mountains.webp",
+      "bytes": 11102,
+      "sha256": "e1b95391aee4ede57afb2bb84b9e194731dd03853682a6d83abb61a76f8edc6b",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "backgrounds/twilight-warm-pines.webp",
+      "ossKey": "fish/assets/backgrounds/twilight-warm-pines.webp",
+      "url": "https://apex-res.nefelibata.ink/fish/assets/backgrounds/twilight-warm-pines.webp",
+      "bytes": 219526,
+      "sha256": "ad3e98571b7a08ae2e252fae502b8a95fb1fc8c2e3502691b3fe4105726409e6",
       "contentType": "image/webp"
     },
     {

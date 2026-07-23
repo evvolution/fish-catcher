@@ -5,12 +5,20 @@ import {
   appendResultToStore,
   buildFoodBackpack,
   buildSnackSummary,
+  COLLECTED_CARD_LIMIT,
   createEmptyGuestStore,
   maybeDropCard,
   pickBackground,
   pickResultCopy,
 } from "~~/src/lib/moyu-engine";
-import type { ActivityRecord, ForestCatalog, ForestResult, GuestForestStore } from "~~/src/lib/moyu-types";
+import { rankRelatedCopyEntries } from "~~/src/lib/copy-explorer";
+import type {
+  ActivityRecord,
+  CopywritingRecord,
+  ForestCatalog,
+  ForestResult,
+  GuestForestStore,
+} from "~~/src/lib/moyu-types";
 import { regionalCatalog } from "~~/src/lib/regional-catalog";
 import { shuffleFishOrder } from "~~/src/lib/fish-order";
 import { useAmbientNoise } from "~/composables/useAmbientNoise";
@@ -33,8 +41,9 @@ import {
 
 function createMoyuForestController(catalog: ForestCatalog) {
   const welcomeVisible = ref(true);
+  const fishOverlayMode = ref<"entry" | "detail">("entry");
   const welcomeFishIndex = ref(0);
-  const welcomeFishOrder = ref([...catalog.fishes]);
+  const welcomeFishOrder = ref(shuffleFishOrder(catalog.fishes));
   const store = ref<GuestForestStore>(createEmptyGuestStore());
   const hasHydrated = ref(false);
   const view = ref<ViewState>("forest");
@@ -50,7 +59,9 @@ function createMoyuForestController(catalog: ForestCatalog) {
   const locationDraft = ref<LocationDraft>(createDefaultLocationDraft());
   const industryDraft = ref("");
   const customIndustryDraft = ref("");
-  const fishViewingStartedAt = ref(Date.now());
+  const fishViewingStartedAt = ref(0);
+  const quoteExplorerEntryId = ref<string | null>(null);
+  const quoteExplorerTrailIds = ref<string[]>([]);
   const ambientNoise = useAmbientNoise();
 
   const activities = computed(() => catalog.activities);
@@ -63,14 +74,30 @@ function createMoyuForestController(catalog: ForestCatalog) {
   const homeQuoteCandidates = computed(() => catalog.copyEntries.filter(
     (entry) => entry.kind === "GREETING" || (entry.kind === "RESULT" && entry.content.length <= 42),
   ));
+  const quoteExplorerEntries = computed(() => catalog.copyEntries.filter(
+    (entry) => entry.kind === "RESULT" || entry.kind === "CARD",
+  ));
   const backgroundMap = new Map(catalog.backgrounds.map((background) => [background.slug, background]));
   const activityMap = new Map(catalog.activities.map((activity) => [activity.slug, activity]));
   const copyMap = new Map(catalog.copyEntries.map((entry) => [entry.id, entry]));
-  const onboardingOpen = computed(() => hasHydrated.value
-    && (!store.value.profile.hasSeenOnboarding || (!store.value.profile.citySlug && !store.value.profile.cityName)));
+  const dimensionLabelMap = new Map(catalog.dimensionGroups.flatMap((group) =>
+    group.options.map((option) => [`${group.key}:${option.slug}`, option.label] as const)));
   const greeting = computed(() => homeGreetingId.value && copyMap.has(homeGreetingId.value)
     ? copyMap.get(homeGreetingId.value) ?? null
     : catalog.copyEntries.find((entry) => entry.kind === "GREETING") ?? null);
+  const quoteExplorerEntry = computed(() => quoteExplorerEntryId.value
+    ? copyMap.get(quoteExplorerEntryId.value) ?? null : null);
+  const quoteExplorerTags = computed(() => {
+    const entry = quoteExplorerEntry.value;
+    if (!entry) return [];
+    return [...new Set(Object.entries(entry.dimensionKeys).flatMap(([groupKey, slugs]) =>
+      slugs.map((slug) => dimensionLabelMap.get(`${groupKey}:${slug}`)).filter((label): label is string => Boolean(label)),
+    ))].slice(0, 5);
+  });
+  const quoteExplorerSaved = computed(() => Boolean(
+    quoteExplorerEntry.value
+    && store.value.cards.some((card) => card.copyId === quoteExplorerEntry.value?.id),
+  ));
   const currentBackground = computed(() => (view.value === "result" ? result.value?.background?.slug : timer.value?.backgroundSlug)
     ?? homeBackgroundSlug.value ?? catalog.backgrounds[0]?.slug ?? null);
   const currentBackgroundRecord = computed(() => currentBackground.value
@@ -112,6 +139,47 @@ function createMoyuForestController(catalog: ForestCatalog) {
   function advanceHomeQuote() {
     const candidates = homeQuoteCandidates.value.filter((entry) => entry.id !== homeGreetingId.value);
     homeGreetingId.value = candidates[Math.floor(Math.random() * candidates.length)]?.id ?? homeGreetingId.value;
+  }
+
+  function openQuoteExplorer(seed: CopywritingRecord | null = greeting.value) {
+    const entry = seed ?? quoteExplorerEntries.value[Math.floor(Math.random() * quoteExplorerEntries.value.length)] ?? null;
+    if (!entry) return;
+    quoteExplorerEntryId.value = entry.id;
+    quoteExplorerTrailIds.value = [entry.id];
+    sheet.value = "quotes";
+  }
+
+  function advanceQuoteExplorer(mode: "related" | "wander") {
+    const current = quoteExplorerEntry.value;
+    if (!current) return openQuoteExplorer();
+    const unseen = quoteExplorerEntries.value.filter(
+      (entry) => entry.id !== current.id && !quoteExplorerTrailIds.value.includes(entry.id),
+    );
+    const ranked = mode === "related"
+      ? rankRelatedCopyEntries(quoteExplorerEntries.value, current, quoteExplorerTrailIds.value)
+      : unseen;
+    const pool = ranked.length ? (mode === "related" ? ranked.slice(0, 12) : ranked)
+      : quoteExplorerEntries.value.filter((entry) => entry.id !== current.id);
+    const next = pool[Math.floor(Math.random() * pool.length)] ?? null;
+    if (!next) return;
+    quoteExplorerEntryId.value = next.id;
+    quoteExplorerTrailIds.value = [...quoteExplorerTrailIds.value, next.id].slice(-40);
+  }
+
+  function handleCollectQuote() {
+    const entry = quoteExplorerEntry.value;
+    if (!entry || quoteExplorerSaved.value) return;
+    store.value = {
+      ...store.value,
+      cards: [{
+        id: `card_saved_${entry.id}_${Date.now()}`,
+        copyId: entry.id,
+        title: entry.title,
+        content: entry.content,
+        collectedAt: new Date().toISOString(),
+        backgroundSlug: currentBackground.value,
+      }, ...store.value.cards].slice(0, COLLECTED_CARD_LIMIT),
+    };
   }
 
   function handleStartActivity(activity: ActivityRecord) {
@@ -204,12 +272,20 @@ function createMoyuForestController(catalog: ForestCatalog) {
   }
 
   function handleOpenFish() {
+    fishOverlayMode.value = "detail";
     fishViewingStartedAt.value = Date.now();
     welcomeVisible.value = true;
   }
 
   function handleDismissFish() {
-    if (!fishViewingStartedAt.value) return;
+    if (fishOverlayMode.value === "entry") {
+      welcomeVisible.value = false;
+      return;
+    }
+    if (!fishViewingStartedAt.value) {
+      welcomeVisible.value = false;
+      return;
+    }
     const endedAt = new Date();
     const startedAt = new Date(Math.min(fishViewingStartedAt.value, endedAt.getTime()));
     const durationSec = Math.max(1, Math.floor((endedAt.getTime() - startedAt.getTime()) / 1000));
@@ -224,6 +300,11 @@ function createMoyuForestController(catalog: ForestCatalog) {
       });
     }
     welcomeVisible.value = false;
+  }
+
+  function handleNextFish() {
+    advanceWelcomeFish();
+    fishViewingStartedAt.value = Date.now();
   }
 
   function openLibrary(tab: LibraryTab) {
@@ -293,24 +374,22 @@ function createMoyuForestController(catalog: ForestCatalog) {
     sheet,
     timer,
     elapsedMs,
-    onboardingOpen,
-    homeQuoteCandidates,
     industryOptions,
     industryDraft,
     customIndustryDraft,
     locationDraft,
-    advanceWelcomeFish,
-    advanceHomeQuote,
     applyHomeAtmosphere,
   });
 
   return {
     activities, activeIndustryLabel, activeRegionLabel, backpackItems, currentBackgroundRecord,
-    customIndustryDraft, elapsedMs, greeting, handleBackToForest, handleDeleteCard, handleDismissFish,
-    handleFinishTimer, handleLibraryScroll, handleOpenFish, handlePauseOrResume, handleSaveProfile,
-    handleStartActivity, handleToggleAmbient, industryDraft, industryOptions, libraryTab, locationDraft,
-    onboardingOpen, openLibrary, changeLibraryTab, profileValid, protectionNotice, result, sheet, store,
-    timer, timerActivityName, view, visibleCardCount, visibleLogCount, welcomeFish, welcomeVisible,
+    customIndustryDraft, elapsedMs, fishOverlayMode, greeting, handleBackToForest, handleCollectQuote,
+    handleDeleteCard, handleDismissFish, handleFinishTimer, handleLibraryScroll, handleNextFish,
+    handleOpenFish, handlePauseOrResume, handleSaveProfile, handleStartActivity, handleToggleAmbient,
+    industryDraft, industryOptions, libraryTab, locationDraft, openLibrary, openQuoteExplorer,
+    advanceHomeQuote, advanceQuoteExplorer, changeLibraryTab, profileValid, protectionNotice,
+    quoteExplorerEntry, quoteExplorerSaved, quoteExplorerTags, result, sheet, store, timer,
+    timerActivityName, view, visibleCardCount, visibleLogCount, welcomeFish, welcomeVisible,
   };
 }
 

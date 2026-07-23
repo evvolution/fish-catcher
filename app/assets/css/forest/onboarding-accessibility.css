@@ -48,6 +48,12 @@
 .pauseButton:focus-visible,
 .primaryButton:focus-visible,
 .secondaryButton:focus-visible,
+.heroQuietAction:focus-visible,
+.heroExploreAction:focus-visible,
+.resultExploreButton:focus-visible,
+.welcomeFishAction:focus-visible,
+.quotePathButton:focus-visible,
+.quoteCollectButton:focus-visible,
 .choiceChip:focus-visible,
 .cityRankButton:focus-visible,
 .cityCustomAction:focus-visible,
@@ -84,6 +90,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .backgroundImage,
+  .welcomeBackground,
   .timerCenter {
     animation: none;
     transform: none;

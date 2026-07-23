@@ -6,6 +6,7 @@ import {
   appendResultToStore,
   buildFoodBackpack,
   buildSnackSummary,
+  COLLECTED_CARD_LIMIT,
   createEmptyGuestStore,
   formatDuration,
   maybeDropCard,
@@ -14,6 +15,7 @@ import {
   pickResultCopy,
   sanitizeGuestStore,
 } from "@moyu-core/moyu-engine";
+import { rankRelatedCopyEntries } from "@moyu-core/copy-explorer";
 import { regionalCatalog } from "@moyu-core/regional-catalog";
 import type {
   ActivityRecord,
@@ -23,7 +25,7 @@ import type {
 } from "@moyu-core/moyu-types";
 
 type Screen = "forest" | "timer" | "result";
-type Sheet = null | "library" | "settings";
+type Sheet = null | "library" | "settings" | "quotes";
 type LibraryTab = "cards" | "logs" | "backpack";
 type TimerState = {
   activitySlug: string;
@@ -59,8 +61,11 @@ const result = ref<ForestResult | null>(null);
 const homeGreetingId = ref<string | null>(null);
 const homeBackgroundSlug = ref<string | null>(null);
 const welcomeVisible = ref(true);
+const welcomeMode = ref<"entry" | "detail">("entry");
 const welcomeFishIndex = ref(0);
-const fishViewingStartedAt = ref(Date.now());
+const fishViewingStartedAt = ref(0);
+const quoteExplorerEntryId = ref<string | null>(null);
+const quoteExplorerTrailIds = ref<string[]>([]);
 const provinceIndex = ref(0);
 const cityIndex = ref(0);
 const districtIndex = ref(0);
@@ -72,6 +77,22 @@ const activityMap = computed(() => new Map(activities.value.map((item) => [item.
 const copyMap = computed(() => new Map((catalog.value?.copyEntries ?? []).map((item) => [item.id, item])));
 const welcomeFish = computed(() => catalog.value?.fishes[welcomeFishIndex.value % (catalog.value.fishes.length || 1)] ?? null);
 const greeting = computed(() => homeGreetingId.value ? copyMap.value.get(homeGreetingId.value) ?? null : null);
+const quoteExplorerEntries = computed(() => catalog.value?.copyEntries.filter(
+  (entry) => entry.kind === "RESULT" || entry.kind === "CARD",
+) ?? []);
+const quoteExplorerEntry = computed(() => quoteExplorerEntryId.value
+  ? copyMap.value.get(quoteExplorerEntryId.value) ?? null : null);
+const quoteExplorerSaved = computed(() => Boolean(
+  quoteExplorerEntry.value && store.value.cards.some((card) => card.copyId === quoteExplorerEntry.value?.id),
+));
+const dimensionLabelMap = computed(() => new Map(catalog.value?.dimensionGroups.flatMap((group) =>
+  group.options.map((option) => [`${group.key}:${option.slug}`, option.label] as const)) ?? []));
+const quoteExplorerTags = computed(() => {
+  if (!quoteExplorerEntry.value) return [];
+  return [...new Set(Object.entries(quoteExplorerEntry.value.dimensionKeys).flatMap(([groupKey, slugs]) =>
+    slugs.map((slug) => dimensionLabelMap.value.get(`${groupKey}:${slug}`)).filter((label): label is string => Boolean(label)),
+  ))].slice(0, 5);
+});
 const industryOptions = computed(() => catalog.value?.dimensionGroups.find((group) => group.key === "industry")?.options ?? []);
 const industryLabels = computed(() => ["暂不设置", ...industryOptions.value.map((item) => item.label)]);
 const provinces = computed(() => regionalCatalog.regions);
@@ -83,7 +104,6 @@ const selectedCity = computed(() => cities.value[cityIndex.value] ?? cities.valu
 const districts = computed(() => selectedCity.value?.districts ?? []);
 const districtLabels = computed(() => districts.value.map((item) => item.name));
 const selectedDistrict = computed(() => districts.value[districtIndex.value] ?? districts.value[0]);
-const onboardingOpen = computed(() => hydrated.value && !store.value.profile.hasSeenOnboarding);
 const activeIndustryLabel = computed(() => store.value.profile.industrySlug
   ? industryOptions.value.find((item) => item.slug === store.value.profile.industrySlug)?.label ?? "未设置职业"
   : store.value.profile.industryName ?? "未设置职业");
@@ -104,7 +124,6 @@ const currentActivityName = computed(() => timer.value
 const backpack = computed(() => buildFoodBackpack(store.value.profile, store.value.totalAttentionCents));
 
 let tickInterval: ReturnType<typeof setInterval> | null = null;
-let atmosphereInterval: ReturnType<typeof setInterval> | null = null;
 
 function assetUrl(path: string | null | undefined) {
   if (!path) return "";
@@ -182,13 +201,8 @@ function applyHomeAtmosphere() {
   homeBackgroundSlug.value = pickBackground(catalog.value, null, store.value.profile)?.slug ?? null;
 }
 
-function rotateAtmosphere() {
+function advanceHomeQuote() {
   if (!catalog.value) return;
-  if (welcomeVisible.value && catalog.value.fishes.length > 1) {
-    welcomeFishIndex.value = (welcomeFishIndex.value + 1) % catalog.value.fishes.length;
-    return;
-  }
-  if (screen.value !== "forest" || sheet.value || onboardingOpen.value) return;
   const candidates = catalog.value.copyEntries.filter((entry) =>
     (entry.kind === "GREETING" || (entry.kind === "RESULT" && entry.content.length <= 42))
     && entry.id !== homeGreetingId.value);
@@ -196,6 +210,10 @@ function rotateAtmosphere() {
 }
 
 function dismissWelcome() {
+  if (welcomeMode.value === "entry") {
+    welcomeVisible.value = false;
+    return;
+  }
   const fish = welcomeFish.value;
   if (fish) {
     const endedAt = new Date();
@@ -214,8 +232,56 @@ function dismissWelcome() {
 
 function openFish() {
   welcomeFishIndex.value = Math.floor(Math.random() * (catalog.value?.fishes.length || 1));
+  welcomeMode.value = "detail";
   fishViewingStartedAt.value = Date.now();
   welcomeVisible.value = true;
+}
+
+function nextFish() {
+  const fishCount = catalog.value?.fishes.length ?? 0;
+  if (fishCount > 1) welcomeFishIndex.value = (welcomeFishIndex.value + 1) % fishCount;
+  fishViewingStartedAt.value = Date.now();
+}
+
+function openQuoteExplorer(seed = greeting.value) {
+  const entry = seed ?? quoteExplorerEntries.value[Math.floor(Math.random() * quoteExplorerEntries.value.length)] ?? null;
+  if (!entry) return;
+  quoteExplorerEntryId.value = entry.id;
+  quoteExplorerTrailIds.value = [entry.id];
+  sheet.value = "quotes";
+}
+
+function advanceQuoteExplorer(mode: "related" | "wander") {
+  const current = quoteExplorerEntry.value;
+  if (!current) return openQuoteExplorer();
+  const unseen = quoteExplorerEntries.value.filter(
+    (entry) => entry.id !== current.id && !quoteExplorerTrailIds.value.includes(entry.id),
+  );
+  const ranked = mode === "related"
+    ? rankRelatedCopyEntries(quoteExplorerEntries.value, current, quoteExplorerTrailIds.value)
+    : unseen;
+  const pool = ranked.length ? (mode === "related" ? ranked.slice(0, 12) : ranked)
+    : quoteExplorerEntries.value.filter((entry) => entry.id !== current.id);
+  const next = pool[Math.floor(Math.random() * pool.length)] ?? null;
+  if (!next) return;
+  quoteExplorerEntryId.value = next.id;
+  quoteExplorerTrailIds.value = [...quoteExplorerTrailIds.value, next.id].slice(-40);
+}
+
+function collectQuote() {
+  const entry = quoteExplorerEntry.value;
+  if (!entry || quoteExplorerSaved.value) return;
+  store.value = {
+    ...store.value,
+    cards: [{
+      id: `card_saved_${entry.id}_${Date.now()}`,
+      copyId: entry.id,
+      title: entry.title,
+      content: entry.content,
+      collectedAt: new Date().toISOString(),
+      backgroundSlug: currentBackground.value?.slug ?? null,
+    }, ...store.value.cards].slice(0, COLLECTED_CARD_LIMIT),
+  };
 }
 
 function startActivity(activity: ActivityRecord) {
@@ -368,12 +434,10 @@ onMounted(() => {
       ? current.accumulatedMs + (current.segmentStartedAt ? Date.now() - current.segmentStartedAt : 0)
       : 0;
   }, 250);
-  atmosphereInterval = setInterval(rotateAtmosphere, 5_000);
 });
 
 onBeforeUnmount(() => {
   if (tickInterval) clearInterval(tickInterval);
-  if (atmosphereInterval) clearInterval(atmosphereInterval);
 });
 </script>
 
@@ -411,6 +475,12 @@ onBeforeUnmount(() => {
           <view class="hero-card">
             <text class="hero-title">{{ greeting?.content ?? '先停一下，不急着把自己交回给待办。' }}</text>
             <text class="hero-meta">{{ greeting?.title ?? '摸鱼森林' }}</text>
+            <view class="hero-actions">
+              <button class="hero-action" @click="advanceHomeQuote">换一句</button>
+              <button class="hero-action hero-action-primary" @click="openQuoteExplorer(greeting)">
+                走进句子森林 →
+              </button>
+            </view>
           </view>
         </view>
 
@@ -434,6 +504,7 @@ onBeforeUnmount(() => {
           <text class="result-duration">{{ formatDuration(result.durationSec) }}</text>
           <text class="result-copy">{{ result.copy.content }}</text>
           <text class="result-source">{{ result.copy.title }}</text>
+          <button class="result-explore-button" @click="openQuoteExplorer(result.copy)">沿着这句话走下去 →</button>
           <text class="snack-copy">{{ result.snackSummary }}</text>
           <view v-if="result.droppedCard" class="drop-card">
             <text class="drop-label">捡到一张句子</text>
@@ -446,7 +517,7 @@ onBeforeUnmount(() => {
           </view>
         </scroll-view>
 
-        <view v-if="screen !== 'result' && !onboardingOpen" class="bottom-nav">
+        <view v-if="screen !== 'result'" class="bottom-nav">
           <button
             v-for="activity in activities"
             :key="activity.slug"
@@ -473,8 +544,14 @@ onBeforeUnmount(() => {
         <image class="welcome-background" :src="assetUrl('/assets/backgrounds/mist-lake-dawn.webp')" mode="aspectFill" />
         <view class="welcome-scrim" />
         <view class="welcome-content" @click="dismissWelcome">
-          <text class="welcome-title">你一定要记得摸鱼</text>
-          <view v-if="welcomeFish" class="fish-card" @click.stop>
+          <text class="welcome-eyebrow">{{ welcomeMode === 'entry' ? '一处不计算产出的地方' : '林中水域' }}</text>
+          <text class="welcome-title">{{ welcomeMode === 'entry' ? '你一定要记得摸鱼' : '看一会儿鱼' }}</text>
+          <view v-if="welcomeMode === 'entry' && welcomeFish" class="portal-fish-card">
+            <image class="portal-fish-image" :src="assetUrl(welcomeFish.imagePath)" mode="aspectFit" />
+            <text class="portal-fish-name">{{ welcomeFish.commonNameZh }}</text>
+            <text class="portal-fish-copy">它只是从这里游过，不要求你记住什么。</text>
+          </view>
+          <view v-else-if="welcomeFish" class="fish-card" @click.stop>
             <view class="fish-image-wrap">
               <image class="fish-image" :src="assetUrl(welcomeFish.imagePath)" mode="aspectFit" />
               <text class="fish-habitat">{{ welcomeFish.habitatLabel }}</text>
@@ -485,15 +562,55 @@ onBeforeUnmount(() => {
             <text class="fish-fact">习性 · {{ welcomeFish.habits }}</text>
             <text class="fish-fact">分布 · {{ welcomeFish.distribution }}</text>
           </view>
-          <text class="welcome-hint">轻触空白处，回到森林</text>
+          <view v-if="welcomeMode === 'detail'" class="fish-actions" @click.stop>
+            <button class="fish-action" @click="nextFish">换一条</button>
+            <button class="fish-action fish-action-primary" @click="dismissWelcome">回到森林</button>
+          </view>
+          <text class="welcome-hint">
+            {{ welcomeMode === 'entry' ? '轻触，进入森林' : '不需要认识它，只看一会儿也很好' }}
+          </text>
         </view>
       </view>
 
-      <view v-if="onboardingOpen || sheet === 'settings'" class="modal-backdrop">
+      <view v-if="sheet === 'quotes' && quoteExplorerEntry" class="modal-backdrop" @click="sheet = null">
+        <view class="quote-sheet" @click.stop>
+          <view class="sheet-header">
+            <view>
+              <text class="sheet-title">句子森林</text>
+              <text class="quote-sheet-lead">每次只往前走一句。方向相近，不保证答案相同。</text>
+            </view>
+            <button class="close-button" @click="sheet = null">×</button>
+          </view>
+          <scroll-view class="quote-sheet-body" scroll-y>
+            <view class="quote-explorer-card">
+              <view v-if="quoteExplorerTags.length" class="quote-tags">
+                <text v-for="tag in quoteExplorerTags" :key="tag">{{ tag }}</text>
+              </view>
+              <text class="quote-explorer-copy">{{ quoteExplorerEntry.content }}</text>
+              <text class="quote-explorer-source">{{ quoteExplorerEntry.title }}</text>
+            </view>
+            <view class="quote-paths">
+              <button class="quote-path" @click="advanceQuoteExplorer('wander')">
+                <text class="quote-path-hint">不按线索</text>
+                <text class="quote-path-title">换条小路</text>
+              </button>
+              <button class="quote-path quote-path-primary" @click="advanceQuoteExplorer('related')">
+                <text class="quote-path-hint">沿着相近的情绪</text>
+                <text class="quote-path-title">继续往里走</text>
+              </button>
+            </view>
+            <button class="quote-collect" :disabled="quoteExplorerSaved" @click="collectQuote">
+              {{ quoteExplorerSaved ? '已经收进卡册' : '把这句话收进卡册' }}
+            </button>
+          </scroll-view>
+        </view>
+      </view>
+
+      <view v-if="sheet === 'settings'" class="modal-backdrop">
         <scroll-view class="settings-card" scroll-y>
           <view class="sheet-header">
-            <text class="sheet-title">{{ onboardingOpen ? '你在哪里？' : '区域 / 职业' }}</text>
-            <button v-if="!onboardingOpen" class="close-button" @click="sheet = null">×</button>
+            <text class="sheet-title">区域 / 职业</text>
+            <button class="close-button" @click="sheet = null">×</button>
           </view>
           <text class="field-label">省份</text>
           <picker :range="provinceLabels" :value="provinceIndex" @change="onProvinceChange">
@@ -511,7 +628,7 @@ onBeforeUnmount(() => {
           <picker :range="industryLabels" :value="industryIndex" @change="onIndustryChange">
             <view class="picker-field">{{ industryLabels[industryIndex] }}</view>
           </picker>
-          <button class="primary-button save-button" @click="saveProfile">{{ onboardingOpen ? '进入森林' : '保存' }}</button>
+          <button class="primary-button save-button" @click="saveProfile">保存</button>
         </scroll-view>
       </view>
 
@@ -567,6 +684,8 @@ onBeforeUnmount(() => {
 <style scoped>
 .page-shell { position: relative; width: 100%; height: 100vh; overflow: hidden; background: #10252a; }
 .background, .background-scrim { position: absolute; inset: 0; width: 100%; height: 100%; }
+.background, .welcome-background { animation: moyu-background-breathe 34s ease-in-out infinite; transform-origin: center; will-change: transform; }
+.welcome-background { animation-delay: -9s; }
 .background-scrim { background: linear-gradient(180deg, rgba(5, 19, 23, .28), rgba(8, 22, 25, .56) 62%, rgba(8, 20, 23, .84)); }
 .content-shell { position: relative; z-index: 2; width: 100%; max-width: 1120rpx; height: 100%; margin: 0 auto; }
 .forest-stage { box-sizing: border-box; height: 100%; padding: calc(env(safe-area-inset-top) + 30rpx) 34rpx 230rpx; }
@@ -582,6 +701,9 @@ onBeforeUnmount(() => {
 .hero-card { display: flex; flex-direction: column; justify-content: flex-end; width: 82%; min-height: 440rpx; padding: 90rpx 8rpx; }
 .hero-title { color: #fffdf5; font-family: "Songti SC", serif; font-size: 58rpx; font-weight: 600; line-height: 1.5; text-shadow: 0 4rpx 28rpx rgba(0,0,0,.32); }
 .hero-meta, .result-source { margin-top: 26rpx; color: rgba(255,255,255,.65); font-size: 24rpx; }
+.hero-actions { display: flex; gap: 14rpx; margin-top: 34rpx; }
+.hero-action { min-width: auto; height: 72rpx; margin: 0; padding: 0 24rpx; border: 1rpx solid rgba(255,255,255,.16); border-radius: 36rpx; color: rgba(255,255,255,.68); font-size: 21rpx; background: rgba(10,31,35,.22); }
+.hero-action-primary { color: #18383c; background: rgba(244,241,226,.9); }
 .bottom-nav { position: absolute; right: 24rpx; bottom: calc(env(safe-area-inset-bottom) + 24rpx); left: 24rpx; display: flex; justify-content: space-around; padding: 20rpx 8rpx 18rpx; border: 1rpx solid rgba(255,255,255,.12); border-radius: 42rpx; background: rgba(12, 31, 35, .78); box-shadow: 0 20rpx 60rpx rgba(0,0,0,.28); backdrop-filter: blur(24px); }
 .nav-item { display: flex; flex: 1; flex-direction: column; align-items: center; gap: 10rpx; opacity: .74; }
 .nav-item.active { opacity: 1; }
@@ -604,6 +726,7 @@ onBeforeUnmount(() => {
 .result-stage { text-align: left; }
 .result-duration { font-size: 62rpx; }
 .result-copy { display: block; margin-top: 52rpx; color: #fffdf5; font-family: "Songti SC", serif; font-size: 43rpx; font-weight: 600; line-height: 1.68; }
+.result-explore-button { width: auto; min-width: auto; height: 72rpx; margin: 30rpx 0 0; padding: 0 26rpx; border: 1rpx solid rgba(255,255,255,.2); border-radius: 36rpx; color: rgba(255,255,255,.76); font-size: 22rpx; background: rgba(10,31,35,.28); }
 .snack-copy { display: block; margin-top: 46rpx; padding: 28rpx; border-radius: 28rpx; color: rgba(255,255,255,.72); font-size: 24rpx; line-height: 1.7; background: rgba(240,234,216,.11); }
 .drop-card { display: flex; flex-direction: column; gap: 20rpx; margin-top: 34rpx; padding: 38rpx; border: 1rpx solid rgba(255,255,255,.2); border-radius: 34rpx; background: rgba(248,242,224,.12); }
 .drop-label { color: #d8c99d; font-size: 20rpx; letter-spacing: 4rpx; }
@@ -614,7 +737,12 @@ onBeforeUnmount(() => {
 .welcome-overlay { z-index: 20; background: #d9e5de; }
 .welcome-scrim { background: linear-gradient(180deg, rgba(222,235,226,.28), rgba(18,45,49,.7)); }
 .welcome-content { position: relative; z-index: 2; display: flex; box-sizing: border-box; flex-direction: column; align-items: center; height: 100%; padding: calc(env(safe-area-inset-top) + 42rpx) 34rpx calc(env(safe-area-inset-bottom) + 36rpx); }
+.welcome-eyebrow { margin-bottom: 18rpx; color: rgba(255,255,255,.72); font-size: 18rpx; letter-spacing: 5rpx; }
 .welcome-title { color: #14363a; font-family: "Songti SC", serif; font-size: 48rpx; font-weight: 700; letter-spacing: 8rpx; }
+.portal-fish-card { display: flex; box-sizing: border-box; width: 88%; max-width: 620rpx; min-height: 520rpx; align-items: center; justify-content: center; flex-direction: column; margin: auto 0; padding: 52rpx; border: 1rpx solid rgba(255,255,255,.28); border-radius: 46% 54% 42% 58% / 48% 44% 56% 52%; color: #f7f7ed; background: rgba(13,39,43,.22); backdrop-filter: blur(20px); }
+.portal-fish-image { width: 100%; height: 280rpx; filter: drop-shadow(0 28rpx 34rpx rgba(5,22,25,.3)); }
+.portal-fish-name { margin-top: 22rpx; font-size: 27rpx; font-weight: 700; letter-spacing: 4rpx; }
+.portal-fish-copy { max-width: 440rpx; margin-top: 16rpx; color: rgba(255,255,255,.66); font-family: "Songti SC", serif; font-size: 23rpx; line-height: 1.7; text-align: center; }
 .fish-card { display: flex; flex-direction: column; box-sizing: border-box; width: 100%; max-width: 680rpx; margin: auto 0; padding: 34rpx; border: 1rpx solid rgba(255,255,255,.55); border-radius: 42rpx; color: #17373c; background: rgba(247,247,235,.78); box-shadow: 0 30rpx 90rpx rgba(14,45,49,.18); backdrop-filter: blur(24px); }
 .fish-image-wrap { position: relative; height: 320rpx; }
 .fish-image { width: 100%; height: 100%; }
@@ -623,15 +751,34 @@ onBeforeUnmount(() => {
 .fish-latin { margin-top: 8rpx; color: #698083; font-family: serif; font-size: 21rpx; font-style: italic; }
 .fish-summary { margin-top: 22rpx; font-size: 27rpx; line-height: 1.65; }
 .fish-fact { margin-top: 15rpx; color: #4e696c; font-size: 22rpx; line-height: 1.55; }
+.fish-actions { display: flex; width: 100%; max-width: 680rpx; gap: 16rpx; margin-bottom: 28rpx; }
+.fish-action { flex: 1; height: 80rpx; margin: 0; border: 1rpx solid rgba(255,255,255,.22); border-radius: 40rpx; color: rgba(255,255,255,.78); font-size: 23rpx; background: rgba(10,31,35,.34); }
+.fish-action-primary { color: #18383c; background: #f4f0e4; }
 .welcome-hint { color: rgba(255,255,255,.78); font-size: 22rpx; letter-spacing: 4rpx; }
 .modal-backdrop { z-index: 30; display: flex; align-items: flex-end; justify-content: center; background: rgba(4,15,18,.62); }
-.settings-card, .library-sheet { box-sizing: border-box; width: 100%; max-width: 1120rpx; max-height: 88vh; padding: 38rpx 34rpx calc(env(safe-area-inset-bottom) + 38rpx); border-radius: 44rpx 44rpx 0 0; color: #1b3538; background: #f4f0e4; }
+.settings-card, .library-sheet, .quote-sheet { box-sizing: border-box; width: 100%; max-width: 1120rpx; max-height: 88vh; padding: 38rpx 34rpx calc(env(safe-area-inset-bottom) + 38rpx); border-radius: 44rpx 44rpx 0 0; color: #1b3538; background: #f4f0e4; }
 .sheet-header { justify-content: space-between; margin-bottom: 30rpx; }
 .sheet-title { font-family: "Songti SC", serif; font-size: 40rpx; font-weight: 700; }
 .close-button { width: 60rpx; color: #66777a; font-size: 52rpx; }
 .field-label { display: block; margin: 28rpx 0 12rpx; color: #637477; font-size: 22rpx; }
 .picker-field { padding: 28rpx; border: 1rpx solid #d7d2c5; border-radius: 22rpx; font-size: 28rpx; background: rgba(255,255,255,.65); }
 .save-button { width: 100%; margin-top: 40rpx; color: #f7f2e5; background: #244b50; }
+.quote-sheet { height: 86vh; }
+.quote-sheet-lead { display: block; max-width: 500rpx; margin-top: 12rpx; color: #7a888a; font-size: 19rpx; line-height: 1.55; }
+.quote-sheet-body { height: calc(86vh - 170rpx); }
+.quote-explorer-card { display: flex; box-sizing: border-box; min-height: 620rpx; justify-content: center; flex-direction: column; padding: 54rpx 44rpx; border: 1rpx solid #d9d8cc; border-radius: 40rpx; background: linear-gradient(145deg, rgba(255,254,247,.9), rgba(216,232,222,.72)); }
+.quote-tags { display: flex; gap: 10rpx; margin-bottom: 38rpx; flex-wrap: wrap; }
+.quote-tags text { padding: 9rpx 14rpx; border: 1rpx solid rgba(31,56,58,.1); border-radius: 22rpx; color: #718183; font-size: 18rpx; background: rgba(255,255,255,.55); }
+.quote-explorer-copy { color: #203638; font-family: "Songti SC", serif; font-size: 48rpx; font-weight: 600; line-height: 1.62; }
+.quote-explorer-source { margin-top: 36rpx; color: #718183; font-size: 21rpx; line-height: 1.5; }
+.quote-paths { display: flex; gap: 16rpx; margin-top: 20rpx; }
+.quote-path { display: flex; flex: 1; height: 112rpx; align-items: flex-start; justify-content: center; flex-direction: column; margin: 0; padding: 0 26rpx; border: 1rpx solid #d9d8cc; border-radius: 28rpx; color: #425d60; background: rgba(255,255,255,.56); text-align: left; }
+.quote-path-hint { color: #899496; font-size: 17rpx; }
+.quote-path-title { margin-top: 10rpx; font-size: 24rpx; font-weight: 700; }
+.quote-path-primary { color: #f5f2e7; background: #264447; }
+.quote-path-primary .quote-path-hint { color: rgba(255,255,255,.56); }
+.quote-collect { width: 100%; height: 80rpx; margin-top: 16rpx; color: #647779; font-size: 21rpx; background: transparent; }
+.quote-collect[disabled] { opacity: .45; }
 .library-sheet { height: 82vh; }
 .tab-row { gap: 12rpx; margin-bottom: 22rpx; padding: 8rpx; border-radius: 24rpx; background: #e4ded0; }
 .tab-button { flex: 1; height: 68rpx; border-radius: 18rpx; color: #657477; font-size: 24rpx; }
@@ -650,6 +797,15 @@ onBeforeUnmount(() => {
 .state-card { display: flex; box-sizing: border-box; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 60rpx; text-align: center; }
 .state-title { font-family: "Songti SC", serif; font-size: 42rpx; font-weight: 600; }
 .state-copy { margin-top: 24rpx; color: rgba(255,255,255,.65); font-size: 24rpx; }
+
+@keyframes moyu-background-breathe {
+  0%, 100% { transform: scale(1.035); }
+  50% { transform: scale(1.055); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .background, .welcome-background { animation: none; transform: none; }
+}
 
 @media (min-width: 720px) {
   .page-shell { width: min(100%, 560px); margin: 0 auto; box-shadow: 0 0 90px rgba(0,0,0,.38); }

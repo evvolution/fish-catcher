@@ -4,6 +4,7 @@ import MoyuBottomNav from "~/components/forest/MoyuBottomNav.vue";
 import MoyuHomeView from "~/components/forest/MoyuHomeView.vue";
 import MoyuLibrarySheet from "~/components/forest/MoyuLibrarySheet.vue";
 import MoyuProfileOverlays from "~/components/forest/MoyuProfileOverlays.vue";
+import MoyuQuoteExplorerSheet from "~/components/forest/MoyuQuoteExplorerSheet.vue";
 import MoyuResultView from "~/components/forest/MoyuResultView.vue";
 import MoyuTimerView from "~/components/forest/MoyuTimerView.vue";
 import MoyuWelcomeOverlay from "~/components/forest/MoyuWelcomeOverlay.vue";
@@ -36,6 +37,7 @@ const forest = provideMoyuForest(props.catalog);
       </Transition>
       <MoyuBottomNav />
       <MoyuLibrarySheet />
+      <MoyuQuoteExplorerSheet />
       <MoyuProfileOverlays />
     </div>
   </main>

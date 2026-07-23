@@ -16,7 +16,7 @@ import { regionalCatalog } from "./regional-catalog";
 const MOMENT_VALUE_CENTS_PER_SECOND = 6;
 const RECENT_COPY_LIMIT = 8;
 const RECORD_LIMIT = 40;
-const CARD_LIMIT = 40;
+export const COLLECTED_CARD_LIMIT = 240;
 
 export function createEmptyGuestStore(): GuestForestStore {
   return {
@@ -75,7 +75,7 @@ export function sanitizeGuestStore(value: unknown): GuestForestStore {
       : [],
     records,
     cards: Array.isArray(candidate.cards)
-      ? candidate.cards.filter(isCollectedCard).slice(0, CARD_LIMIT)
+      ? candidate.cards.filter(isCollectedCard).slice(0, COLLECTED_CARD_LIMIT)
       : [],
   };
 }
@@ -264,7 +264,7 @@ export function appendResultToStore(
       RECENT_COPY_LIMIT,
     ),
     records: [record, ...store.records].slice(0, RECORD_LIMIT),
-    cards: result.droppedCard ? [result.droppedCard, ...store.cards].slice(0, CARD_LIMIT) : store.cards,
+    cards: result.droppedCard ? [result.droppedCard, ...store.cards].slice(0, COLLECTED_CARD_LIMIT) : store.cards,
   } satisfies GuestForestStore;
 }
 

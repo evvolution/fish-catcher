@@ -1,7 +1,7 @@
 import { onMounted, watch, type ComputedRef, type Ref } from "vue";
 
 import { createEmptyGuestStore, sanitizeGuestStore } from "~~/src/lib/moyu-engine";
-import type { CopywritingRecord, FishSpeciesRecord, GuestForestStore } from "~~/src/lib/moyu-types";
+import type { FishSpeciesRecord, GuestForestStore } from "~~/src/lib/moyu-types";
 import {
   CUSTOM_OCCUPATION_VALUE,
   LEGACY_STORAGE_KEY,
@@ -24,29 +24,15 @@ type LifecycleOptions = {
   sheet: Ref<SheetState>;
   timer: Ref<TimerState | null>;
   elapsedMs: Ref<number>;
-  onboardingOpen: ComputedRef<boolean>;
-  homeQuoteCandidates: ComputedRef<CopywritingRecord[]>;
   industryOptions: ComputedRef<Array<{ value: string; label: string }>>;
   industryDraft: Ref<string>;
   customIndustryDraft: Ref<string>;
   locationDraft: Ref<LocationDraft>;
-  advanceWelcomeFish: () => void;
-  advanceHomeQuote: () => void;
   applyHomeAtmosphere: () => void;
 };
 
 export function useMoyuForestLifecycle(options: LifecycleOptions) {
   const assetUrl = useAssetUrl();
-
-  watch(
-    [options.welcomeVisible, () => options.welcomeFishOrder.value.length],
-    ([visible, fishCount], _previous, onCleanup) => {
-      if (!visible || fishCount < 2 || !import.meta.client) return;
-      const interval = window.setInterval(options.advanceWelcomeFish, 5_000);
-      onCleanup(() => window.clearInterval(interval));
-    },
-    { immediate: true },
-  );
 
   watch([options.welcomeFishIndex, options.welcomeVisible], () => {
     if (!import.meta.client || !options.welcomeVisible.value || options.welcomeFishOrder.value.length < 2) return;
@@ -88,16 +74,6 @@ export function useMoyuForestLifecycle(options: LifecycleOptions) {
     const interval = window.setInterval(refresh, 250);
     onCleanup(() => window.clearInterval(interval));
   }, { deep: true });
-
-  watch(
-    [options.view, options.welcomeVisible, options.sheet, options.onboardingOpen, () => options.homeQuoteCandidates.value.length],
-    ([currentView, fishOpen, currentSheet, onboarding, quoteCount], _previous, onCleanup) => {
-      if (currentView !== "forest" || fishOpen || currentSheet || onboarding || quoteCount < 2 || !import.meta.client) return;
-      const interval = window.setInterval(options.advanceHomeQuote, 5_000);
-      onCleanup(() => window.clearInterval(interval));
-    },
-    { immediate: true },
-  );
 
   onMounted(() => {
     try {

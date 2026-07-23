@@ -24,7 +24,7 @@ export const protectionLabels: Record<FishSpeciesRecord["chinaProtectionStatus"]
 };
 
 export type ViewState = "forest" | "timer" | "result";
-export type SheetState = null | "album" | "settings";
+export type SheetState = null | "album" | "settings" | "quotes";
 export type LibraryTab = "cards" | "logs" | "backpack";
 export type LocationDraft = {
   mode: "standard" | "custom";
@@ -43,12 +43,11 @@ export type TimerState = {
 };
 
 export function createDefaultLocationDraft(): LocationDraft {
-  const city = regionalCatalog.cities.find((item) => item.slug === "beijing") ?? regionalCatalog.cities[0];
   return {
     mode: "standard",
-    provinceCode: city?.provinceCode ?? "",
-    cityCode: city?.code ?? "",
-    districtCode: city?.districts[0]?.code ?? "",
+    provinceCode: "",
+    cityCode: "",
+    districtCode: "",
     customName: "",
   };
 }

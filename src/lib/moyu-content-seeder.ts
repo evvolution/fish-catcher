@@ -80,7 +80,7 @@ export async function ensureMoyuSeedData() {
   if (
     activityCount > 0 &&
     copyCount > 0 &&
-    backgroundCount > 0 &&
+    backgroundCount >= backgroundSeeds.length &&
     cityCount > 0 &&
     groupCount >= dimensionGroupSeeds.length &&
     dimensionOptionCount === expectedDimensionOptionCount &&

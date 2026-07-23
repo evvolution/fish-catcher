@@ -5,7 +5,7 @@ const forest = useMoyuForest();
 </script>
 
 <template>
-  <nav v-if="forest.view.value !== 'result' && !forest.onboardingOpen.value" class="bottomTabBar" aria-label="摸鱼方式">
+  <nav v-if="forest.view.value !== 'result'" class="bottomTabBar" aria-label="摸鱼方式">
     <button
       v-for="activity in forest.activities.value"
       :key="activity.slug"

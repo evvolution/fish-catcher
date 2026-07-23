@@ -25,6 +25,13 @@ const forest = useMoyuForest();
           <p class="heroMeta">{{ forest.greeting.value?.title }}</p>
         </div>
       </Transition>
+      <div class="heroActions">
+        <button type="button" class="heroQuietAction" @click="forest.advanceHomeQuote">换一句</button>
+        <button type="button" class="heroExploreAction" @click="forest.openQuoteExplorer(forest.greeting.value)">
+          走进句子森林
+          <span aria-hidden="true">→</span>
+        </button>
+      </div>
     </section>
   </section>
 </template>

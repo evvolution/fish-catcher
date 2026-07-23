@@ -1,5 +1,7 @@
 import type { FishSpeciesRecord } from "~~/src/lib/moyu-types";
 import moyuCopyCorpusData from "~~/src/lib/moyu-copy-corpus.json";
+import moyuBackgroundData from "~~/src/lib/moyu-backgrounds.json";
+import moyuMastersEvaluationData from "~~/src/lib/moyu-masters-evaluation.json";
 import moyuForumCopyData from "~~/src/lib/moyu-forum-copy.json";
 import fishSpeciesData from "~~/src/lib/fish-species.json";
 import { moyuQuoteSeeds } from "~~/src/lib/moyu-quotes";
@@ -562,6 +564,16 @@ export const backgroundSeeds: BackgroundSeed[] = [
     sortOrder: 4,
     dimensions: ["time_of_day:dusk"],
   },
+  ...moyuBackgroundData.map((entry) => ({
+    ...entry,
+    imagePath: `/assets/backgrounds/${entry.slug}.webp`,
+    sourceName: "Pexels",
+    licenseLabel: "Pexels License",
+  })),
+  ...moyuMastersEvaluationData.map((entry) => ({
+    ...entry,
+    imagePath: `/assets/backgrounds/${entry.slug}.webp`,
+  })),
 ];
 
 export const citySeeds: CitySeed[] = [

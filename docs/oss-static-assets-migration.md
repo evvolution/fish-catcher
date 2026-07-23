@@ -10,16 +10,16 @@ ossutil cp -r oss-upload/fish/assets/ oss://apexres/fish/assets/ --update
 
 不要上传 `.output/`、`.nuxt/`、源码或数据库文件。原始字体不进入仓库和部署产物。`fish.nefelibata.ink` 部署 Nuxt 应用，`apex-res.nefelibata.ink` 只提供静态资源。
 
-当前目录包含 221 个待上传对象：
+当前目录包含 370 个待上传对象：
 
-- 4 张背景图，全部 WebP。
+- 153 张背景图，全部 WebP：4 张 Pixabay、40 张 Pexels、109 张哈苏大师赛学习评估图。
 - 200 张 960×640 透明鱼图，全部 WebP。
 - 2 个按项目文案字集化的 WOFF2；原始 TTF/OTF 不上传。
 - 13 个 SVG 界面图标。SVG 已是更小且无损缩放的矢量资源，不转 WebP。
 - 1 个地区数据 JSON。
 - 1 个 `manifest.json` 上传清单。
 
-完整的逐文件清单位于 `oss-upload/fish/assets/manifest.json`。清单列出每个对象的本地相对路径、OSS Object Key、最终 URL、字节数、MIME 和 SHA-256，并把清单自身作为第 221 个对象计入。运行：
+完整的逐文件清单位于 `oss-upload/fish/assets/manifest.json`。清单列出每个对象的本地相对路径、OSS Object Key、最终 URL、字节数、MIME 和 SHA-256，并把清单自身作为第 370 个对象计入。运行：
 
 ```bash
 npm run build:assets
