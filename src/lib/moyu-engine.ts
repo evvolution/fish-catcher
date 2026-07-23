@@ -8,10 +8,10 @@ import type {
   GuestForestStore,
   GuestProfile,
   MomentRecord,
-} from "~~/src/lib/moyu-types";
-import { moyuSemanticPreferencesByActivity } from "~~/src/lib/moyu-semantics";
-import { packFoodBudget, type FoodBackpackItem } from "~~/src/lib/food-backpack";
-import { regionalCatalog } from "~~/src/lib/regional-catalog";
+} from "./moyu-types";
+import { moyuSemanticPreferencesByActivity } from "./moyu-semantics";
+import { packFoodBudget, type FoodBackpackItem } from "./food-backpack";
+import { regionalCatalog } from "./regional-catalog";
 
 const MOMENT_VALUE_CENTS_PER_SECOND = 6;
 const RECENT_COPY_LIMIT = 8;

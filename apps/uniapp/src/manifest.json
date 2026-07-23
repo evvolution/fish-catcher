@@ -1,0 +1,43 @@
+{
+  "name": "摸鱼",
+  "appid": "__UNI__MOYU001",
+  "description": "把碎片时间轻轻收好。",
+  "versionName": "0.1.0",
+  "versionCode": "100",
+  "transformPx": false,
+  "uniStatistics": {
+    "enable": false
+  },
+  "app-plus": {
+    "usingComponents": true,
+    "nvueStyleCompiler": "uni-app",
+    "compilerVersion": 3,
+    "splashscreen": {
+      "alwaysShowBeforeRender": true,
+      "waiting": true,
+      "autoclose": true,
+      "delay": 0
+    },
+    "distribute": {
+      "android": {
+        "permissions": ["<uses-permission android:name=\"android.permission.INTERNET\"/>"]
+      }
+    }
+  },
+  "h5": {
+    "router": {
+      "mode": "hash",
+      "base": "./"
+    },
+    "title": "摸鱼"
+  },
+  "mp-weixin": {
+    "appid": "",
+    "setting": {
+      "urlCheck": true,
+      "minified": true
+    },
+    "usingComponents": true
+  },
+  "vueVersion": "3"
+}

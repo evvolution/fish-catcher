@@ -14,14 +14,14 @@ type EnsureUserForIdentityInput = {
   existingGuestUserId?: string | null;
 };
 
-export async function createGuestUser(meta: RequestMeta) {
+export async function createGuestUser(meta: RequestMeta, platform = "h5") {
   const suffix = createRandomToken(4).slice(0, 4);
   const user = await ensureUserForIdentity({
     provider: "GUEST",
     providerUserId: `guest_${createRandomToken(10)}`,
     displayName: `游客${suffix}`,
   });
-  const session = await createSessionForUser(user.id, meta);
+  const session = await createSessionForUser(user.id, meta, platform);
   return { user, session };
 }
 

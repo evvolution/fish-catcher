@@ -5,6 +5,7 @@
 ## 当前能力
 
 - Nuxt 4 / Vue 3 / Vite 8 / Nitro
+- uni-app Vue 3 跨端客户端：H5、微信小程序、Android/iOS App 资源与 macOS DMG
 - Prisma 7 / MySQL 内容与账号模型
 - 游客本地优先的森林、计时、结果、卡册、日志背包和设置闭环
 - 4 条时段问候、880 条行为结果、320 条掉落卡片（共 1,204 条内容资产）
@@ -28,6 +29,14 @@ npm run dev
 ```
 
 Then open `http://localhost:3000`.
+
+跨端客户端位于 `apps/uniapp`，继续复用本仓库的内容引擎并只访问统一 Nitro backend。开发 H5：
+
+```bash
+npm run uni:dev:h5
+```
+
+其他平台的构建与发布要求见 [`docs/uniapp-cross-platform.md`](docs/uniapp-cross-platform.md)。
 
 没有数据库、只需做本地视觉验收时，可在开发环境设置：
 
@@ -165,9 +174,11 @@ npm run prisma:studio
 ## Project structure
 
 - `app/pages`: Nuxt pages
+- `apps/uniapp`: H5 / 小程序 / App / DMG 共用的 uni-app 客户端
 - `app/components`: small view components grouped by feature
 - `app/composables`: forest state, lifecycle and browser capabilities
 - `server/api`: Nitro API handlers
+- `server/api/v1/bootstrap.get.ts`: 跨端客户端的版本化启动接口
 - `prisma/schema.prisma`: database models
 - `src/lib/prisma.ts`: shared Prisma client
 - `src/lib/auth.ts`: auth/session/provider domain helpers

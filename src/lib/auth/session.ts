@@ -1,4 +1,4 @@
-import { getCookie, type H3Event } from "h3";
+import { getCookie, getHeader, type H3Event } from "h3";
 
 import { getSessionDurationMs, sessionCookieName } from "~~/src/lib/auth-config";
 import { createRandomToken, hashValue, type RequestMeta } from "~~/src/lib/auth/core";
@@ -31,8 +31,17 @@ export async function createSessionForUser(
   return { token, expiresAt };
 }
 
+function getRequestSessionToken(event: H3Event) {
+  const authorization = getHeader(event, "authorization")?.trim() ?? "";
+  const bearer = authorization.match(/^Bearer\s+([a-f\d]{64})$/i)?.[1];
+  const cookie = getCookie(event, sessionCookieName);
+  const token = bearer ?? cookie;
+  return token && /^[a-f\d]{64}$/i.test(token) ? token : null;
+}
+
 export async function revokeSessionByCookie(event: H3Event) {
-  const token = getCookie(event, sessionCookieName);
+  // ponytail: 保留旧函数名兼容现有调用；现在同时撤销 Cookie 与 Bearer 会话。
+  const token = getRequestSessionToken(event);
   if (!token) return;
   await prisma.userSession.updateMany({
     where: { sessionToken: hashValue(token), status: "ACTIVE" },
@@ -41,7 +50,7 @@ export async function revokeSessionByCookie(event: H3Event) {
 }
 
 export async function getCurrentSession(event: H3Event) {
-  const token = getCookie(event, sessionCookieName);
+  const token = getRequestSessionToken(event);
   if (!token) return null;
   const session = await prisma.userSession.findFirst({
     where: {

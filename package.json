@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "workspaces": [
+    "apps/*"
+  ],
   "engines": {
     "node": ">=20.19.0"
   },
@@ -12,6 +15,14 @@
     "prebuild": "npm run prisma:generate",
     "build": "nuxt build",
     "start": "node .output/server/index.mjs",
+    "backend:dev": "npm run dev",
+    "backend:build": "npm run build",
+    "uni:dev:h5": "npm run dev:h5 --workspace @moyu/uniapp",
+    "uni:build:h5": "npm run build:h5 --workspace @moyu/uniapp",
+    "uni:build:mp-weixin": "npm run build:mp-weixin --workspace @moyu/uniapp",
+    "uni:build:app": "npm run build:app --workspace @moyu/uniapp",
+    "uni:build:dmg": "npm run build:dmg --workspace @moyu/uniapp",
+    "uni:typecheck": "npm run typecheck --workspace @moyu/uniapp",
     "lint": "eslint scripts",
     "typecheck": "nuxt typecheck",
     "build:quotes": "node scripts/build-moyu-copy-corpus.mjs",
@@ -35,6 +46,7 @@
   "dependencies": {
     "@prisma/adapter-mariadb": "^7.6.0",
     "@prisma/client": "^7.6.0",
+    "h3": "1.15.11",
     "mariadb": "^3.4.5",
     "nuxt": "4.5.0",
     "vue": "3.5.40",

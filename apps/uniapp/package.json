@@ -1,0 +1,30 @@
+{
+  "name": "@moyu/uniapp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev:h5": "uni",
+    "dev:mp-weixin": "uni -p mp-weixin",
+    "build:h5": "uni build",
+    "build:mp-weixin": "uni build -p mp-weixin",
+    "build:app": "uni build -p app",
+    "build:dmg": "npm run build:h5 && node scripts/build-macos-dmg.mjs",
+    "typecheck": "vue-tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@dcloudio/uni-app": "3.0.0-5010520260709002",
+    "@dcloudio/uni-app-plus": "3.0.0-5010520260709002",
+    "@dcloudio/uni-components": "3.0.0-5010520260709002",
+    "@dcloudio/uni-h5": "3.0.0-5010520260709002",
+    "@dcloudio/uni-mp-weixin": "3.0.0-5010520260709002",
+    "@dcloudio/types": "^3.4.8",
+    "@dcloudio/uni-cli-shared": "3.0.0-5010520260709002",
+    "@dcloudio/vite-plugin-uni": "3.0.0-5010520260709002",
+    "typescript": "^5.9.3",
+    "vite": "5.2.8",
+    "vue": "3.5.40",
+    "vue-i18n": "^9.1.9",
+    "vue-tsc": "3.3.7"
+  }
+}
