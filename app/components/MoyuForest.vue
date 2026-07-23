@@ -20,10 +20,12 @@ const forest = provideMoyuForest(props.catalog);
 
     <div class="backgroundViewport" aria-hidden="true">
       <MoyuAssetImage
-        v-if="forest.currentBackgroundRecord.value"
+        v-if="!forest.welcomeVisible.value && forest.currentBackgroundRecord.value"
         :src="forest.currentBackgroundRecord.value.imagePath"
         alt=""
         class="backgroundImage"
+        loading="eager"
+        fetch-priority="high"
       />
       <div class="backgroundBloom" />
       <div class="backgroundScrim" />

@@ -56,7 +56,15 @@ const forest = useMoyuForest();
             <time :datetime="record.endedAt">{{ formatLogDate(record.endedAt) }}</time>
           </header>
           <div v-if="record.fishSlug && record.fishImagePath" class="fishLogPreview">
-            <div class="fishLogImageWrap"><MoyuAssetImage :src="record.fishImagePath" :alt="record.fishName ?? '本次看到的鱼'" class="fishLogImage" /></div>
+            <div class="fishLogImageWrap">
+              <MoyuAssetImage
+                :src="record.fishImagePath"
+                :alt="record.fishName ?? '本次看到的鱼'"
+                class="fishLogImage"
+                loading="lazy"
+                fetch-priority="low"
+              />
+            </div>
             <div class="fishLogCopy">
               <div><strong>{{ record.fishName ?? "看鱼" }}</strong><em>{{ record.copyTitle }}</em></div>
               <p>{{ record.copyContent }}</p>

@@ -455,7 +455,7 @@ onBeforeUnmount(() => {
     </view>
 
     <template v-else-if="catalog">
-      <image v-if="currentBackground" class="background" :src="assetUrl(currentBackground.imagePath)" mode="aspectFill" />
+      <image v-if="!welcomeVisible && currentBackground" class="background" :src="assetUrl(currentBackground.imagePath)" mode="aspectFill" />
       <view class="background-scrim" />
 
       <view class="content-shell">

@@ -11,7 +11,13 @@ const forest = useMoyuForest();
       aria-modal="true"
       :aria-label="forest.fishOverlayMode.value === 'entry' ? '进入摸鱼森林' : '看鱼'"
     >
-      <MoyuAssetImage src="/assets/backgrounds/mist-lake-dawn.webp" alt="" class="welcomeBackground" />
+      <MoyuAssetImage
+        src="/assets/backgrounds/mist-lake-dawn.webp"
+        alt=""
+        class="welcomeBackground"
+        loading="eager"
+        fetch-priority="high"
+      />
       <div class="welcomeScrim" aria-hidden="true" />
       <button
         type="button"
@@ -29,6 +35,7 @@ const forest = useMoyuForest();
               :src="forest.welcomeFish.value.imagePath"
               :alt="forest.welcomeFish.value.commonNameZh"
               class="welcomePortalFish"
+              loading="eager"
             />
             <figcaption>
               <strong>{{ forest.welcomeFish.value.commonNameZh }}</strong>
@@ -50,6 +57,7 @@ const forest = useMoyuForest();
                     :src="forest.welcomeFish.value.imagePath"
                     :alt="forest.welcomeFish.value.commonNameZh"
                     class="welcomeFishImage"
+                    loading="eager"
                   />
                   <span class="welcomeHabitat">{{ forest.welcomeFish.value.habitatLabel }}</span>
                 </div>

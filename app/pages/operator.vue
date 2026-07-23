@@ -181,7 +181,15 @@ async function deleteRecord(endpoint: "/api/operator/copy" | "/api/operator/back
       <div class="backgroundGrid">
         <details v-for="background in data.backgrounds" :key="background.id" class="backgroundCard">
           <summary class="backgroundSummary">
-            <div class="backgroundPreview"><MoyuAssetImage :src="background.imagePath" :alt="background.title" class="backgroundImage" /></div>
+            <div class="backgroundPreview">
+              <MoyuAssetImage
+                :src="background.imagePath"
+                :alt="background.title"
+                class="backgroundImage"
+                loading="lazy"
+                fetch-priority="low"
+              />
+            </div>
             <div class="backgroundMeta"><p class="recordMeta">{{ background.isActive ? "启用中" : "已停用" }} · {{ background.sourceName }}</p><h3 class="recordTitle">{{ background.title }}</h3><p class="recordPreview">{{ background.imagePath }}</p></div>
           </summary>
           <form class="editForm" @submit.prevent="submitRecord($event, '/api/operator/background', 'update')">
