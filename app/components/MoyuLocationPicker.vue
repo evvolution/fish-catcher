@@ -79,6 +79,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", closeOnEscape));
 
 <template>
   <div class="field">
+    <span class="fieldLabel">地区</span>
     <div class="locationCascade" role="group" aria-label="地区">
       <div class="cascadeField">
         <button

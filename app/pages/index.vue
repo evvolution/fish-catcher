@@ -6,7 +6,7 @@ const { data: catalog, error } = await useFetch<ForestCatalog>("/api/catalog");
 if (error.value) {
   throw createError({
     statusCode: error.value.statusCode ?? 500,
-    statusMessage: "摸鱼森林加载失败",
+    statusMessage: "这里暂时没有回应",
     cause: error.value,
   });
 }

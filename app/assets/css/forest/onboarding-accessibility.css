@@ -11,22 +11,22 @@
   overflow-y: auto;
   padding: 24px 20px max(22px, env(safe-area-inset-bottom));
   border: 1px solid rgba(255, 255, 255, 0.48);
-  border-radius: 34px;
+  border-radius: 26px;
   background:
     linear-gradient(155deg, rgba(250, 250, 246, 0.88), rgba(226, 233, 226, 0.78)),
     rgba(236, 240, 234, 0.8);
   color: #203638;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.7),
-    0 24px 70px rgba(2, 12, 15, 0.28);
+    0 12px 34px rgba(2, 12, 15, 0.18);
   backdrop-filter: blur(28px) saturate(160%);
   -webkit-backdrop-filter: blur(28px) saturate(160%);
 }
 
 .onboardingTitle {
   margin: 0 0 22px;
-  font-size: 30px;
-  font-weight: 740;
+  font-size: 28px;
+  font-weight: 620;
   letter-spacing: -0.04em;
 }
 
@@ -48,12 +48,7 @@
 .pauseButton:focus-visible,
 .primaryButton:focus-visible,
 .secondaryButton:focus-visible,
-.heroQuietAction:focus-visible,
-.heroExploreAction:focus-visible,
-.resultExploreButton:focus-visible,
 .welcomeFishAction:focus-visible,
-.quotePathButton:focus-visible,
-.quoteCollectButton:focus-visible,
 .choiceChip:focus-visible,
 .cityRankButton:focus-visible,
 .cityCustomAction:focus-visible,

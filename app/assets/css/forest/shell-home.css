@@ -115,39 +115,6 @@
   gap: 9px;
 }
 
-.profileSummary {
-  display: flex;
-  overflow: hidden;
-  min-width: 0;
-  max-width: min(52vw, 230px);
-  align-items: flex-end;
-  flex-direction: column;
-  gap: 3px;
-  text-align: right;
-}
-
-.profileIndustry,
-.profileRegion {
-  overflow: hidden;
-  max-width: 100%;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.profileIndustry {
-  color: rgba(249, 250, 246, 0.82);
-  font-size: 13px;
-  font-weight: 680;
-  letter-spacing: 0.055em;
-}
-
-.profileRegion {
-  color: rgba(247, 249, 244, 0.48);
-  font-size: 9px;
-  font-weight: 580;
-  letter-spacing: 0.06em;
-}
-
 .settingsButton {
   width: 42px;
   height: 42px;
@@ -170,13 +137,13 @@
   overflow: hidden;
   padding: 46px 30px 62px;
   border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 36px;
+  border-radius: 26px;
   background:
     linear-gradient(150deg, rgba(232, 244, 238, 0.13), rgba(7, 24, 28, 0.22)),
     rgba(8, 25, 29, 0.14);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.2),
-    0 24px 64px rgba(2, 12, 15, 0.26);
+    0 12px 30px rgba(2, 12, 15, 0.18);
   backdrop-filter: blur(24px) saturate(145%);
   -webkit-backdrop-filter: blur(24px) saturate(145%);
 }
@@ -185,7 +152,7 @@
   position: absolute;
   inset: 8px;
   border: 1px solid rgba(255, 255, 255, 0.11);
-  border-radius: 28px;
+  border-radius: 20px;
   content: "";
   pointer-events: none;
 }
@@ -195,14 +162,14 @@
   inset: 0;
   display: grid;
   place-items: center;
-  padding: 46px 30px 104px;
+  padding: 46px 30px 72px;
 }
 
 .heroTitle {
   max-width: 390px;
   margin: 0;
   font-size: clamp(30px, 8.3vw, 43px);
-  font-weight: 720;
+  font-weight: 560;
   line-height: 1.18;
   letter-spacing: -0.045em;
   text-shadow: 0 4px 24px rgba(2, 12, 15, 0.24);
@@ -213,7 +180,7 @@
 .heroMeta {
   position: absolute;
   right: 24px;
-  bottom: 72px;
+  bottom: 30px;
   max-width: calc(100% - 48px);
   margin: 0;
   color: rgba(246, 248, 242, 0.58);
@@ -223,46 +190,6 @@
   font-weight: 580;
   letter-spacing: 0.1em;
   text-align: right;
-}
-
-.heroActions {
-  position: absolute;
-  right: 20px;
-  bottom: 18px;
-  left: 20px;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.heroQuietAction,
-.heroExploreAction {
-  min-height: 42px;
-  border: 0;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 680;
-  letter-spacing: 0.06em;
-}
-
-.heroQuietAction {
-  padding: 0 14px;
-  background: transparent;
-  color: rgba(248, 250, 245, 0.58);
-}
-
-.heroExploreAction {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 0 17px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(238, 245, 232, 0.12);
-  color: rgba(250, 251, 247, 0.9);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .bottomTabBar {
@@ -276,13 +203,13 @@
   gap: 3px;
   padding: 7px;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 30px;
+  border-radius: 22px;
   background:
     linear-gradient(145deg, rgba(232, 244, 239, 0.15), rgba(8, 26, 30, 0.22)),
     rgba(7, 23, 27, 0.32);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.22),
-    0 18px 48px rgba(2, 12, 15, 0.3);
+    0 10px 28px rgba(2, 12, 15, 0.18);
   backdrop-filter: blur(26px) saturate(155%);
   -webkit-backdrop-filter: blur(26px) saturate(155%);
 }
@@ -297,11 +224,11 @@
   gap: 5px;
   padding: 4px 1px;
   border: 0;
-  border-radius: 23px;
+  border-radius: 14px;
   background: transparent;
   color: rgba(250, 251, 247, 0.68);
   font-size: 9px;
-  font-weight: 670;
+  font-weight: 600;
   letter-spacing: 0.04em;
   transition: background 180ms ease, color 180ms ease, opacity 180ms ease;
 }

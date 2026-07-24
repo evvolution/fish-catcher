@@ -6,16 +6,14 @@ import {
   appendResultToStore,
   buildFoodBackpack,
   buildSnackSummary,
-  COLLECTED_CARD_LIMIT,
   createEmptyGuestStore,
   formatDuration,
+  getPlaceInvitation,
   maybeDropCard,
   pickBackground,
-  pickGreetingEntry,
   pickResultCopy,
   sanitizeGuestStore,
 } from "@moyu-core/moyu-engine";
-import { rankRelatedCopyEntries } from "@moyu-core/copy-explorer";
 import { regionalCatalog } from "@moyu-core/regional-catalog";
 import type {
   ActivityRecord,
@@ -25,7 +23,7 @@ import type {
 } from "@moyu-core/moyu-types";
 
 type Screen = "forest" | "timer" | "result";
-type Sheet = null | "library" | "settings" | "quotes";
+type Sheet = null | "library" | "settings";
 type LibraryTab = "cards" | "logs" | "backpack";
 type TimerState = {
   activitySlug: string;
@@ -58,14 +56,11 @@ const libraryTab = ref<LibraryTab>("cards");
 const timer = ref<TimerState | null>(null);
 const elapsedMs = ref(0);
 const result = ref<ForestResult | null>(null);
-const homeGreetingId = ref<string | null>(null);
 const homeBackgroundSlug = ref<string | null>(null);
 const welcomeVisible = ref(true);
 const welcomeMode = ref<"entry" | "detail">("entry");
 const welcomeFishIndex = ref(0);
 const fishViewingStartedAt = ref(0);
-const quoteExplorerEntryId = ref<string | null>(null);
-const quoteExplorerTrailIds = ref<string[]>([]);
 const provinceIndex = ref(0);
 const cityIndex = ref(0);
 const districtIndex = ref(0);
@@ -74,25 +69,8 @@ const industryIndex = ref(0);
 const activities = computed(() => catalog.value?.activities ?? []);
 const backgrounds = computed(() => new Map((catalog.value?.backgrounds ?? []).map((item) => [item.slug, item])));
 const activityMap = computed(() => new Map(activities.value.map((item) => [item.slug, item])));
-const copyMap = computed(() => new Map((catalog.value?.copyEntries ?? []).map((item) => [item.id, item])));
 const welcomeFish = computed(() => catalog.value?.fishes[welcomeFishIndex.value % (catalog.value.fishes.length || 1)] ?? null);
-const greeting = computed(() => homeGreetingId.value ? copyMap.value.get(homeGreetingId.value) ?? null : null);
-const quoteExplorerEntries = computed(() => catalog.value?.copyEntries.filter(
-  (entry) => entry.kind === "RESULT" || entry.kind === "CARD",
-) ?? []);
-const quoteExplorerEntry = computed(() => quoteExplorerEntryId.value
-  ? copyMap.value.get(quoteExplorerEntryId.value) ?? null : null);
-const quoteExplorerSaved = computed(() => Boolean(
-  quoteExplorerEntry.value && store.value.cards.some((card) => card.copyId === quoteExplorerEntry.value?.id),
-));
-const dimensionLabelMap = computed(() => new Map(catalog.value?.dimensionGroups.flatMap((group) =>
-  group.options.map((option) => [`${group.key}:${option.slug}`, option.label] as const)) ?? []));
-const quoteExplorerTags = computed(() => {
-  if (!quoteExplorerEntry.value) return [];
-  return [...new Set(Object.entries(quoteExplorerEntry.value.dimensionKeys).flatMap(([groupKey, slugs]) =>
-    slugs.map((slug) => dimensionLabelMap.value.get(`${groupKey}:${slug}`)).filter((label): label is string => Boolean(label)),
-  ))].slice(0, 5);
-});
+const placeInvitation = computed(() => getPlaceInvitation());
 const industryOptions = computed(() => catalog.value?.dimensionGroups.find((group) => group.key === "industry")?.options ?? []);
 const industryLabels = computed(() => ["暂不设置", ...industryOptions.value.map((item) => item.label)]);
 const provinces = computed(() => regionalCatalog.regions);
@@ -104,14 +82,6 @@ const selectedCity = computed(() => cities.value[cityIndex.value] ?? cities.valu
 const districts = computed(() => selectedCity.value?.districts ?? []);
 const districtLabels = computed(() => districts.value.map((item) => item.name));
 const selectedDistrict = computed(() => districts.value[districtIndex.value] ?? districts.value[0]);
-const activeIndustryLabel = computed(() => store.value.profile.industrySlug
-  ? industryOptions.value.find((item) => item.slug === store.value.profile.industrySlug)?.label ?? "未设置职业"
-  : store.value.profile.industryName ?? "未设置职业");
-const activeRegionLabel = computed(() => [
-  store.value.profile.provinceName,
-  store.value.profile.cityName,
-  store.value.profile.districtName,
-].filter(Boolean).join(" ") || "未设置地区");
 const currentBackground = computed(() => {
   const slug = screen.value === "result"
     ? result.value?.background?.slug
@@ -165,7 +135,7 @@ async function boot() {
     hydrateStore();
     applyHomeAtmosphere();
   } catch (error) {
-    loadError.value = error instanceof Error ? error.message : "森林加载失败";
+    loadError.value = error instanceof Error ? error.message : "这里暂时没有回应";
   } finally {
     loading.value = false;
   }
@@ -197,16 +167,7 @@ function syncPickersFromProfile() {
 
 function applyHomeAtmosphere() {
   if (!catalog.value) return;
-  homeGreetingId.value = pickGreetingEntry(catalog.value, store.value.profile)?.id ?? null;
   homeBackgroundSlug.value = pickBackground(catalog.value, null, store.value.profile)?.slug ?? null;
-}
-
-function advanceHomeQuote() {
-  if (!catalog.value) return;
-  const candidates = catalog.value.copyEntries.filter((entry) =>
-    (entry.kind === "GREETING" || (entry.kind === "RESULT" && entry.content.length <= 42))
-    && entry.id !== homeGreetingId.value);
-  homeGreetingId.value = candidates[Math.floor(Math.random() * candidates.length)]?.id ?? homeGreetingId.value;
 }
 
 function dismissWelcome() {
@@ -241,47 +202,6 @@ function nextFish() {
   const fishCount = catalog.value?.fishes.length ?? 0;
   if (fishCount > 1) welcomeFishIndex.value = (welcomeFishIndex.value + 1) % fishCount;
   fishViewingStartedAt.value = Date.now();
-}
-
-function openQuoteExplorer(seed = greeting.value) {
-  const entry = seed ?? quoteExplorerEntries.value[Math.floor(Math.random() * quoteExplorerEntries.value.length)] ?? null;
-  if (!entry) return;
-  quoteExplorerEntryId.value = entry.id;
-  quoteExplorerTrailIds.value = [entry.id];
-  sheet.value = "quotes";
-}
-
-function advanceQuoteExplorer(mode: "related" | "wander") {
-  const current = quoteExplorerEntry.value;
-  if (!current) return openQuoteExplorer();
-  const unseen = quoteExplorerEntries.value.filter(
-    (entry) => entry.id !== current.id && !quoteExplorerTrailIds.value.includes(entry.id),
-  );
-  const ranked = mode === "related"
-    ? rankRelatedCopyEntries(quoteExplorerEntries.value, current, quoteExplorerTrailIds.value)
-    : unseen;
-  const pool = ranked.length ? (mode === "related" ? ranked.slice(0, 12) : ranked)
-    : quoteExplorerEntries.value.filter((entry) => entry.id !== current.id);
-  const next = pool[Math.floor(Math.random() * pool.length)] ?? null;
-  if (!next) return;
-  quoteExplorerEntryId.value = next.id;
-  quoteExplorerTrailIds.value = [...quoteExplorerTrailIds.value, next.id].slice(-40);
-}
-
-function collectQuote() {
-  const entry = quoteExplorerEntry.value;
-  if (!entry || quoteExplorerSaved.value) return;
-  store.value = {
-    ...store.value,
-    cards: [{
-      id: `card_saved_${entry.id}_${Date.now()}`,
-      copyId: entry.id,
-      title: entry.title,
-      content: entry.content,
-      collectedAt: new Date().toISOString(),
-      backgroundSlug: currentBackground.value?.slug ?? null,
-    }, ...store.value.cards].slice(0, COLLECTED_CARD_LIMIT),
-  };
 }
 
 function startActivity(activity: ActivityRecord) {
@@ -359,7 +279,7 @@ function openLibrary(tab: LibraryTab) {
 function deleteCard(cardId: string) {
   uni.showModal({
     title: "删除卡片",
-    content: "这张卡片删除后无法恢复。",
+    content: "这张卡片删除后无法恢复",
     success: ({ confirm }) => {
       if (confirm) store.value = { ...store.value, cards: store.value.cards.filter((card) => card.id !== cardId) };
     },
@@ -444,12 +364,12 @@ onBeforeUnmount(() => {
 <template>
   <view class="page-shell">
     <view v-if="loading" class="state-card">
-      <text class="state-title">正在走进森林…</text>
-      <text class="state-copy">风会慢一点，内容也会。</text>
+      <text class="state-title">正在打开一处地方…</text>
+      <text class="state-copy">风会慢一点，内容也会</text>
     </view>
 
     <view v-else-if="loadError" class="state-card">
-      <text class="state-title">森林暂时没有回应</text>
+      <text class="state-title">这里暂时没有回应</text>
       <text class="state-copy">{{ loadError }}</text>
       <button class="primary-button compact" @click="boot">再试一次</button>
     </view>
@@ -461,33 +381,23 @@ onBeforeUnmount(() => {
       <view class="content-shell">
         <view v-if="screen === 'forest'" class="forest-stage">
           <view class="top-bar">
-            <button class="round-button" aria-label="打开卡册" @click="openLibrary('cards')">
+            <button class="round-button" aria-label="打开背包" @click="openLibrary('cards')">
               <image class="button-icon" :src="assetUrl('/assets/icons/book.svg')" mode="aspectFit" />
             </button>
             <button class="profile-button" @click="sheet = 'settings'; syncPickersFromProfile()">
-              <view class="profile-copy">
-                <text class="profile-main">{{ activeIndustryLabel }}</text>
-                <text class="profile-sub">{{ activeRegionLabel }}</text>
-              </view>
               <image class="button-icon" :src="assetUrl('/assets/icons/settings.svg')" mode="aspectFit" />
             </button>
           </view>
           <view class="hero-card">
-            <text class="hero-title">{{ greeting?.content ?? '先停一下，不急着把自己交回给待办。' }}</text>
-            <text class="hero-meta">{{ greeting?.title ?? '摸鱼森林' }}</text>
-            <view class="hero-actions">
-              <button class="hero-action" @click="advanceHomeQuote">换一句</button>
-              <button class="hero-action hero-action-primary" @click="openQuoteExplorer(greeting)">
-                走进句子森林 →
-              </button>
-            </view>
+            <text class="hero-title">{{ placeInvitation.title }}</text>
+            <text class="hero-meta">{{ placeInvitation.detail }}</text>
           </view>
         </view>
 
         <view v-else-if="screen === 'timer' && timer" class="timer-stage">
           <text class="eyebrow">{{ currentActivityName }}</text>
           <text class="timer-value">{{ formatDuration(Math.floor(elapsedMs / 1000)) }}</text>
-          <text class="timer-hint">这段时间不需要交代用途。</text>
+          <text class="timer-hint">这里没有任务，也不用坚持</text>
           <view class="action-row">
             <button class="secondary-button" @click="finishTimer">
               <image class="inline-icon" :src="assetUrl('/assets/icons/stop.svg')" mode="aspectFit" />结束
@@ -504,16 +414,14 @@ onBeforeUnmount(() => {
           <text class="result-duration">{{ formatDuration(result.durationSec) }}</text>
           <text class="result-copy">{{ result.copy.content }}</text>
           <text class="result-source">{{ result.copy.title }}</text>
-          <button class="result-explore-button" @click="openQuoteExplorer(result.copy)">沿着这句话走下去 →</button>
           <text class="snack-copy">{{ result.snackSummary }}</text>
           <view v-if="result.droppedCard" class="drop-card">
-            <text class="drop-label">捡到一张句子</text>
+            <text class="drop-label">替你收好了一张纸条</text>
             <text class="drop-title">{{ result.droppedCard.title }}</text>
             <text class="drop-content">{{ result.droppedCard.content }}</text>
           </view>
           <view class="action-row result-actions">
-            <button class="primary-button" @click="backToForest">回到森林</button>
-            <button class="secondary-button" @click="backToForest(); openLibrary('logs')">查看日志</button>
+            <button class="primary-button" @click="backToForest">不看了</button>
           </view>
         </scroll-view>
 
@@ -544,14 +452,9 @@ onBeforeUnmount(() => {
         <image class="welcome-background" :src="assetUrl('/assets/backgrounds/mist-lake-dawn.webp')" mode="aspectFill" />
         <view class="welcome-scrim" />
         <view class="welcome-content" @click="dismissWelcome">
-          <text class="welcome-eyebrow">{{ welcomeMode === 'entry' ? '一处不计算产出的地方' : '林中水域' }}</text>
-          <text class="welcome-title">{{ welcomeMode === 'entry' ? '你一定要记得摸鱼' : '看一会儿鱼' }}</text>
-          <view v-if="welcomeMode === 'entry' && welcomeFish" class="portal-fish-card">
-            <image class="portal-fish-image" :src="assetUrl(welcomeFish.imagePath)" mode="aspectFit" />
-            <text class="portal-fish-name">{{ welcomeFish.commonNameZh }}</text>
-            <text class="portal-fish-copy">它只是从这里游过，不要求你记住什么。</text>
-          </view>
-          <view v-else-if="welcomeFish" class="fish-card" @click.stop>
+          <text class="welcome-eyebrow">{{ welcomeMode === 'entry' ? '先别急着做什么' : '它游过来了' }}</text>
+          <text class="welcome-title">{{ welcomeMode === 'entry' ? '这里替你留了一块不赶时间的地方' : '看它一会儿' }}</text>
+          <view v-if="welcomeMode === 'detail' && welcomeFish" class="fish-card" @click.stop>
             <view class="fish-image-wrap">
               <image class="fish-image" :src="assetUrl(welcomeFish.imagePath)" mode="aspectFit" />
               <text class="fish-habitat">{{ welcomeFish.habitatLabel }}</text>
@@ -563,55 +466,22 @@ onBeforeUnmount(() => {
             <text class="fish-fact">分布 · {{ welcomeFish.distribution }}</text>
           </view>
           <view v-if="welcomeMode === 'detail'" class="fish-actions" @click.stop>
+            <button class="fish-action fish-action-primary" @click="dismissWelcome">不看了</button>
             <button class="fish-action" @click="nextFish">换一条</button>
-            <button class="fish-action fish-action-primary" @click="dismissWelcome">回到森林</button>
           </view>
           <text class="welcome-hint">
-            {{ welcomeMode === 'entry' ? '轻触，进入森林' : '不需要认识它，只看一会儿也很好' }}
+            {{ welcomeMode === 'entry' ? '轻触，进去坐一会儿' : '不用认识它，看着就好' }}
           </text>
-        </view>
-      </view>
-
-      <view v-if="sheet === 'quotes' && quoteExplorerEntry" class="modal-backdrop" @click="sheet = null">
-        <view class="quote-sheet" @click.stop>
-          <view class="sheet-header">
-            <view>
-              <text class="sheet-title">句子森林</text>
-              <text class="quote-sheet-lead">每次只往前走一句。方向相近，不保证答案相同。</text>
-            </view>
-            <button class="close-button" @click="sheet = null">×</button>
-          </view>
-          <scroll-view class="quote-sheet-body" scroll-y>
-            <view class="quote-explorer-card">
-              <view v-if="quoteExplorerTags.length" class="quote-tags">
-                <text v-for="tag in quoteExplorerTags" :key="tag">{{ tag }}</text>
-              </view>
-              <text class="quote-explorer-copy">{{ quoteExplorerEntry.content }}</text>
-              <text class="quote-explorer-source">{{ quoteExplorerEntry.title }}</text>
-            </view>
-            <view class="quote-paths">
-              <button class="quote-path" @click="advanceQuoteExplorer('wander')">
-                <text class="quote-path-hint">不按线索</text>
-                <text class="quote-path-title">换条小路</text>
-              </button>
-              <button class="quote-path quote-path-primary" @click="advanceQuoteExplorer('related')">
-                <text class="quote-path-hint">沿着相近的情绪</text>
-                <text class="quote-path-title">继续往里走</text>
-              </button>
-            </view>
-            <button class="quote-collect" :disabled="quoteExplorerSaved" @click="collectQuote">
-              {{ quoteExplorerSaved ? '已经收进卡册' : '把这句话收进卡册' }}
-            </button>
-          </scroll-view>
         </view>
       </view>
 
       <view v-if="sheet === 'settings'" class="modal-backdrop">
         <scroll-view class="settings-card" scroll-y>
           <view class="sheet-header">
-            <text class="sheet-title">区域 / 职业</text>
+            <text class="sheet-title">摸鱼人档案</text>
             <button class="close-button" @click="sheet = null">×</button>
           </view>
+          <text class="field-label location-label">地区</text>
           <text class="field-label">省份</text>
           <picker :range="provinceLabels" :value="provinceIndex" @change="onProvinceChange">
             <view class="picker-field">{{ selectedProvince?.name ?? '请选择' }}</view>
@@ -635,17 +505,17 @@ onBeforeUnmount(() => {
       <view v-if="sheet === 'library'" class="modal-backdrop" @click="sheet = null">
         <view class="library-sheet" @click.stop>
           <view class="sheet-header">
-            <text class="sheet-title">我的森林</text>
+          <text class="sheet-title">背包</text>
             <button class="close-button" @click="sheet = null">×</button>
           </view>
           <view class="tab-row">
-            <button class="tab-button" :class="{ active: libraryTab === 'cards' }" @click="libraryTab = 'cards'">卡册</button>
-            <button class="tab-button" :class="{ active: libraryTab === 'logs' }" @click="libraryTab = 'logs'">日志</button>
-            <button class="tab-button" :class="{ active: libraryTab === 'backpack' }" @click="libraryTab = 'backpack'">背包</button>
+            <button class="tab-button" :class="{ active: libraryTab === 'cards' }" @click="libraryTab = 'cards'">纸条</button>
+            <button class="tab-button" :class="{ active: libraryTab === 'logs' }" @click="libraryTab = 'logs'">记录</button>
+            <button class="tab-button" :class="{ active: libraryTab === 'backpack' }" @click="libraryTab = 'backpack'">带走</button>
           </view>
           <scroll-view class="library-list" scroll-y>
             <template v-if="libraryTab === 'cards'">
-              <text v-if="!store.cards.length" class="empty-copy">还没有捡到句子。先去林子里待一会儿。</text>
+              <text v-if="!store.cards.length" class="empty-copy">这里还没有纸条，先去坐一会儿</text>
               <view v-for="card in store.cards" :key="card.id" class="library-card">
                 <view class="card-heading">
                   <text class="library-card-title">{{ card.title }}</text>
@@ -656,7 +526,7 @@ onBeforeUnmount(() => {
               </view>
             </template>
             <template v-else-if="libraryTab === 'logs'">
-              <text v-if="!store.records.length" class="empty-copy">还没有摸鱼日志。</text>
+              <text v-if="!store.records.length" class="empty-copy">这里还没有记录</text>
               <view v-for="record in store.records" :key="record.id" class="library-card">
                 <view class="card-heading">
                   <text class="library-card-title">{{ record.activityName }} · {{ formatDuration(record.durationSec) }}</text>
@@ -668,7 +538,7 @@ onBeforeUnmount(() => {
             </template>
             <template v-else>
               <text class="backpack-total">累计收好 ¥{{ (store.totalAttentionCents / 100).toFixed(2) }} 的碎片时光</text>
-              <text v-if="!backpack.length" class="empty-copy">再待一会儿，背包里会慢慢多起来。</text>
+              <text v-if="!backpack.length" class="empty-copy">再待一会儿，手边会慢慢多起来</text>
               <view v-for="item in backpack" :key="item.name" class="backpack-row">
                 <text class="library-card-title">{{ item.name }}</text>
                 <text class="backpack-amount">{{ formatAmount(item.amount) }}{{ item.unit }}</text>
@@ -694,17 +564,11 @@ onBeforeUnmount(() => {
 .round-button, .profile-button, .close-button, .delete-button, .tab-button, .nav-item { margin: 0; padding: 0; color: inherit; line-height: 1; background: transparent; }
 .round-button { display: flex; align-items: center; justify-content: center; width: 82rpx; height: 82rpx; border-radius: 50%; background: rgba(242, 239, 225, .14); backdrop-filter: blur(18px); }
 .button-icon { width: 38rpx; height: 38rpx; filter: brightness(0) invert(1); }
-.profile-button { gap: 20rpx; justify-content: flex-end; min-height: 82rpx; padding: 0 24rpx; border-radius: 42rpx; background: rgba(242, 239, 225, .14); backdrop-filter: blur(18px); }
-.profile-copy { display: flex; flex-direction: column; align-items: flex-end; max-width: 390rpx; }
-.profile-main { font-size: 26rpx; font-weight: 600; }
-.profile-sub { margin-top: 8rpx; overflow: hidden; color: rgba(255,255,255,.7); font-size: 20rpx; text-overflow: ellipsis; white-space: nowrap; }
+.profile-button { gap: 20rpx; justify-content: flex-end; min-height: 82rpx; padding: 0 24rpx; border-radius: 18rpx; background: rgba(242, 239, 225, .14); backdrop-filter: blur(18px); }
 .hero-card { display: flex; flex-direction: column; justify-content: flex-end; width: 82%; min-height: 440rpx; padding: 90rpx 8rpx; }
-.hero-title { color: #fffdf5; font-family: "Songti SC", serif; font-size: 58rpx; font-weight: 600; line-height: 1.5; text-shadow: 0 4rpx 28rpx rgba(0,0,0,.32); }
+.hero-title { color: #fffdf5; font-family: "Songti SC", serif; font-size: 58rpx; font-weight: 540; line-height: 1.5; text-shadow: 0 4rpx 28rpx rgba(0,0,0,.32); }
 .hero-meta, .result-source { margin-top: 26rpx; color: rgba(255,255,255,.65); font-size: 24rpx; }
-.hero-actions { display: flex; gap: 14rpx; margin-top: 34rpx; }
-.hero-action { min-width: auto; height: 72rpx; margin: 0; padding: 0 24rpx; border: 1rpx solid rgba(255,255,255,.16); border-radius: 36rpx; color: rgba(255,255,255,.68); font-size: 21rpx; background: rgba(10,31,35,.22); }
-.hero-action-primary { color: #18383c; background: rgba(244,241,226,.9); }
-.bottom-nav { position: absolute; right: 24rpx; bottom: calc(env(safe-area-inset-bottom) + 24rpx); left: 24rpx; display: flex; justify-content: space-around; padding: 20rpx 8rpx 18rpx; border: 1rpx solid rgba(255,255,255,.12); border-radius: 42rpx; background: rgba(12, 31, 35, .78); box-shadow: 0 20rpx 60rpx rgba(0,0,0,.28); backdrop-filter: blur(24px); }
+.bottom-nav { position: absolute; right: 24rpx; bottom: calc(env(safe-area-inset-bottom) + 24rpx); left: 24rpx; display: flex; justify-content: space-around; padding: 20rpx 8rpx 18rpx; border: 1rpx solid rgba(255,255,255,.12); border-radius: 22rpx; background: rgba(12, 31, 35, .78); box-shadow: 0 8rpx 24rpx rgba(0,0,0,.16); backdrop-filter: blur(24px); }
 .nav-item { display: flex; flex: 1; flex-direction: column; align-items: center; gap: 10rpx; opacity: .74; }
 .nav-item.active { opacity: 1; }
 .nav-item[disabled] { opacity: .28; }
@@ -718,17 +582,16 @@ onBeforeUnmount(() => {
 .timer-value, .result-duration { display: block; margin: 44rpx 0 26rpx; color: #fffdf5; font-family: "Songti SC", serif; font-size: 88rpx; font-weight: 600; }
 .timer-hint { color: rgba(255,255,255,.6); font-size: 24rpx; }
 .action-row { justify-content: center; gap: 24rpx; width: 100%; margin-top: 100rpx; }
-.primary-button, .secondary-button { display: flex; align-items: center; justify-content: center; gap: 14rpx; min-width: 240rpx; height: 92rpx; margin: 0; padding: 0 34rpx; border-radius: 46rpx; font-size: 28rpx; font-weight: 600; }
+.primary-button, .secondary-button { display: flex; align-items: center; justify-content: center; gap: 14rpx; min-width: 240rpx; height: 92rpx; margin: 0; padding: 0 34rpx; border-radius: 18rpx; font-size: 28rpx; font-weight: 600; }
 .primary-button { color: #173238; background: #f4eedc; }
 .secondary-button { color: #f4eedc; border: 1rpx solid rgba(255,255,255,.35); background: rgba(15,36,40,.42); }
 .primary-button.compact { min-width: 200rpx; margin-top: 42rpx; }
 .inline-icon { width: 32rpx; height: 32rpx; }
 .result-stage { text-align: left; }
 .result-duration { font-size: 62rpx; }
-.result-copy { display: block; margin-top: 52rpx; color: #fffdf5; font-family: "Songti SC", serif; font-size: 43rpx; font-weight: 600; line-height: 1.68; }
-.result-explore-button { width: auto; min-width: auto; height: 72rpx; margin: 30rpx 0 0; padding: 0 26rpx; border: 1rpx solid rgba(255,255,255,.2); border-radius: 36rpx; color: rgba(255,255,255,.76); font-size: 22rpx; background: rgba(10,31,35,.28); }
-.snack-copy { display: block; margin-top: 46rpx; padding: 28rpx; border-radius: 28rpx; color: rgba(255,255,255,.72); font-size: 24rpx; line-height: 1.7; background: rgba(240,234,216,.11); }
-.drop-card { display: flex; flex-direction: column; gap: 20rpx; margin-top: 34rpx; padding: 38rpx; border: 1rpx solid rgba(255,255,255,.2); border-radius: 34rpx; background: rgba(248,242,224,.12); }
+.result-copy { display: block; margin-top: 52rpx; color: #fffdf5; font-family: "Songti SC", serif; font-size: 43rpx; font-weight: 540; line-height: 1.68; }
+.snack-copy { display: block; margin-top: 46rpx; padding: 28rpx; border-radius: 18rpx; color: rgba(255,255,255,.72); font-size: 24rpx; line-height: 1.7; background: rgba(240,234,216,.11); }
+.drop-card { display: flex; flex-direction: column; gap: 20rpx; margin-top: 34rpx; padding: 38rpx; border: 1rpx solid rgba(255,255,255,.2); border-radius: 18rpx; background: rgba(248,242,224,.12); }
 .drop-label { color: #d8c99d; font-size: 20rpx; letter-spacing: 4rpx; }
 .drop-title { font-size: 28rpx; font-weight: 600; }
 .drop-content { font-family: "Songti SC", serif; font-size: 32rpx; line-height: 1.7; }
@@ -738,60 +601,43 @@ onBeforeUnmount(() => {
 .welcome-scrim { background: linear-gradient(180deg, rgba(222,235,226,.28), rgba(18,45,49,.7)); }
 .welcome-content { position: relative; z-index: 2; display: flex; box-sizing: border-box; flex-direction: column; align-items: center; height: 100%; padding: calc(env(safe-area-inset-top) + 42rpx) 34rpx calc(env(safe-area-inset-bottom) + 36rpx); }
 .welcome-eyebrow { margin-bottom: 18rpx; color: rgba(255,255,255,.72); font-size: 18rpx; letter-spacing: 5rpx; }
-.welcome-title { color: #14363a; font-family: "Songti SC", serif; font-size: 48rpx; font-weight: 700; letter-spacing: 8rpx; }
-.portal-fish-card { display: flex; box-sizing: border-box; width: 88%; max-width: 620rpx; min-height: 520rpx; align-items: center; justify-content: center; flex-direction: column; margin: auto 0; padding: 52rpx; border: 1rpx solid rgba(255,255,255,.28); border-radius: 46% 54% 42% 58% / 48% 44% 56% 52%; color: #f7f7ed; background: rgba(13,39,43,.22); backdrop-filter: blur(20px); }
-.portal-fish-image { width: 100%; height: 280rpx; filter: drop-shadow(0 28rpx 34rpx rgba(5,22,25,.3)); }
-.portal-fish-name { margin-top: 22rpx; font-size: 27rpx; font-weight: 700; letter-spacing: 4rpx; }
-.portal-fish-copy { max-width: 440rpx; margin-top: 16rpx; color: rgba(255,255,255,.66); font-family: "Songti SC", serif; font-size: 23rpx; line-height: 1.7; text-align: center; }
-.fish-card { display: flex; flex-direction: column; box-sizing: border-box; width: 100%; max-width: 680rpx; margin: auto 0; padding: 34rpx; border: 1rpx solid rgba(255,255,255,.55); border-radius: 42rpx; color: #17373c; background: rgba(247,247,235,.78); box-shadow: 0 30rpx 90rpx rgba(14,45,49,.18); backdrop-filter: blur(24px); }
+.welcome-title { color: #14363a; font-family: "Songti SC", serif; font-size: 48rpx; font-weight: 600; letter-spacing: 8rpx; }
+.fish-card { display: flex; flex-direction: column; box-sizing: border-box; width: 100%; max-width: 680rpx; margin: auto 0; padding: 34rpx; border: 1rpx solid rgba(255,255,255,.55); border-radius: 26rpx; color: #17373c; background: rgba(247,247,235,.78); box-shadow: 0 12rpx 32rpx rgba(14,45,49,.14); backdrop-filter: blur(24px); }
 .fish-image-wrap { position: relative; height: 320rpx; }
 .fish-image { width: 100%; height: 100%; }
 .fish-habitat { position: absolute; right: 0; bottom: 0; padding: 10rpx 18rpx; border-radius: 22rpx; color: #f8f5e9; font-size: 20rpx; background: #557b7f; }
-.fish-name { margin-top: 24rpx; font-size: 40rpx; font-weight: 700; }
+.fish-name { margin-top: 24rpx; font-size: 40rpx; font-weight: 600; }
 .fish-latin { margin-top: 8rpx; color: #698083; font-family: serif; font-size: 21rpx; font-style: italic; }
 .fish-summary { margin-top: 22rpx; font-size: 27rpx; line-height: 1.65; }
 .fish-fact { margin-top: 15rpx; color: #4e696c; font-size: 22rpx; line-height: 1.55; }
 .fish-actions { display: flex; width: 100%; max-width: 680rpx; gap: 16rpx; margin-bottom: 28rpx; }
-.fish-action { flex: 1; height: 80rpx; margin: 0; border: 1rpx solid rgba(255,255,255,.22); border-radius: 40rpx; color: rgba(255,255,255,.78); font-size: 23rpx; background: rgba(10,31,35,.34); }
+.fish-action { flex: 1; height: 80rpx; margin: 0; border: 1rpx solid rgba(255,255,255,.22); border-radius: 16rpx; color: rgba(255,255,255,.78); font-size: 23rpx; background: rgba(10,31,35,.34); }
 .fish-action-primary { color: #18383c; background: #f4f0e4; }
 .welcome-hint { color: rgba(255,255,255,.78); font-size: 22rpx; letter-spacing: 4rpx; }
 .modal-backdrop { z-index: 30; display: flex; align-items: flex-end; justify-content: center; background: rgba(4,15,18,.62); }
-.settings-card, .library-sheet, .quote-sheet { box-sizing: border-box; width: 100%; max-width: 1120rpx; max-height: 88vh; padding: 38rpx 34rpx calc(env(safe-area-inset-bottom) + 38rpx); border-radius: 44rpx 44rpx 0 0; color: #1b3538; background: #f4f0e4; }
+.settings-card, .library-sheet { box-sizing: border-box; width: 100%; max-width: 1120rpx; max-height: 88vh; padding: 38rpx 34rpx calc(env(safe-area-inset-bottom) + 38rpx); border-radius: 28rpx 28rpx 0 0; color: #1b3538; background: #f4f0e4; }
 .sheet-header { justify-content: space-between; margin-bottom: 30rpx; }
-.sheet-title { font-family: "Songti SC", serif; font-size: 40rpx; font-weight: 700; }
+.sheet-title { font-family: "Songti SC", serif; font-size: 40rpx; font-weight: 600; }
 .close-button { width: 60rpx; color: #66777a; font-size: 52rpx; }
 .field-label { display: block; margin: 28rpx 0 12rpx; color: #637477; font-size: 22rpx; }
-.picker-field { padding: 28rpx; border: 1rpx solid #d7d2c5; border-radius: 22rpx; font-size: 28rpx; background: rgba(255,255,255,.65); }
-.save-button { width: 100%; margin-top: 40rpx; color: #f7f2e5; background: #244b50; }
-.quote-sheet { height: 86vh; }
-.quote-sheet-lead { display: block; max-width: 500rpx; margin-top: 12rpx; color: #7a888a; font-size: 19rpx; line-height: 1.55; }
-.quote-sheet-body { height: calc(86vh - 170rpx); }
-.quote-explorer-card { display: flex; box-sizing: border-box; min-height: 620rpx; justify-content: center; flex-direction: column; padding: 54rpx 44rpx; border: 1rpx solid #d9d8cc; border-radius: 40rpx; background: linear-gradient(145deg, rgba(255,254,247,.9), rgba(216,232,222,.72)); }
-.quote-tags { display: flex; gap: 10rpx; margin-bottom: 38rpx; flex-wrap: wrap; }
-.quote-tags text { padding: 9rpx 14rpx; border: 1rpx solid rgba(31,56,58,.1); border-radius: 22rpx; color: #718183; font-size: 18rpx; background: rgba(255,255,255,.55); }
-.quote-explorer-copy { color: #203638; font-family: "Songti SC", serif; font-size: 48rpx; font-weight: 600; line-height: 1.62; }
-.quote-explorer-source { margin-top: 36rpx; color: #718183; font-size: 21rpx; line-height: 1.5; }
-.quote-paths { display: flex; gap: 16rpx; margin-top: 20rpx; }
-.quote-path { display: flex; flex: 1; height: 112rpx; align-items: flex-start; justify-content: center; flex-direction: column; margin: 0; padding: 0 26rpx; border: 1rpx solid #d9d8cc; border-radius: 28rpx; color: #425d60; background: rgba(255,255,255,.56); text-align: left; }
-.quote-path-hint { color: #899496; font-size: 17rpx; }
-.quote-path-title { margin-top: 10rpx; font-size: 24rpx; font-weight: 700; }
-.quote-path-primary { color: #f5f2e7; background: #264447; }
-.quote-path-primary .quote-path-hint { color: rgba(255,255,255,.56); }
-.quote-collect { width: 100%; height: 80rpx; margin-top: 16rpx; color: #647779; font-size: 21rpx; background: transparent; }
-.quote-collect[disabled] { opacity: .45; }
+.location-label { margin-top: 0; margin-bottom: 0; }
+.location-label + .field-label { margin-top: 20rpx; }
+.picker-field { padding: 28rpx; border: 1rpx solid #d7d2c5; border-radius: 14rpx; font-size: 28rpx; background: rgba(255,255,255,.65); }
+.save-button { width: 100%; margin-top: 40rpx; border-radius: 16rpx; color: #f7f2e5; background: #244b50; box-shadow: inset 0 2rpx 0 rgba(255,255,255,.18), inset 0 -5rpx 0 rgba(8,35,38,.22), 0 5rpx 0 rgba(21,65,69,.35), 0 10rpx 16rpx rgba(21,65,69,.14); }
+.save-button:active { box-shadow: inset 0 1rpx 0 rgba(255,255,255,.14), inset 0 -2rpx 0 rgba(8,35,38,.2), 0 1rpx 0 rgba(21,65,69,.3); transform: translateY(3rpx); }
 .library-sheet { height: 82vh; }
-.tab-row { gap: 12rpx; margin-bottom: 22rpx; padding: 8rpx; border-radius: 24rpx; background: #e4ded0; }
-.tab-button { flex: 1; height: 68rpx; border-radius: 18rpx; color: #657477; font-size: 24rpx; }
-.tab-button.active { color: #17383c; background: #fffdf6; box-shadow: 0 4rpx 16rpx rgba(23,56,60,.08); }
+.tab-row { gap: 12rpx; margin-bottom: 22rpx; padding: 0 0 8rpx; border-bottom: 1rpx solid #d7d2c5; }
+.tab-button { flex: 1; height: 68rpx; border-radius: 0; color: #657477; font-size: 24rpx; }
+.tab-button.active { color: #17383c; border-bottom: 4rpx solid #31595b; background: transparent; }
 .library-list { height: calc(82vh - 200rpx); }
-.library-card { margin-bottom: 22rpx; padding: 28rpx; border: 1rpx solid #ded8ca; border-radius: 26rpx; background: rgba(255,255,255,.56); }
+.library-card { margin-bottom: 0; padding: 28rpx 4rpx; border-bottom: 1rpx solid #ded8ca; background: transparent; }
 .card-heading, .backpack-row { justify-content: space-between; gap: 18rpx; }
 .library-card-title { color: #18383c; font-size: 27rpx; font-weight: 600; }
 .library-card-copy { display: block; margin-top: 18rpx; color: #3b5558; font-family: "Songti SC", serif; font-size: 28rpx; line-height: 1.65; }
 .library-meta { display: block; margin-top: 16rpx; color: #849093; font-size: 20rpx; line-height: 1.5; }
 .delete-button { color: #98716b; font-size: 21rpx; }
 .empty-copy { display: block; padding: 100rpx 30rpx; color: #829092; font-size: 25rpx; line-height: 1.7; text-align: center; }
-.backpack-total { display: block; margin-bottom: 24rpx; padding: 30rpx; border-radius: 24rpx; color: #f6efdb; font-size: 27rpx; background: #345b5f; }
+.backpack-total { display: block; margin-bottom: 24rpx; padding: 26rpx 24rpx; border-radius: 14rpx; color: #f6efdb; font-size: 27rpx; background: #345b5f; }
 .backpack-row { margin-bottom: 16rpx; padding: 28rpx; border-bottom: 1rpx solid #ddd7c9; }
 .backpack-amount { color: #667b7d; font-size: 25rpx; }
 .state-card { display: flex; box-sizing: border-box; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 60rpx; text-align: center; }
@@ -801,6 +647,15 @@ onBeforeUnmount(() => {
 @keyframes moyu-background-breathe {
   0%, 100% { transform: scale(1.035); }
   50% { transform: scale(1.055); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .background,
+  .welcome-background,
+  .save-button {
+    animation: none;
+    transform: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

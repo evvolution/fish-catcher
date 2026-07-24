@@ -1,7 +1,7 @@
 import { onMounted, watch, type ComputedRef, type Ref } from "vue";
 
 import { createEmptyGuestStore, sanitizeGuestStore } from "~~/src/lib/moyu-engine";
-import type { FishSpeciesRecord, GuestForestStore } from "~~/src/lib/moyu-types";
+import type { GuestForestStore } from "~~/src/lib/moyu-types";
 import {
   CUSTOM_OCCUPATION_VALUE,
   LEGACY_STORAGE_KEY,
@@ -16,8 +16,6 @@ import {
 
 type LifecycleOptions = {
   welcomeVisible: Ref<boolean>;
-  welcomeFishIndex: Ref<number>;
-  welcomeFishOrder: Ref<FishSpeciesRecord[]>;
   store: Ref<GuestForestStore>;
   hasHydrated: Ref<boolean>;
   view: Ref<ViewState>;
@@ -32,16 +30,6 @@ type LifecycleOptions = {
 };
 
 export function useMoyuForestLifecycle(options: LifecycleOptions) {
-  const assetUrl = useAssetUrl();
-
-  watch([options.welcomeFishIndex, options.welcomeVisible], () => {
-    if (!import.meta.client || !options.welcomeVisible.value || options.welcomeFishOrder.value.length < 2) return;
-    const nextFish = options.welcomeFishOrder.value[
-      (options.welcomeFishIndex.value + 1) % options.welcomeFishOrder.value.length
-    ];
-    if (nextFish) new window.Image().src = assetUrl(nextFish.imagePath);
-  });
-
   watch(options.welcomeVisible, (visible, _previous, onCleanup) => {
     if (!visible || !import.meta.client) return;
     const previousOverflow = document.body.style.overflow;

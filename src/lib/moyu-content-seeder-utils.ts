@@ -11,34 +11,6 @@ export async function buildDimensionOptionIdMap(tx: Prisma.TransactionClient) {
   return new Map(items.map((item) => [`${item.group.key}:${item.slug}`, item.id]));
 }
 
-export async function syncCopyDimensions(
-  tx: Prisma.TransactionClient,
-  copyId: string,
-  dimensionRefs: string[],
-  optionMap: Map<string, string>,
-) {
-  const optionIds = dimensionRefs.map((item) => optionMap.get(item)).filter((item): item is string => Boolean(item));
-  await tx.copywritingEntryDimension.deleteMany({ where: { copywritingEntryId: copyId } });
-  if (!optionIds.length) return;
-  await tx.copywritingEntryDimension.createMany({
-    data: optionIds.map((optionId) => ({ copywritingEntryId: copyId, optionId })),
-  });
-}
-
-export async function syncBackgroundDimensions(
-  tx: Prisma.TransactionClient,
-  backgroundId: string,
-  dimensionRefs: string[],
-  optionMap: Map<string, string>,
-) {
-  const optionIds = dimensionRefs.map((item) => optionMap.get(item)).filter((item): item is string => Boolean(item));
-  await tx.backgroundAssetDimension.deleteMany({ where: { backgroundAssetId: backgroundId } });
-  if (!optionIds.length) return;
-  await tx.backgroundAssetDimension.createMany({
-    data: optionIds.map((optionId) => ({ backgroundAssetId: backgroundId, optionId })),
-  });
-}
-
 export function assertMoyuModelDelegates() {
   const prismaRecord = prisma as unknown as Record<string, unknown>;
   const requiredDelegates = [

@@ -8,20 +8,20 @@ const forest = useMoyuForest();
 <template>
   <MoyuOverlaySheet
     v-if="forest.sheet.value === 'album' && forest.view.value === 'forest'"
-    title="我的摸鱼"
+    title="背包"
     @close="forest.sheet.value = null"
     @body-scroll="forest.handleLibraryScroll"
   >
     <template #sticky>
-      <div class="libraryTabs" role="tablist" aria-label="卡册、日志和背包">
+      <div class="libraryTabs" role="tablist" aria-label="背包里的纸条、记录和带走的东西">
         <button type="button" role="tab" :aria-selected="forest.libraryTab.value === 'cards'" :class="{ libraryTabActive: forest.libraryTab.value === 'cards' }" @click="forest.changeLibraryTab('cards')">
-          卡册 <small>{{ forest.store.value.cards.length }} 张</small>
+          纸条 <small>{{ forest.store.value.cards.length }} 张</small>
         </button>
         <button type="button" role="tab" :aria-selected="forest.libraryTab.value === 'logs'" :class="{ libraryTabActive: forest.libraryTab.value === 'logs' }" @click="forest.changeLibraryTab('logs')">
-          日志 <small>{{ forest.store.value.records.length }} 次</small>
+          记录 <small>{{ forest.store.value.records.length }} 次</small>
         </button>
         <button type="button" role="tab" :aria-selected="forest.libraryTab.value === 'backpack'" :class="{ libraryTabActive: forest.libraryTab.value === 'backpack' }" @click="forest.changeLibraryTab('backpack')">
-          背包 <small>{{ forest.backpackItems.value.length }} 种</small>
+          带走 <small>{{ forest.backpackItems.value.length }} 种</small>
         </button>
       </div>
     </template>
@@ -39,7 +39,7 @@ const forest = useMoyuForest();
           </button>
         </article>
       </template>
-      <article v-else class="emptyCard">还没有卡片掉落。</article>
+      <article v-else class="emptyCard">还没有卡片掉落</article>
       <p v-if="forest.visibleCardCount.value < forest.store.value.cards.length" class="loadMoreHint">继续下滑，加载更多</p>
     </div>
 
@@ -74,13 +74,13 @@ const forest = useMoyuForest();
           <p v-if="record.snackSummary" class="logFood">{{ record.snackSummary }}</p>
         </article>
       </template>
-      <article v-else class="emptyCard">第一条摸鱼日志，等你亲自写下。</article>
+      <article v-else class="emptyCard">这里还没有留下什么，先去坐一会儿</article>
       <p v-if="forest.visibleLogCount.value < forest.store.value.records.length" class="loadMoreHint">继续下滑，加载更多</p>
     </div>
 
     <div v-else class="backpackPanel">
       <header class="backpackHeader">
-        <div><p>累计收进背包</p><strong>{{ forest.backpackItems.value.length }} 种食物</strong></div>
+        <div><p>手边留下了</p><strong>{{ forest.backpackItems.value.length }} 种食物</strong></div>
         <span>零散时光会优先凑成完整份数</span>
       </header>
       <div v-if="forest.backpackItems.value.length" class="backpackGrid">
@@ -93,7 +93,7 @@ const forest = useMoyuForest();
           <p class="backpackAmount">{{ formatBackpackAmount(item.amount) }}<small>{{ item.unit }}</small></p>
         </article>
       </div>
-      <article v-else class="emptyCard">背包还是空的，摸一会儿鱼就有了。</article>
+      <article v-else class="emptyCard">背包还是空的，摸一会儿鱼就有了</article>
     </div>
   </MoyuOverlaySheet>
 </template>

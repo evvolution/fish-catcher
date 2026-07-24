@@ -35,7 +35,7 @@
 .sideTitle,
 .dimensionTitle {
   margin: 0;
-  font-weight: 730;
+  font-weight: 620;
   letter-spacing: -0.035em;
 }
 
@@ -64,7 +64,7 @@
   align-items: center;
   justify-content: center;
   border: 0;
-  border-radius: 999px;
+  border-radius: 14px;
   padding: 0 17px;
   font: inherit;
   font-size: 13px;
@@ -75,9 +75,7 @@
   border: 1px solid rgba(255, 255, 255, 0.68);
   background: rgba(255, 255, 255, 0.48);
   color: #1e3436;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.72),
-    0 10px 28px rgba(30, 52, 54, 0.09);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(20px) saturate(150%);
   -webkit-backdrop-filter: blur(20px) saturate(150%);
 }
@@ -110,14 +108,12 @@
 .section {
   border: 1px solid rgba(255, 255, 255, 0.64);
   background: rgba(250, 251, 248, 0.72);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.72),
-    0 18px 50px rgba(28, 52, 53, 0.065);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
 }
 
 .statCard {
   padding: 18px;
-  border-radius: 24px;
+  border-radius: 18px;
 }
 
 .statLabel {
@@ -130,7 +126,7 @@
 .statValue {
   margin: 16px 0 0;
   font-size: 34px;
-  font-weight: 720;
+  font-weight: 600;
   line-height: 1;
   letter-spacing: -0.04em;
 }
@@ -138,7 +134,7 @@
 .section {
   margin-top: 14px;
   padding: 22px;
-  border-radius: 32px;
+  border-radius: 22px;
 }
 
 .sectionHeader {
@@ -150,7 +146,7 @@
 
 .sectionTitle {
   margin-top: 7px;
-  font-size: 29px;
+  font-size: 27px;
   line-height: 1.12;
 }
 
@@ -163,7 +159,7 @@
 .dimensionCard,
 .sideCard {
   padding: 18px;
-  border-radius: 24px;
+  border-radius: 18px;
   background: rgba(255, 255, 255, 0.48);
 }
 
@@ -202,7 +198,7 @@
   gap: 7px;
   padding: 0 11px;
   border: 1px solid rgba(30, 52, 54, 0.07);
-  border-radius: 999px;
+  border-radius: 10px;
   background: rgba(230, 237, 232, 0.72);
   color: rgba(30, 52, 54, 0.74);
   font-size: 11px;
@@ -223,7 +219,7 @@
 
 .formCard {
   padding: 18px;
-  border-radius: 24px;
+  border-radius: 18px;
   background: rgba(255, 255, 255, 0.5);
 }
 
@@ -281,7 +277,19 @@
 .submitButton {
   background: #274649;
   color: #f6f8f3;
-  box-shadow: 0 10px 24px rgba(31, 65, 68, 0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -3px 0 rgba(4, 24, 27, 0.2),
+    0 3px 0 rgba(22, 54, 57, 0.35),
+    0 7px 11px rgba(31, 65, 68, 0.16);
+}
+
+.submitButton:active {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -1px 0 rgba(4, 24, 27, 0.2),
+    0 1px 0 rgba(22, 54, 57, 0.3);
+  transform: translateY(2px);
 }
 
 .stack {
@@ -294,7 +302,7 @@
 .record,
 .backgroundCard {
   overflow: hidden;
-  border-radius: 24px;
+  border-radius: 18px;
   background: rgba(255, 255, 255, 0.48);
 }
 
@@ -314,7 +322,7 @@
 
 .recordTitle {
   margin-top: 8px;
-  font-size: 20px;
+  font-size: 19px;
   line-height: 1.2;
 }
 
@@ -339,7 +347,7 @@
   width: 100%;
   aspect-ratio: 16 / 10;
   overflow: hidden;
-  border-radius: 18px;
+  border-radius: 14px;
 }
 
 .backgroundImage {
@@ -347,7 +355,22 @@
   inset: 0;
   width: 100%;
   height: 100%;
+  animation: operator-background-breathe 40s ease-in-out infinite;
   object-fit: cover;
+  transform: scale(1.02);
+  transform-origin: center;
+  will-change: transform;
+}
+
+@keyframes operator-background-breathe {
+  0%,
+  100% {
+    transform: scale(1.02);
+  }
+
+  50% {
+    transform: scale(1.035);
+  }
 }
 
 .backgroundMeta {
@@ -373,6 +396,7 @@
 
 .simpleList strong {
   font-size: 14px;
+  font-weight: 600;
 }
 
 .simpleList span {
@@ -419,5 +443,12 @@
 
   .checkboxRow {
     padding-top: 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backgroundImage {
+    animation: none;
+    transform: none;
   }
 }

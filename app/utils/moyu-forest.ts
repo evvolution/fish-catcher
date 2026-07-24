@@ -1,4 +1,4 @@
-import { pickBackground, pickGreetingEntry } from "~~/src/lib/moyu-engine";
+import { pickBackground } from "~~/src/lib/moyu-engine";
 import type { FishSpeciesRecord, ForestCatalog, GuestForestStore } from "~~/src/lib/moyu-types";
 import { regionalCatalog } from "~~/src/lib/regional-catalog";
 
@@ -24,7 +24,7 @@ export const protectionLabels: Record<FishSpeciesRecord["chinaProtectionStatus"]
 };
 
 export type ViewState = "forest" | "timer" | "result";
-export type SheetState = null | "album" | "settings" | "quotes";
+export type SheetState = null | "album" | "settings";
 export type LibraryTab = "cards" | "logs" | "backpack";
 export type LocationDraft = {
   mode: "standard" | "custom";
@@ -108,7 +108,6 @@ export function formatBackpackAmount(value: number) {
 export function resolveHomeAtmosphere(catalog: ForestCatalog, profile: GuestForestStore["profile"]) {
   const now = new Date();
   return {
-    greetingId: pickGreetingEntry(catalog, profile, now)?.id ?? null,
     backgroundSlug: pickBackground(catalog, null, profile, now)?.slug ?? null,
   };
 }
@@ -117,7 +116,7 @@ export function getFishProtectionNotice(fish: FishSpeciesRecord, label: string) 
   const protectedSpecies = fish.chinaProtectionStatus !== "NONE" || fish.citesAppendix !== "NONE";
   const threeHaveSpecies = fish.threeHaveStatus === "LISTED";
   if (!protectedSpecies && !threeHaveSpecies) return null;
-  if (protectedSpecies && threeHaveSpecies) return `${label}，并列入“三有”名录；野生个体请勿随意捕捉或交易。`;
-  if (threeHaveSpecies) return "已列入“三有”名录；野生个体请勿随意捕捉或交易。";
-  return `${label}；野生个体请以现行名录及当地规定为准。`;
+  if (protectedSpecies && threeHaveSpecies) return `${label}，并列入“三有”名录；野生个体请勿随意捕捉或交易`;
+  if (threeHaveSpecies) return "已列入“三有”名录；野生个体请勿随意捕捉或交易";
+  return `${label}；野生个体请以现行名录及当地规定为准`;
 }

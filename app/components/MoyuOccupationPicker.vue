@@ -92,7 +92,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", closeOnEscape));
         aria-label="自定义职业"
         @input="emit('update:customOccupationDraft', ($event.target as HTMLInputElement).value)"
       >
-      <span class="fieldHint">只用于匹配语气，不会公开展示。</span>
+      <span class="fieldHint">只用于匹配语气，不会公开展示</span>
     </div>
 
     <Teleport to="body">

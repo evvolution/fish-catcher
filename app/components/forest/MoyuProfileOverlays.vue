@@ -5,7 +5,7 @@ const forest = useMoyuForest();
 <template>
   <MoyuOverlaySheet
     v-if="forest.sheet.value === 'settings' && forest.view.value === 'forest'"
-    title="区域 / 职业"
+    title="摸鱼人档案"
     @close="forest.sheet.value = null"
   >
     <div class="settingsPanel">

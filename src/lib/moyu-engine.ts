@@ -49,7 +49,15 @@ export function sanitizeGuestStore(value: unknown): GuestForestStore {
   const candidate = value as Partial<GuestForestStore>;
   const profile = candidate.profile ?? empty.profile;
   const records = Array.isArray(candidate.records)
-    ? candidate.records.filter(isMomentRecord).slice(0, RECORD_LIMIT)
+    ? candidate.records
+      .filter(isMomentRecord)
+      .slice(0, RECORD_LIMIT)
+      .map((record) => ({
+        ...record,
+        copyTitle: stripTerminalPeriod(record.copyTitle),
+        copyContent: stripTerminalPeriod(record.copyContent),
+        snackSummary: record.snackSummary ? stripTerminalPeriod(record.snackSummary) : null,
+      }))
     : [];
   const totalAttentionCents =
     typeof candidate.totalAttentionCents === "number" && Number.isFinite(candidate.totalAttentionCents)
@@ -75,9 +83,20 @@ export function sanitizeGuestStore(value: unknown): GuestForestStore {
       : [],
     records,
     cards: Array.isArray(candidate.cards)
-      ? candidate.cards.filter(isCollectedCard).slice(0, COLLECTED_CARD_LIMIT)
+      ? candidate.cards
+        .filter(isCollectedCard)
+        .slice(0, COLLECTED_CARD_LIMIT)
+        .map((card) => ({
+          ...card,
+          title: stripTerminalPeriod(card.title),
+          content: stripTerminalPeriod(card.content),
+        }))
       : [],
   };
+}
+
+function stripTerminalPeriod(value: string) {
+  return value.replace(/。+$/u, "");
 }
 
 export function getTimeOfDaySlug(date = new Date()) {
@@ -110,17 +129,30 @@ export function formatDuration(totalSeconds: number) {
   return `${minutes} 分 ${String(seconds).padStart(2, "0")} 秒`;
 }
 
-export function pickGreetingEntry(catalog: ForestCatalog, profile: GuestProfile, date = new Date()) {
-  return (
-    pickCopyByContext(catalog.copyEntries, {
-      kind: "GREETING",
-      activitySlug: null,
-      durationSec: null,
-      industrySlug: profile.industrySlug,
-      timeOfDaySlug: getTimeOfDaySlug(date),
-      recentCopyIds: [],
-    }) ?? null
-  );
+export function getPlaceInvitation(date = new Date()) {
+  const hour = date.getHours();
+  if (hour < 5 || hour >= 22) {
+    return {
+      title: "今晚的风很轻，刚好够你松开一点",
+      detail: "这里不问后来，也不催你回去",
+    };
+  }
+  if (hour < 11) {
+    return {
+      title: "雾还没散，先把自己放在这里",
+      detail: "这一小段时间，不用去往哪里",
+    };
+  }
+  if (hour < 17) {
+    return {
+      title: "把脚边的浪声借给你一会儿",
+      detail: "潮水来了又走，什么也不催",
+    };
+  }
+  return {
+    title: "火光替你守着这一小段空白",
+    detail: "坐下来，手里的事会晚一点",
+  };
 }
 
 export function pickBackground(
@@ -153,7 +185,7 @@ export function pickResultCopy(
   recentCopyIds: string[],
   date = new Date(),
 ) {
-  return (
+  const selected = (
     pickCopyByContext(catalog.copyEntries, {
       kind: "RESULT",
       activitySlug,
@@ -167,6 +199,13 @@ export function pickResultCopy(
     ) ??
     null
   );
+  return selected
+    ? {
+        ...selected,
+        title: stripTerminalPeriod(selected.title),
+        content: stripTerminalPeriod(selected.content),
+      }
+    : null;
 }
 
 export function maybeDropCard(
@@ -198,8 +237,8 @@ export function maybeDropCard(
   return {
     id: `card_${selected.id}_${date.getTime()}`,
     copyId: selected.id,
-    title: selected.title,
-    content: selected.content,
+    title: stripTerminalPeriod(selected.title),
+    content: stripTerminalPeriod(selected.content),
     collectedAt: date.toISOString(),
     backgroundSlug,
   } satisfies CollectedCard;
@@ -216,7 +255,7 @@ export function buildSnackSummary(profile: GuestProfile, durationSec: number) {
   const parts = buildFoodEquivalent(foods, attentionCents, Boolean(localFoods?.length));
   const place = profile.cityName ? `${profile.cityName}这一带` : "通用城市";
 
-  return `${place}的这段摸鱼时光，约合 ${parts.join("、")}。`;
+  return `${place}的这段摸鱼时光，约合 ${parts.join("、")}`;
 }
 
 export function buildFoodBackpack(profile: GuestProfile, totalAttentionCents: number): FoodBackpackItem[] {
@@ -287,7 +326,7 @@ export function appendFishViewingToStore(
     durationSec: result.durationSec,
     copyId: `fish:${result.fish.slug}`,
     copyTitle: result.fish.scientificName,
-    copyContent: result.fish.summary,
+    copyContent: stripTerminalPeriod(result.fish.summary),
     backgroundSlug: null,
     snackSummary: result.snackSummary,
     droppedCardId: null,

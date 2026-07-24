@@ -5,16 +5,14 @@ import {
   appendResultToStore,
   buildFoodBackpack,
   buildSnackSummary,
-  COLLECTED_CARD_LIMIT,
   createEmptyGuestStore,
+  getPlaceInvitation,
   maybeDropCard,
   pickBackground,
   pickResultCopy,
 } from "~~/src/lib/moyu-engine";
-import { rankRelatedCopyEntries } from "~~/src/lib/copy-explorer";
 import type {
   ActivityRecord,
-  CopywritingRecord,
   ForestCatalog,
   ForestResult,
   GuestForestStore,
@@ -54,67 +52,27 @@ function createMoyuForestController(catalog: ForestCatalog) {
   const timer = ref<TimerState | null>(null);
   const elapsedMs = ref(0);
   const result = ref<ForestResult | null>(null);
-  const homeGreetingId = ref<string | null>(null);
   const homeBackgroundSlug = ref<string | null>(null);
   const locationDraft = ref<LocationDraft>(createDefaultLocationDraft());
   const industryDraft = ref("");
   const customIndustryDraft = ref("");
   const fishViewingStartedAt = ref(0);
-  const quoteExplorerEntryId = ref<string | null>(null);
-  const quoteExplorerTrailIds = ref<string[]>([]);
   const ambientNoise = useAmbientNoise();
 
   const activities = computed(() => catalog.activities);
+  const placeInvitation = getPlaceInvitation();
   const welcomeFish = computed(() => welcomeFishOrder.value.length
     ? welcomeFishOrder.value[welcomeFishIndex.value % welcomeFishOrder.value.length] ?? null
     : null);
   const industryOptions = computed(() => catalog.dimensionGroups.find((group) => group.key === "industry")?.options
     .map((option) => ({ value: option.slug, label: option.label })) ?? []);
   const backpackItems = computed(() => buildFoodBackpack(store.value.profile, store.value.totalAttentionCents));
-  const homeQuoteCandidates = computed(() => catalog.copyEntries.filter(
-    (entry) => entry.kind === "GREETING" || (entry.kind === "RESULT" && entry.content.length <= 42),
-  ));
-  const quoteExplorerEntries = computed(() => catalog.copyEntries.filter(
-    (entry) => entry.kind === "RESULT" || entry.kind === "CARD",
-  ));
   const backgroundMap = new Map(catalog.backgrounds.map((background) => [background.slug, background]));
   const activityMap = new Map(catalog.activities.map((activity) => [activity.slug, activity]));
-  const copyMap = new Map(catalog.copyEntries.map((entry) => [entry.id, entry]));
-  const dimensionLabelMap = new Map(catalog.dimensionGroups.flatMap((group) =>
-    group.options.map((option) => [`${group.key}:${option.slug}`, option.label] as const)));
-  const greeting = computed(() => homeGreetingId.value && copyMap.has(homeGreetingId.value)
-    ? copyMap.get(homeGreetingId.value) ?? null
-    : catalog.copyEntries.find((entry) => entry.kind === "GREETING") ?? null);
-  const quoteExplorerEntry = computed(() => quoteExplorerEntryId.value
-    ? copyMap.get(quoteExplorerEntryId.value) ?? null : null);
-  const quoteExplorerTags = computed(() => {
-    const entry = quoteExplorerEntry.value;
-    if (!entry) return [];
-    return [...new Set(Object.entries(entry.dimensionKeys).flatMap(([groupKey, slugs]) =>
-      slugs.map((slug) => dimensionLabelMap.get(`${groupKey}:${slug}`)).filter((label): label is string => Boolean(label)),
-    ))].slice(0, 5);
-  });
-  const quoteExplorerSaved = computed(() => Boolean(
-    quoteExplorerEntry.value
-    && store.value.cards.some((card) => card.copyId === quoteExplorerEntry.value?.id),
-  ));
   const currentBackground = computed(() => (view.value === "result" ? result.value?.background?.slug : timer.value?.backgroundSlug)
     ?? homeBackgroundSlug.value ?? catalog.backgrounds[0]?.slug ?? null);
   const currentBackgroundRecord = computed(() => currentBackground.value
     ? backgroundMap.get(currentBackground.value) ?? null : null);
-  const activeProfileCity = computed(() => regionalCatalog.cities.find(
-    (city) => city.code === store.value.profile.cityCode || city.slug === store.value.profile.citySlug,
-  ));
-  const activeRegionLabel = computed(() => [
-    store.value.profile.provinceName,
-    activeProfileCity.value?.officialName ?? store.value.profile.cityName,
-    store.value.profile.districtName,
-  ].filter((name): name is string => Boolean(name))
-    .filter((name, index, parts) => index === 0 || name.replace(/市$/, "") !== parts[index - 1]?.replace(/市$/, ""))
-    .join(""));
-  const activeIndustryLabel = computed(() => store.value.profile.industrySlug
-    ? industryOptions.value.find((option) => option.value === store.value.profile.industrySlug)?.label ?? null
-    : store.value.profile.industryName);
   const timerActivityName = computed(() => timer.value
     ? activityMap.get(timer.value.activitySlug)?.name ?? "驻足" : "驻足");
   const protectionLabel = computed(() => welcomeFish.value
@@ -134,52 +92,6 @@ function createMoyuForestController(catalog: ForestCatalog) {
     }
     welcomeFishOrder.value = shuffleFishOrder(catalog.fishes, welcomeFishOrder.value.at(-1)?.slug);
     welcomeFishIndex.value = 0;
-  }
-
-  function advanceHomeQuote() {
-    const candidates = homeQuoteCandidates.value.filter((entry) => entry.id !== homeGreetingId.value);
-    homeGreetingId.value = candidates[Math.floor(Math.random() * candidates.length)]?.id ?? homeGreetingId.value;
-  }
-
-  function openQuoteExplorer(seed: CopywritingRecord | null = greeting.value) {
-    const entry = seed ?? quoteExplorerEntries.value[Math.floor(Math.random() * quoteExplorerEntries.value.length)] ?? null;
-    if (!entry) return;
-    quoteExplorerEntryId.value = entry.id;
-    quoteExplorerTrailIds.value = [entry.id];
-    sheet.value = "quotes";
-  }
-
-  function advanceQuoteExplorer(mode: "related" | "wander") {
-    const current = quoteExplorerEntry.value;
-    if (!current) return openQuoteExplorer();
-    const unseen = quoteExplorerEntries.value.filter(
-      (entry) => entry.id !== current.id && !quoteExplorerTrailIds.value.includes(entry.id),
-    );
-    const ranked = mode === "related"
-      ? rankRelatedCopyEntries(quoteExplorerEntries.value, current, quoteExplorerTrailIds.value)
-      : unseen;
-    const pool = ranked.length ? (mode === "related" ? ranked.slice(0, 12) : ranked)
-      : quoteExplorerEntries.value.filter((entry) => entry.id !== current.id);
-    const next = pool[Math.floor(Math.random() * pool.length)] ?? null;
-    if (!next) return;
-    quoteExplorerEntryId.value = next.id;
-    quoteExplorerTrailIds.value = [...quoteExplorerTrailIds.value, next.id].slice(-40);
-  }
-
-  function handleCollectQuote() {
-    const entry = quoteExplorerEntry.value;
-    if (!entry || quoteExplorerSaved.value) return;
-    store.value = {
-      ...store.value,
-      cards: [{
-        id: `card_saved_${entry.id}_${Date.now()}`,
-        copyId: entry.id,
-        title: entry.title,
-        content: entry.content,
-        collectedAt: new Date().toISOString(),
-        backgroundSlug: currentBackground.value,
-      }, ...store.value.cards].slice(0, COLLECTED_CARD_LIMIT),
-    };
   }
 
   function handleStartActivity(activity: ActivityRecord) {
@@ -360,14 +272,11 @@ function createMoyuForestController(catalog: ForestCatalog) {
 
   function applyHomeAtmosphere() {
     const next = resolveHomeAtmosphere(catalog, store.value.profile);
-    homeGreetingId.value = next.greetingId;
     homeBackgroundSlug.value = next.backgroundSlug;
   }
 
   useMoyuForestLifecycle({
     welcomeVisible,
-    welcomeFishIndex,
-    welcomeFishOrder,
     store,
     hasHydrated,
     view,
@@ -382,13 +291,12 @@ function createMoyuForestController(catalog: ForestCatalog) {
   });
 
   return {
-    activities, activeIndustryLabel, activeRegionLabel, backpackItems, currentBackgroundRecord,
-    customIndustryDraft, elapsedMs, fishOverlayMode, greeting, handleBackToForest, handleCollectQuote,
+    activities, backpackItems, currentBackgroundRecord,
+    customIndustryDraft, elapsedMs, fishOverlayMode, handleBackToForest,
     handleDeleteCard, handleDismissFish, handleFinishTimer, handleLibraryScroll, handleNextFish,
     handleOpenFish, handlePauseOrResume, handleSaveProfile, handleStartActivity, handleToggleAmbient,
-    industryDraft, industryOptions, libraryTab, locationDraft, openLibrary, openQuoteExplorer,
-    advanceHomeQuote, advanceQuoteExplorer, changeLibraryTab, profileValid, protectionNotice,
-    quoteExplorerEntry, quoteExplorerSaved, quoteExplorerTags, result, sheet, store, timer,
+    industryDraft, industryOptions, libraryTab, locationDraft, openLibrary,
+    changeLibraryTab, placeInvitation, profileValid, protectionNotice, result, sheet, store, timer,
     timerActivityName, view, visibleCardCount, visibleLogCount, welcomeFish, welcomeVisible,
   };
 }
